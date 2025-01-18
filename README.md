@@ -80,8 +80,17 @@ cp example.config.toml config.toml
 
 ## 🚀 使用说明
 
-1. 配置 `config.toml`
-2. 启动机器人（具体启动命令待补充）
+使用 Docker 运行：
+
+```
+make up
+```
+
+停止服务:
+
+```
+make down
+```
 
 ## ⚠️ 注意事项
 
