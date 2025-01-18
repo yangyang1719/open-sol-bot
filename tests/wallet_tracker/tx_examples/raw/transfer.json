@@ -1,0 +1,98 @@
+{
+  "blockTime": 1733149202,
+  "meta": {
+    "computeUnitsConsumed": 150,
+    "err": null,
+    "fee": 5000,
+    "innerInstructions": [],
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+    ],
+    "postBalances": [9671274978, 46518378, 1],
+    "postTokenBalances": [],
+    "preBalances": [9671329978, 46468378, 1],
+    "preTokenBalances": [],
+    "rewards": [],
+    "status": { "Ok": null }
+  },
+  "slot": 304963807,
+  "transaction": {
+    "message": {
+      "accountKeys": [
+        {
+          "pubkey": "2dV7UHwdooBxowaNTjLALuFJaGeRfgcuP6DkUNysMdpX",
+          "signer": true,
+          "source": "transaction",
+          "writable": true
+        },
+        {
+          "pubkey": "ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49",
+          "signer": false,
+          "source": "transaction",
+          "writable": true
+        },
+        {
+          "pubkey": "11111111111111111111111111111111",
+          "signer": false,
+          "source": "transaction",
+          "writable": false
+        }
+      ],
+      "addressTableLookups": [],
+      "instructions": [
+        {
+          "parsed": {
+            "info": {
+              "destination": "ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49",
+              "lamports": 50000,
+              "source": "2dV7UHwdooBxowaNTjLALuFJaGeRfgcuP6DkUNysMdpX"
+            },
+            "type": "transfer"
+          },
+          "program": "system",
+          "programId": "11111111111111111111111111111111",
+          "stackHeight": null
+        }
+      ],
+      "recentBlockhash": "8HiTCufJChGgbK4qXReRYpjvQ9d51fZUAGsQRMjpUxLc"
+    },
+    "signatures": [
+      "374qB8uFGxP818m2kAUz9Ydf1czoDCMMniWkf2RZhm4hDFBj3VP1cCmg3wqHYAoLmrSFLtGKMT6DonGC2gj9pQVM"
+    ]
+  },
+  "version": 0,
+  "parsed": {
+    "timestamp": "2024-12-02T14:20:02.000Z",
+    "fee": 5e-6,
+    "fee_payer": "2dV7UHwdooBxowaNTjLALuFJaGeRfgcuP6DkUNysMdpX",
+    "signers": ["2dV7UHwdooBxowaNTjLALuFJaGeRfgcuP6DkUNysMdpX"],
+    "signatures": [
+      "374qB8uFGxP818m2kAUz9Ydf1czoDCMMniWkf2RZhm4hDFBj3VP1cCmg3wqHYAoLmrSFLtGKMT6DonGC2gj9pQVM"
+    ],
+    "protocol": {
+      "address": "11111111111111111111111111111111",
+      "name": "SYSTEM_PROGRAM"
+    },
+    "type": "SOL_TRANSFER",
+    "status": "Success",
+    "token_balance_changes": [],
+    "actions": [
+      {
+        "info": {
+          "sender": "2dV7UHwdooBxowaNTjLALuFJaGeRfgcuP6DkUNysMdpX",
+          "receiver": "ADaUMid9yfUytqMBgopwjb2DTLSokTSzL1zt6iGPaS49",
+          "amount": 5e-5,
+          "amount_raw": 50000
+        },
+        "source_protocol": {
+          "address": "11111111111111111111111111111111",
+          "name": "SYSTEM_PROGRAM"
+        },
+        "type": "SOL_TRANSFER",
+        "ix_index": 0
+      }
+    ],
+    "events": []
+  }
+}

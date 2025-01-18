@@ -1,0 +1,53 @@
+[wallet]
+private_key = ""
+
+[monitor]
+mode = "wss" # wss or geyser
+
+[rpc]
+network = "mainnet-beta"
+endpoints = [
+    "https://api.mainnet-beta.solana.com"  # 多个 rpc 节点, 优先使用第一个
+] # 多个 rpc 节点, 优先使用第一个
+commitment = "finalized"
+
+[rpc.geyser]
+enable = false
+endpoint = ""
+api_key = ""
+
+[trading]
+# prioritization fee = UNIT_PRICE * UNIT_LIMIT
+unit_limit = 300000
+unit_price = 1
+tx_simulate = false
+
+[api]
+helius_api_base_url = "https://api.helius.xyz/v0"
+helius_api_key = ""
+shyft_api_base_url = "https://api.shyft.to"
+shyft_api_key = ""
+pumpportal_api_data_url = "wss://pumpportal.fun/api/data"
+solscan_api_base_url = "https://pro-api.solscan.io/v2.0"
+solscan_api_key = ""
+
+[db]
+# -- for local
+# mysql_url = "mysql+pymysql://root:root@127.0.0.1:3306/solana_trade_bot"
+# redis_url = "redis://127.0.0.1:6379/0"
+
+# -- for docker
+mysql_url = "mysql+pymysql://root:root@mysql:3306/solana_trade_bot"
+redis_url = "redis://redis:6379/0"
+
+[sentry]
+dsn = ""
+traces_sample_rate = 1.0
+
+[log]
+level = "debug"
+
+[tg_bot]
+token = ""
+mode = "private" # private or public, private 意味着机器人是私有的，只有使用激活码才能访问，public 意味着机器人公开，任何人都可以访问
+manager_id = 5049063827  # 管理员 id，管理员无视激活码

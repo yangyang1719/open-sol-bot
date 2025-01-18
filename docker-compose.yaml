@@ -1,0 +1,87 @@
+version: "3.8"
+
+services:
+  wallet-tracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: solana-wallet-tracker
+    restart: unless-stopped
+    volumes:
+      - ./config.toml:/app/config.toml:ro
+      - ./logs/wallet-tracker:/app/logs
+    depends_on:
+      - mysql
+      - redis
+    command: ["make", "wallet-tracker"]
+
+  trading:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: solana-trading
+    restart: unless-stopped
+    volumes:
+      - ./config.toml:/app/config.toml:ro
+      - ./logs/trading:/app/logs
+    depends_on:
+      - mysql
+      - redis
+    command: ["make", "trading"]
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: solana-trading-bot
+    restart: unless-stopped
+    volumes:
+      - ./config.toml:/app/config.toml:ro
+      - ./logs/bot/:/app/logs
+    depends_on:
+      - mysql
+      - redis
+      - wallet-tracker
+      - trading
+    command: ["make", "bot"]
+
+  mysql:
+    image: mysql:8.0
+    container_name: solana-bot-mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=solana_trade_bot
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: solana-bot-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  default:
+    name: solana-bot-network
+    driver: bridge
