@@ -1,9 +1,12 @@
+import math
+
 from solana.rpc.api import Client
 from solana.rpc.async_api import AsyncClient
 from solders.hash import Hash  # type: ignore
 from solders.pubkey import Pubkey  # type: ignore
 from spl.token.instructions import get_associated_token_address
-import math
+
+from cache.account import GlobalAccountCache
 from common.layouts.bonding_curve_account import BondingCurveAccount
 from common.layouts.global_account import GlobalAccount
 
@@ -68,14 +71,7 @@ async def get_bonding_curve_account(
 async def get_global_account(
     client: AsyncClient, program: Pubkey
 ) -> GlobalAccount | None:
-    global_account_pda = Pubkey.find_program_address([b"global"], program)[0]
-    token_account = await client.get_account_info_json_parsed(global_account_pda)
-    if token_account is None:
-        return None
-    value = token_account.value
-    if value is None:
-        return None
-    return GlobalAccount.from_buffer(bytes(value.data))
+    return await GlobalAccountCache(client).get(program)
 
 
 def calculate_with_slippage_buy(amount: int, basis_points: int) -> int:
