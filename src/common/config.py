@@ -143,7 +143,8 @@ class RPCConfig(BaseModel):
 class TradingConfig(BaseModel):
     unit_price: int
     unit_limit: int
-    tx_simulate: bool
+    tx_simulate: bool = False
+    preflight_check: bool = False
 
 
 class APIConfig(BaseModel):

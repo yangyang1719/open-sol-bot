@@ -20,6 +20,7 @@ api_key = ""
 # prioritization fee = UNIT_PRICE * UNIT_LIMIT
 unit_limit = 300000
 unit_price = 1
+preflight_check = false
 tx_simulate = false
 
 [api]
