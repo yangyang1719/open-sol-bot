@@ -92,6 +92,24 @@ make up
 make down
 ```
 
+详细部署文档：[https://github.com/mkdir700/open-sol-bot/wiki/Deployment](https://github.com/mkdir700/open-sol-bot/wiki/Deployment)
+
+## ❓ 常见问题
+
+### 交易未上链，在 Solscan 上查询不到？
+
+这通常是由于网络拥堵导致的。如果默认的交易费用参数（`unit_price` 和 `unit_limit`）设置过低，交易可能无法被及时处理。建议调整配置文件中的这两个参数到更高的值，例如：
+
+```toml
+unit_limit = 81000  # 计算单位上限
+unit_price = 3000000  # 每计算单位的价格（lamports）
+```
+
+> 💡 提示：
+> - 这些参数决定了交易的优先级
+> - 网络拥堵时适当提高可以加快交易处理速度
+> - 后续版本将支持自动动态调整交易费用
+
 ## ⚠️ 注意事项
 
 - 🔒 请确保配置文件中的私钥安全
