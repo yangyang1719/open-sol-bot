@@ -126,4 +126,9 @@ async def start(message: types.Message, state: FSMContext):
         token_mint = arg.split("_")[1]
         await start_asset(token_mint, message, state)
     else:
-        raise ValueError("Invalid command: {}".format(arg))
+        token_info_cache = TokenInfoCache()
+        token_info = await token_info_cache.get(arg)
+        if token_info is None:
+            await message.answer("❌ 无法查询到该代币信息")
+            return
+        await start_asset(token_info.mint, message, state)
