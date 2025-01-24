@@ -20,7 +20,7 @@ RAY_V4_PROGRAM_ID = str(RAY_V4)
 class TradingExecutor:
     def __init__(self, client: AsyncClient):
         self._client = client
-        self._raydium_api = RaydiumAPI(client)
+        self._raydium_api = RaydiumAPI()
 
     async def _is_lanuch_on_raydium(self, mint: str) -> bool:
         """Check if a token is launch on raydium.
