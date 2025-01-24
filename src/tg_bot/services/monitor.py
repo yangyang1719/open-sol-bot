@@ -6,7 +6,7 @@ from sqlmodel import select
 from common.cp.monitor_events import MonitorEventProducer
 from common.models.tg_bot.monitor import Monitor as MonitorModel
 from db.redis import RedisClient
-from db.session import provide_session, NEW_ASYNC_SESSION
+from db.session import NEW_ASYNC_SESSION, provide_session
 from tg_bot.models.monitor import Monitor
 
 
@@ -26,6 +26,17 @@ class MonitorService:
     def __init__(self) -> None:
         redis = RedisClient.get_instance()
         self.producer = MonitorEventProducer(redis)
+
+    @provide_session
+    async def get_by_chat_id(
+        self, chat_id: int, *, session: AsyncSession = NEW_ASYNC_SESSION
+    ) -> Monitor | None:
+        stmt = select(MonitorModel).where(MonitorModel.chat_id == chat_id)
+        result = await session.execute(stmt)
+        obj = result.scalar_one_or_none()
+        if obj is None:
+            return None
+        return from_db_model(obj)
 
     @provide_session
     async def add(
@@ -180,6 +191,16 @@ class MonitorService:
         stmt = select(MonitorModel).where(MonitorModel.target_wallet == target_wallet)
         results = await session.execute(stmt)
         return [row.chat_id for row in results.scalars()]
+
+    @provide_session
+    async def get_active_by_target_wallet(
+        self, target_wallet: str, *, session: AsyncSession = NEW_ASYNC_SESSION
+    ) -> List[Monitor]:
+        stmt = select(MonitorModel).where(
+            MonitorModel.target_wallet == target_wallet, MonitorModel.active == True
+        )
+        results = await session.execute(stmt)
+        return [from_db_model(obj) for obj in results.scalars()]
 
     @provide_session
     async def inactive_all(

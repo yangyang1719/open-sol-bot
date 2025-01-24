@@ -2,7 +2,7 @@
 Message templates for Telegram bot responses using Jinja2
 """
 
-from typing import List
+from typing import TYPE_CHECKING, List
 
 from jinja2 import BaseLoader, Environment
 from solders.keypair import Keypair  # type: ignore
@@ -14,6 +14,9 @@ from tg_bot.models.monitor import Monitor
 from tg_bot.models.setting import Setting
 from tg_bot.services.holding import HoldingToken
 from tg_bot.utils.bot import get_bot_name
+
+if TYPE_CHECKING:
+    from tg_bot.notify.smart_swap import SwapMessage
 
 # 创建 Jinja2 环境
 env = Environment(loader=BaseLoader())
@@ -104,16 +107,19 @@ def render_edit_monitor_message(monitor: Monitor):
 # NOTIFY
 NOTIFY_SWAP_TEMPLATE = env.from_string(
     """🔔 交易通知\n
-👛 钱包: <code>{{ tx_event.who }}</code>
+{{ human_description }}
+
+📛 钱包别名: {{ wallet_alias }} <code>{{ who }}</code>(点击复制)
 📝 类型: {{ tx_type_cn }}
-💱 交易方向: {{ tx_event.tx_direction }}
-🪙 代币: <code>{{ tx_event.mint }}</code>
+💱 交易方向: {{ tx_direction }}
+🪙 代币名称: ${{ token_symbol }} ({{ token_name }})
+🪙 代币地址: <code>{{ mint }}</code>
 💰 交易数量: {{ "%.4f"|format(from_amount) }} → {{ "%.4f"|format(to_amount) }}
 📊 持仓变化: {{ position_change_formatted }}
 💎 当前持仓: {{ "%.4f"|format(post_amount) }}
 ⏰ 时间: {{ tx_time }}
-🔗 交易HASH: <code>{{ tx_event.signature }}</code>
-📊 K线盯盘: <a href="https://gmgn.ai/sol/token/{{ tx_event.mint }}">GMGN</a> | <a href="https://dexscreener.com/solana/{{ tx_event.mint }}">DexScreen</a>
+🔗 交易详情: <a href="https://solscan.io/tx/{{ signature }}">Solscan</a>
+📊 K线盯盘: <a href="https://gmgn.ai/sol/token/{{ mint }}">GMGN</a> | <a href="https://dexscreener.com/solana/{{ mint }}">DexScreen</a>
 """
 )
 
@@ -151,23 +157,24 @@ def render_copytrade_menu(total, active_cnt):
 
 
 def render_notify_swap(
-    tx_event,
-    tx_type_cn,
-    from_amount,
-    to_amount,
-    position_change_formatted,
-    post_amount,
-    tx_time,
+    swap_message: "SwapMessage",
 ):
     """渲染交易通知消息"""
     return NOTIFY_SWAP_TEMPLATE.render(
-        tx_event=tx_event,
-        tx_type_cn=tx_type_cn,
-        from_amount=from_amount,
-        to_amount=to_amount,
-        position_change_formatted=position_change_formatted,
-        post_amount=post_amount,
-        tx_time=tx_time,
+        human_description=swap_message.human_description,
+        token_name=swap_message.token_name,
+        token_symbol=swap_message.token_symbol,
+        wallet_alias=swap_message.wallet_alias,
+        tx_type_cn=swap_message.tx_type_cn,
+        from_amount=swap_message.from_amount,
+        to_amount=swap_message.to_amount,
+        position_change_formatted=swap_message.position_change_formatted,
+        post_amount=swap_message.post_amount,
+        tx_time=swap_message.tx_time,
+        signature=swap_message.signature,
+        who=swap_message.target_wallet,
+        mint=swap_message.mint,
+        tx_direction=swap_message.tx_direction,
     )
 
 

@@ -4,17 +4,58 @@
 """
 
 import asyncio
+import copy
+from dataclasses import dataclass
+from datetime import datetime
 
 import aioredis
 from aiogram import Bot
 from aiogram.enums import ParseMode
 
+from cache.token_info import TokenInfoCache
 from common.cp.tx_event import TxEventConsumer
 from common.log import logger
 from common.types import TxEvent, TxType
 from tg_bot.keyboards.notify_swap import notify_swap_keyboard
 from tg_bot.services.monitor import MonitorService
 from tg_bot.templates import render_notify_swap
+
+
+@dataclass
+class SwapMessage:
+    """通知消息"""
+
+    target_wallet: str
+    tx_type_cn: str
+    tx_direction: str
+    token_name: str
+    token_symbol: str
+    mint: str
+    from_amount: float
+    to_amount: float
+    position_change_formatted: str
+    post_amount: float
+    tx_time: str
+    signature: str
+    wallet_alias: str | None = None
+
+    @property
+    def human_description(self) -> str:
+        """交易描述"""
+        if self.wallet_alias is None:
+            wallet_name = self.target_wallet[:5] + "..."
+        else:
+            wallet_name = self.wallet_alias
+        if self.tx_type_cn == "开仓":
+            return f"🟢 {wallet_name} 建仓 {self.to_amount} 个 {self.token_symbol}，花费 {self.from_amount} 个 SOL"
+        elif self.tx_type_cn == "加仓":
+            return f"🟢 {wallet_name} 加仓 {self.to_amount} 个 {self.token_symbol}，花费 {self.from_amount} 个 SOL"
+        elif self.tx_type_cn == "减仓":
+            return f"🔴 {wallet_name} 减仓 {self.from_amount} 个 {self.token_symbol}，花费 {self.to_amount} 个 SOL"
+        elif self.tx_type_cn == "清仓":
+            return f"🔴 {wallet_name} 清仓 {self.from_amount} 个 {self.token_symbol}，获得 {self.to_amount} 个 SOL"
+        else:
+            raise ValueError(f"Invalid tx_type_cn: {self.tx_type_cn}")
 
 
 class SmartWalletSwapAlertNotify:
@@ -40,7 +81,7 @@ class SmartWalletSwapAlertNotify:
         self.consumer.register_callback(self._handle_event)
         self.monitor_service = MonitorService()
 
-    async def format_tx_message(self, tx_event: TxEvent) -> str:
+    async def build_swap_message(self, tx_event: TxEvent) -> SwapMessage:
         """格式化交易消息"""
         # 计算实际金额（考虑 decimals）
         from_amount = tx_event.from_amount / (10**tx_event.from_decimals)
@@ -74,40 +115,57 @@ class SmartWalletSwapAlertNotify:
         # 交易类型中文映射
         tx_type_cn = _data.get(tx_event.tx_type, str(tx_event.tx_type))
 
-        # 格式化时间
-        from datetime import datetime
-
         tx_time = datetime.fromtimestamp(tx_event.timestamp).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
 
-        # 构建消息
-        message = render_notify_swap(
-            tx_event=tx_event,
+        token_info = await TokenInfoCache().get(tx_event.mint)
+        if token_info is None:
+            logger.warning(f"Failed to get token info: {tx_event.mint}")
+            token_name = "Unknown"
+            token_symbol = "Unknown"
+        else:
+            token_name = token_info.token_name
+            token_symbol = token_info.symbol
+
+        return SwapMessage(
+            target_wallet=tx_event.who,
+            tx_type_cn=tx_type_cn,
+            tx_direction=tx_event.tx_direction,
+            token_name=token_name,
+            token_symbol=token_symbol,
+            mint=tx_event.mint,
             from_amount=from_amount,
             to_amount=to_amount,
-            tx_time=tx_time,
-            tx_type_cn=tx_type_cn,
             position_change_formatted=position_change_formatted,
             post_amount=post_amount,
+            tx_time=tx_time,
+            signature=tx_event.signature,
         )
-        return message
 
-    async def send_notification(self, tx_event: TxEvent, message: str) -> None:
+    async def send_notification(
+        self, tx_event: TxEvent, swap_message: SwapMessage
+    ) -> None:
         """发送通知到所有配置的聊天"""
-        chat_ids = await self.monitor_service.get_chat_ids_by_target_wallet(
+        monitors = await self.monitor_service.get_active_by_target_wallet(
             str(tx_event.who)
         )
-        tasks = [
-            self.bot.send_message(
-                chat_id=chat_id,
+
+        async def _f(_monitor):
+            copy_message = copy.deepcopy(swap_message)
+            copy_message.wallet_alias = _monitor.wallet_alias
+            message = render_notify_swap(copy_message)
+            await self.bot.send_message(
+                chat_id=_monitor.chat_id,
                 text=message,
                 parse_mode=ParseMode.HTML,
                 disable_web_page_preview=True,
                 reply_markup=notify_swap_keyboard(tx_event),
             )
-            for chat_id in chat_ids
-        ]
+
+        tasks = []
+        for monitor in monitors:
+            tasks.append(asyncio.create_task(_f(monitor)))
 
         try:
             await asyncio.gather(*tasks)
@@ -122,7 +180,7 @@ class SmartWalletSwapAlertNotify:
         """
         try:
             # 格式化消息
-            message = await self.format_tx_message(tx_event)
+            message = await self.build_swap_message(tx_event)
             # 发送通知
             await self.send_notification(tx_event, message)
         except Exception as e:
