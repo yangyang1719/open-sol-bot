@@ -18,8 +18,8 @@ api_key = ""
 
 [trading]
 # prioritization fee = UNIT_PRICE * UNIT_LIMIT
-unit_limit = 300000
-unit_price = 1
+unit_limit = 81000
+unit_price = 3000000
 preflight_check = false
 tx_simulate = false
 
