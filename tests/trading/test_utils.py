@@ -1,14 +1,15 @@
 import pytest
+from solders.pubkey import Pubkey
+
+from common.constants import PUMP_FUN_PROGRAM
 from trading.utils import (
-    get_bonding_curve_pda,
-    get_bonding_curve_account,
     get_associated_bonding_curve,
-    get_global_account,
     get_async_client,
+    get_bonding_curve_account,
+    get_bonding_curve_pda,
+    get_global_account,
     has_ata,
 )
-from common.constants import PUMP_FUN_PROGRAM
-from solders.pubkey import Pubkey
 
 
 @pytest.mark.asyncio
@@ -37,15 +38,6 @@ async def test_get_bonding_curve_account():
     )
     assert result
     bonding_curve, associated_bonding_curve, account = result
-    # BondingCurveAccount(
-    #     discriminator=6966180631402821399,
-    #     virtual_token_reserves=1072999997348202,
-    #     virtual_sol_reserves=30000000087,
-    #     real_token_reserves=793099997348202,
-    #     real_sol_reserves=87,
-    #     token_total_supply=1000000000000000,
-    #     complete=False,
-    # )
     assert account.discriminator == 6966180631402821399
     assert account.virtual_token_reserves == 1072999997348202
     assert account.virtual_sol_reserves == 30000000087
