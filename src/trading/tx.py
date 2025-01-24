@@ -45,11 +45,11 @@ async def build_transaction(
     """
     if not use_jito:
         # TODO: unit_limit and unit_price 应该动态设置, 从用户的配置中获取或从调用方传入
-        instructions.insert(0, set_compute_unit_price(settings.trading.unit_price))
-        instructions.insert(1, set_compute_unit_limit(settings.trading.unit_limit))
+        instructions.insert(0, set_compute_unit_limit(settings.trading.unit_limit))
+        instructions.insert(1, set_compute_unit_price(settings.trading.unit_price))
 
     # init tx
-    recent_blockhash = (await BlockhashCache.get())[0]
+    recent_blockhash, _ = await BlockhashCache.get()
 
     message = MessageV0.try_compile(
         payer=keypair.pubkey(),
@@ -69,11 +69,11 @@ async def new_signed_and_send_transaction(
     use_jito: bool,
 ) -> Signature:
     if not use_jito:
-        instructions.insert(0, set_compute_unit_price(settings.trading.unit_price))
-        instructions.insert(1, set_compute_unit_limit(settings.trading.unit_limit))
+        instructions.insert(0, set_compute_unit_limit(settings.trading.unit_limit))
+        instructions.insert(1, set_compute_unit_price(settings.trading.unit_price))
 
     # init tx
-    recent_blockhash = (await BlockhashCache.get())[0]
+    recent_blockhash, _ = await BlockhashCache.get()
 
     message = MessageV0.try_compile(
         payer=keypair.pubkey(),
