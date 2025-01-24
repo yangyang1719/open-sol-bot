@@ -26,7 +26,7 @@ COPY Makefile pyproject.toml pdm.lock ./
 
 # Install dependencies
 RUN pdm config python.use_venv false && \
-  pdm install --no-self --no-lock
+  pdm install --no-self --no-lock --prod
 
 # Copy source code (this will be used in production mode)
 # In development mode, the source code will be mounted via volume
