@@ -8,8 +8,10 @@ from common.models.tg_bot.user import User
 from common.types.swap import SwapEvent
 from db.session import NEW_ASYNC_SESSION, provide_session
 from trading.swap import SwapDirection, SwapInType
+from common.utils.raydium import RaydiumAPI
 
 from .swap_protocols import Gmgn, Pump, RayV4
+from cache import get_preferred_pool
 
 PUMP_FUN_PROGRAM_ID = str(PUMP_FUN_PROGRAM)
 RAY_V4_PROGRAM_ID = str(RAY_V4)
@@ -18,6 +20,18 @@ RAY_V4_PROGRAM_ID = str(RAY_V4)
 class TradingExecutor:
     def __init__(self, client: AsyncClient):
         self._client = client
+        self._raydium_api = RaydiumAPI(client)
+
+    async def _is_lanuch_on_raydium(self, mint: str) -> bool:
+        """Check if a token is launch on raydium.
+
+        Args:
+            mint (str): Token mint.
+
+        Returns:
+            bool: True if launch on raydium, False otherwise.
+        """
+        return get_preferred_pool(mint) is not None
 
     @provide_session
     async def __get_keypair(self, pubkey: str, *, session=NEW_ASYNC_SESSION) -> Keypair:
@@ -44,9 +58,25 @@ class TradingExecutor:
         keypair = await self.__get_keypair(swap_event.user_pubkey)
         swap_in_type = SwapInType(swap_event.swap_in_type)
 
-        # 如果 program_id 为 pump，则本地构建交易
-        if swap_event.program_id == PUMP_FUN_PROGRAM_ID:
-            logger.info("Program ID is PumpFun, So We use pump to trade")
+        # 检查是否需要使用 Pump 协议进行交易
+        should_use_pump = False
+        check_mint = None
+
+        if swap_event.input_mint.endswith("pump"):
+            check_mint = swap_event.input_mint
+        elif swap_event.output_mint.endswith("pump"):
+            check_mint = swap_event.output_mint
+        elif swap_event.program_id == PUMP_FUN_PROGRAM_ID:
+            should_use_pump = True
+            logger.info("Program ID is PumpFun, using Pump protocol to trade")
+
+        if check_mint and not await self._is_lanuch_on_raydium(check_mint):
+            should_use_pump = True
+            logger.info(
+                f"Token {check_mint} is not launched on Raydium, using Pump protocol to trade"
+            )
+
+        if should_use_pump:
             sig = await Pump(self._client).swap(
                 keypair=keypair,
                 token_address=swap_event.output_mint,
