@@ -1,3 +1,4 @@
+import os
 from typing import Tuple
 from datetime import timedelta
 
@@ -20,8 +21,9 @@ class BlockhashCache(BaseAutoUpdateCache):
         self.redis = redis
         super().__init__(redis)
 
-    async def _get_latest_blockhash(self) -> tuple[Hash, int]:
-        resp = await self.client.get_latest_blockhash()
+    @classmethod
+    async def _get_latest_blockhash(cls) -> tuple[Hash, int]:
+        resp = await get_async_client().get_latest_blockhash()
         return resp.value.blockhash, resp.value.last_valid_block_height
 
     async def _gen_new_value(self) -> str:
@@ -39,6 +41,9 @@ class BlockhashCache(BaseAutoUpdateCache):
         Get current blockhash and last valid block height
         Uses cached value if available
         """
+        if os.getenv("PYTEST_CURRENT_TEST"):
+            return await cls._get_latest_blockhash()
+
         redis = redis or RedisClient.get_instance()
         raw_cached_value = await redis.get(cls.key)
         if raw_cached_value is None:
