@@ -14,9 +14,14 @@ def monitor_keyboard_menu(
     current_row = []
 
     for idx, item in enumerate(monitor_items[:10], 1):  # 限制最多显示10个
+        if item.wallet_alias is None:
+            assert item.target_wallet is not None
+            wallet_name = item.target_wallet[:5] + "..."
+        else:
+            wallet_name = item.wallet_alias
         current_row.append(
             InlineKeyboardButton(
-                text=str(idx),
+                text=f"{str(idx)} - {wallet_name}",
                 callback_data=f"monitor_{item.pk}",
             )
         )
