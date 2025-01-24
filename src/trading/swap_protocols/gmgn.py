@@ -77,6 +77,7 @@ class Gmgn(TraderProtocol):
             "fee": fee,
         }
 
+        # TODO: 获取报价解耦
         resp = await self.client.get(self.api_path, params=params)
         resp.raise_for_status()
 
@@ -102,7 +103,7 @@ class Gmgn(TraderProtocol):
         """
         resp = await self.rpc_client.send_transaction(
             transaction,
-            opts=TxOpts(skip_preflight=True),
+            opts=TxOpts(skip_preflight=not settings.trading.preflight_check),
         )
         return resp.value
 
