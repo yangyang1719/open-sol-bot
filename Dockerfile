@@ -28,7 +28,8 @@ COPY Makefile pyproject.toml pdm.lock ./
 RUN pdm config python.use_venv false && \
   pdm install --no-self --no-lock
 
-# Copy source code
+# Copy source code (this will be used in production mode)
+# In development mode, the source code will be mounted via volume
 COPY src/ ./src/
 
-# No CMD here - let docker-compose specify the command for each service
+# No default CMD - let docker-compose specify the command for each service

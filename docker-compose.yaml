@@ -5,11 +5,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: solana-wallet-tracker
     restart: unless-stopped
     volumes:
       - ./config.toml:/app/config.toml:ro
       - ./logs/wallet-tracker:/app/logs
+      - ./src:/app/src  # 开发模式：源代码映射
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./pdm.lock:/app/pdm.lock
+      - ./Makefile:/app/Makefile
     depends_on:
       - mysql
       - redis
@@ -19,11 +22,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: solana-trading
     restart: unless-stopped
     volumes:
       - ./config.toml:/app/config.toml:ro
       - ./logs/trading:/app/logs
+      - ./src:/app/src  # 开发模式：源代码映射
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./pdm.lock:/app/pdm.lock
+      - ./Makefile:/app/Makefile
     depends_on:
       - mysql
       - redis
@@ -33,11 +39,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: solana-trading-bot
     restart: unless-stopped
     volumes:
       - ./config.toml:/app/config.toml:ro
       - ./logs/bot/:/app/logs
+      - ./src:/app/src  # 开发模式：源代码映射
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./pdm.lock:/app/pdm.lock
+      - ./Makefile:/app/Makefile
     depends_on:
       - mysql
       - redis
@@ -47,7 +56,6 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: solana-bot-mysql
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=root
@@ -65,7 +73,6 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: solana-bot-redis
     restart: unless-stopped
     volumes:
       - redis_data:/data
