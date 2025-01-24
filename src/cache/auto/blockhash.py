@@ -20,12 +20,16 @@ class BlockhashCache(BaseAutoUpdateCache):
         self.redis = redis
         super().__init__(redis)
 
-    async def _gen_new_value(self) -> str:
+    async def _get_latest_blockhash(self) -> tuple[Hash, int]:
         resp = await self.client.get_latest_blockhash()
+        return resp.value.blockhash, resp.value.last_valid_block_height
+
+    async def _gen_new_value(self) -> str:
+        _hash, _last_valid_block_height = await self._get_latest_blockhash()
         return json.dumps(
             {
-                "blockhash": str(resp.value.blockhash),
-                "last_valid_block_height": str(resp.value.last_valid_block_height),
+                "blockhash": str(_hash),
+                "last_valid_block_height": str(_last_valid_block_height),
             }
         ).decode("utf-8")
 
