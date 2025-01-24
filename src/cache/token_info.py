@@ -97,21 +97,36 @@ class TokenInfoCache:
                 symbol=data["symbol"],
                 decimals=data["decimals"],
             )
+
+            async def _write_to_db():
+                _token_info = token_info.model_copy()
+                async with start_async_session() as session:
+                    existing = await session.execute(
+                        select(TokenInfo).where(TokenInfo.mint == _token_info.mint)
+                    )
+                    existing_token = existing.scalar_one_or_none()
+
+                    if existing_token:
+                        existing_token.token_name = _token_info.token_name
+                        existing_token.symbol = _token_info.symbol
+                        existing_token.decimals = _token_info.decimals
+                    else:
+                        session.add(_token_info)
+
+                    try:
+                        await session.commit()
+                        logger.info(
+                            f"{'Updated' if existing_token else 'Stored'} token info: {mint}"
+                        )
+                    except Exception as e:
+                        logger.error(
+                            f"Failed to {'update' if existing_token else 'store'} token info: {mint}, cause: {e}"
+                        )
+                        await session.rollback()
+
+            asyncio.create_task(_write_to_db())
         except Exception as e:
             logger.warning(f"Failed to fetch token info: {mint}, cause: {e}")
             return None
 
-        async def _write_to_db():
-            _token_info = token_info.model_copy()
-            async with start_async_session() as session:
-                session.add(_token_info)
-                try:
-                    await session.commit()
-                except Exception as e:
-                    logger.error(f"Failed to store token info: {mint}")
-                    logger.error(e)
-
-                logger.info(f"Stored token info: {mint}")
-
-        asyncio.create_task(_write_to_db())
         return token_info.model_copy()
