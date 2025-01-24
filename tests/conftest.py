@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 cur_dir = Path(__file__).parent
-config_file_path = cur_dir.parent / "config.toml"
+config_file_path = cur_dir.parent / "config.test.toml"
 
 os.environ["ENV_FILE"] = config_file_path.as_posix()
 # ../src
