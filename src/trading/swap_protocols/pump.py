@@ -155,7 +155,7 @@ class Pump(TraderProtocol):
                 * bonding_curve_account.virtual_token_reserves
                 // bonding_curve_account.virtual_sol_reserves
             )
-            input_accouts = {
+            input_accounts = {
                 "fee_recipient": fee_recipient,
                 "mint": mint,
                 "bonding_curve": bonding_curve,
@@ -178,7 +178,7 @@ class Pump(TraderProtocol):
             min_sol_cost = min_amount_with_slippage(sol_output, slippage_bps)
             sol_amount_threshold = min_sol_cost
             token_amount = amount_specified
-            input_accouts = {
+            input_accounts = {
                 "fee_recipient": fee_recipient,
                 "mint": mint,
                 "bonding_curve": bonding_curve,
@@ -203,18 +203,25 @@ class Pump(TraderProtocol):
         pump_method = pumpfun.program.methods[swap_direction]
         build_swap_instruction = (
             pump_method.args([token_amount, sol_amount_threshold])
-            .accounts(input_accouts)
+            .accounts(input_accounts)
             .instruction()
         )
+        logger.debug(f"Build swap input accounts: {input_accounts}")
 
         if create_instruction is not None:
             instructions.append(create_instruction)
+            logger.debug(f"Create instruction: {create_instruction}")
         if amount_specified > 0:
             instructions.append(build_swap_instruction)
+            logger.debug(f"Swap instruction: {build_swap_instruction}")
         if close_instruction is not None:
             instructions.append(close_instruction)
+            logger.debug(f"Close instruction: {close_instruction}")
+
         if len(instructions) == 0:
             raise Exception("instructions is empty")
+
+        logger.debug(f"Swap instructions: {instructions}")
 
         return await build_transaction(
             keypair=keypair,
@@ -233,7 +240,7 @@ class Pump(TraderProtocol):
         """
         resp = await self.client.send_transaction(
             transaction,
-            opts=TxOpts(skip_preflight=True),
+            opts=TxOpts(skip_preflight=not settings.trading.preflight_check),
         )
         return resp.value
 
@@ -280,6 +287,7 @@ class Pump(TraderProtocol):
             in_type=in_type,
             use_jito=use_jito,
         )
+        logger.debug(f"Swap transaction: {transaction}")
         if settings.trading.tx_simulate:
             await self.simulate_transaction(transaction)
             return
