@@ -17,6 +17,8 @@ services:
       - mysql
       - redis
     command: ["make", "wallet-tracker"]
+    networks:
+      - backend
 
   trading:
     build:
@@ -34,6 +36,8 @@ services:
       - mysql
       - redis
     command: ["make", "trading"]
+    networks:
+      - backend
 
   bot:
     build:
@@ -53,9 +57,11 @@ services:
       - wallet-tracker
       - trading
     command: ["make", "bot"]
+    networks:
+      - backend
 
   mysql:
-    image: mysql:8.0
+    image: docker.io/library/mysql:8.0
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD=root
@@ -67,12 +73,13 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+    networks:
+      - backend
 
   redis:
-    image: redis:7-alpine
+    image: docker.io/library/redis:7-alpine
     restart: unless-stopped
     volumes:
       - redis_data:/data
@@ -83,12 +90,13 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - backend
 
 volumes:
   mysql_data:
   redis_data:
 
 networks:
-  default:
-    name: solana-bot-network
+  backend:
     driver: bridge
