@@ -1,24 +1,23 @@
-from annotated_types import Not
+import os
 import pytest
-from trading.back.pump import Pump
-from trading.swap import SwapInType
+from solders.keypair import Keypair
+from trading.swap_protocols.pump import Pump
+from trading.swap import SwapDirection
 from trading.utils import get_async_client
 
-from common.config import settings
 
+@pytest.mark.asyncio
+async def test_swap_buy():
+    client = get_async_client()
 
-# @pytest.mark.asyncio
-# async def test_swap_buy():
-#     client = await get_async_client()
-
-#     pump = Pump(client, settings.wallet.keypair)
-#     mint = "HiPZWtXxEvgzKnMBfHGvZqHfvgaJ1YHZVhwai1Wd8t4J"
-#     amount_in = 0.001
-#     swap_direction = "buy"
-#     slippage = 10
-#     sig = await pump.swap(mint, amount_in, swap_direction, slippage)
-#     print(sig)
-#     raise NotImplementedError
+    keypair = Keypair.from_base58_string(os.environ["KEYPAIR"])
+    pump = Pump(client)
+    mint = "G1WcqfZxkZGHvPLRvbSpVDgzsWxuWxbi1GcufwcHpump"
+    amount_in = 0.0001
+    swap_direction = SwapDirection.Buy
+    slippage = 1000
+    sig = await pump.swap(keypair, mint, amount_in, swap_direction, slippage)
+    print(sig)
 
 
 # @pytest.mark.asyncio
