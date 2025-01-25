@@ -14,8 +14,8 @@ class Setting:
     max_slippage: int = 3000  # 30%
     sandwich_mode: bool = False
     sandwich_slippage_bps: int = 5000  # 50%
-    buy_priority_fee: float = 0.002  # SOL
-    sell_priority_fee: float = 0.002  # SOL
+    buy_priority_fee: float = 0.0001  # SOL
+    sell_priority_fee: float = 0.0001  # SOL
     auto_buy: bool = False
     auto_sell: bool = False
     custom_buy_amount_1: float = 0.05  # SOL
