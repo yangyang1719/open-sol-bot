@@ -43,11 +43,11 @@ def settings_keyboard(setting: Setting) -> InlineKeyboardMarkup:
             ],
             [
                 InlineKeyboardButton(
-                    text="❌ 自动买关闭" if setting.auto_buy else "✅ 自动买开启",
+                    text="✅ 自动买开启" if setting.auto_buy else "❌ 自动买关闭",
                     callback_data="setting:toggle_auto_buy",
                 ),
                 InlineKeyboardButton(
-                    text="❌ 自动卖关闭" if setting.auto_sell else "✅ 自动卖开启",
+                    text="✅ 自动卖开启" if setting.auto_sell else "❌ 自动卖关闭",
                     callback_data="setting:toggle_auto_sell",
                 ),
             ],
