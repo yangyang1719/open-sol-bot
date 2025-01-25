@@ -11,6 +11,7 @@ from solders.transaction import VersionedTransaction  # type: ignore
 from cache import BlockhashCache
 from common.config import settings
 from common.log import logger
+from trading.utils import calculate_unit_price_and_limit_by_fee
 
 
 async def sign_transaction_from_raw(
@@ -32,6 +33,7 @@ async def build_transaction(
     keypair: Keypair,
     instructions: list,
     use_jito: bool,
+    priority_fee: float | None = None,
 ) -> VersionedTransaction:
     """Build transaction with instructions.
 
@@ -44,9 +46,23 @@ async def build_transaction(
         VersionedTransaction: The built transaction
     """
     if not use_jito:
-        # TODO: unit_limit and unit_price 应该动态设置, 从用户的配置中获取或从调用方传入
-        instructions.insert(0, set_compute_unit_limit(settings.trading.unit_limit))
-        instructions.insert(1, set_compute_unit_price(settings.trading.unit_price))
+        if priority_fee is None:
+            logger.info(
+                "Using default priority fee, unit limit: {}, unit price: {}".format(
+                    settings.trading.unit_limit, settings.trading.unit_price
+                )
+            )
+            instructions.insert(0, set_compute_unit_limit(settings.trading.unit_limit))
+            instructions.insert(1, set_compute_unit_price(settings.trading.unit_price))
+        else:
+            unit_price, unit_limit = calculate_unit_price_and_limit_by_fee(priority_fee)
+            logger.info(
+                "Using custom priority fee, unit limit: {}, unit price: {}".format(
+                    unit_limit, unit_price
+                )
+            )
+            instructions.insert(0, set_compute_unit_limit(unit_limit))
+            instructions.insert(1, set_compute_unit_price(unit_price))
 
     # init tx
     recent_blockhash, _ = await BlockhashCache.get()

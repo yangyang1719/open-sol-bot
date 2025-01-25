@@ -245,6 +245,7 @@ async def buy(callback: CallbackQuery, state: FSMContext):
             ui_amount=from_amount,
             slippage_bps=slippage_bps,
             timestamp=timestamp,
+            priority_fee=setting.buy_priority_fee,
         )
     elif setting.auto_slippage:
         # 需要计算出 slippage
@@ -266,6 +267,7 @@ async def buy(callback: CallbackQuery, state: FSMContext):
             dynamic_slippage=True,
             min_slippage_bps=setting.min_slippage,
             max_slippage_bps=setting.max_slippage,
+            priority_fee=setting.buy_priority_fee,
         )
     else:
         slippage_bps = setting.quick_slippage
@@ -278,10 +280,12 @@ async def buy(callback: CallbackQuery, state: FSMContext):
             ui_amount=from_amount,
             slippage_bps=slippage_bps,
             timestamp=timestamp,
+            priority_fee=setting.buy_priority_fee,
         )
 
     swap_event_producer = SwapEventProducer(RedisClient.get_instance())
     await swap_event_producer.produce(swap_event=swap_event)
+    logger.debug(swap_event)
 
     await callback.message.answer(f"🚀 {token_info.symbol} 买 {from_amount} SOL")
     logger.info(f"Buy {from_amount} SOL for {token_info.symbol}, Wallet: {wallet}")
@@ -416,6 +420,7 @@ async def handle_buyx(message: Message, state: FSMContext):
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
             timestamp=timestamp,
+            priority_fee=setting.buy_priority_fee,
         )
     elif setting.auto_slippage:
         # 需要计算出 slippage
@@ -437,6 +442,7 @@ async def handle_buyx(message: Message, state: FSMContext):
             dynamic_slippage=True,
             min_slippage_bps=setting.min_slippage,
             max_slippage_bps=setting.max_slippage,
+            priority_fee=setting.buy_priority_fee,
         )
     else:
         slippage_bps = setting.quick_slippage
@@ -449,10 +455,12 @@ async def handle_buyx(message: Message, state: FSMContext):
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
             timestamp=timestamp,
+            priority_fee=setting.buy_priority_fee,
         )
 
     swap_event_producer = SwapEventProducer(RedisClient.get_instance())
     await swap_event_producer.produce(swap_event=swap_event)
+    logger.debug(swap_event)
 
     await message.answer(f"🚀 {token_info.symbol} 买 {ui_amount} SOL")
     logger.info(f"Buy {ui_amount} SOL for {token_info.symbol}, Wallet: {wallet}")
@@ -540,6 +548,7 @@ async def sell(callback: CallbackQuery, state: FSMContext):
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
             timestamp=timestamp,
+            priority_fee=setting.sell_priority_fee,
         )
     elif setting.auto_slippage:
         # 需要计算出 slippage
@@ -561,6 +570,7 @@ async def sell(callback: CallbackQuery, state: FSMContext):
             dynamic_slippage=True,
             min_slippage_bps=setting.min_slippage,
             max_slippage_bps=setting.max_slippage,
+            priority_fee=setting.sell_priority_fee,
         )
     else:
         slippage_bps = setting.quick_slippage
@@ -573,6 +583,7 @@ async def sell(callback: CallbackQuery, state: FSMContext):
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
             timestamp=timestamp,
+            priority_fee=setting.sell_priority_fee,
         )
 
     swap_event_producer = SwapEventProducer(RedisClient.get_instance())
@@ -740,6 +751,7 @@ async def handle_sellx(message: Message, state: FSMContext):
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
             timestamp=timestamp,
+            priority_fee=setting.sell_priority_fee,
         )
     elif setting.auto_slippage:
         # 需要计算出 slippage
@@ -761,6 +773,7 @@ async def handle_sellx(message: Message, state: FSMContext):
             dynamic_slippage=True,
             min_slippage_bps=setting.min_slippage,
             max_slippage_bps=setting.max_slippage,
+            priority_fee=setting.sell_priority_fee,
         )
     else:
         slippage_bps = setting.quick_slippage
@@ -773,6 +786,7 @@ async def handle_sellx(message: Message, state: FSMContext):
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
             timestamp=timestamp,
+            priority_fee=setting.sell_priority_fee,
         )
 
     swap_event_producer = SwapEventProducer(RedisClient.get_instance())

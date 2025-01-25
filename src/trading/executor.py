@@ -31,7 +31,7 @@ class TradingExecutor:
         Returns:
             bool: True if launch on raydium, False otherwise.
         """
-        return get_preferred_pool(mint) is not None
+        return await get_preferred_pool(mint) is not None
 
     @provide_session
     async def __get_keypair(self, pubkey: str, *, session=NEW_ASYNC_SESSION) -> Keypair:
@@ -84,6 +84,7 @@ class TradingExecutor:
                 swap_direction=swap_direction,
                 slippage_bps=slippage_bps,
                 in_type=swap_in_type,
+                priority_fee=swap_event.priority_fee,
             )
         # NOTE: 测试下来不是很理想，暂时不启用
         # elif swap_event.program_id == RAY_V4_PROGRAM_ID:
@@ -105,6 +106,7 @@ class TradingExecutor:
                 swap_direction=swap_direction,
                 slippage_bps=slippage_bps,
                 in_type=swap_in_type,
+                priority_fee=swap_event.priority_fee,
             )
         else:
             raise ValueError(f"Program ID is not supported, {swap_event.program_id}")

@@ -9,6 +9,7 @@ from trading.swap import SwapDirection, SwapInType
 
 
 class TraderProtocol(Protocol):
+
     async def build_swap_transaction(
         self,
         keypair: Keypair,
@@ -18,6 +19,7 @@ class TraderProtocol(Protocol):
         slippage_bps: int,
         in_type: SwapInType | None = None,
         use_jito: bool = False,
+        priority_fee: float | None = None,
     ) -> VersionedTransaction: ...
 
     async def send_transaction(self, transaction: VersionedTransaction) -> Signature:
@@ -53,6 +55,7 @@ class TraderProtocol(Protocol):
         slippage_bps: int,
         in_type: SwapInType | None = None,
         use_jito: bool = False,
+        priority_fee: float | None = None,
     ) -> Signature | None:
         """Swap token with GMGN API.
 
@@ -63,5 +66,6 @@ class TraderProtocol(Protocol):
             slippage (int): slippage, percentage
             in_type (SwapInType | None, optional): in type. Defaults to None.
             use_jto (bool, optional): use jto. Defaults to False.
+            priority_fee (float | None, optional): priority fee. Defaults to None.
         """
         ...

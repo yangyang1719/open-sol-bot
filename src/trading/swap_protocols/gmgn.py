@@ -31,6 +31,7 @@ class Gmgn(TraderProtocol):
         slippage_bps: int,
         in_type: SwapInType | None = None,
         use_jito: bool = False,
+        priority_fee: float | None = None,
     ) -> VersionedTransaction:
         """Build swap transaction with GMGN API.
 
@@ -41,6 +42,7 @@ class Gmgn(TraderProtocol):
             slippage (int): slippage, percentage
             in_type (SwapInType | None, optional): in type. Defaults to None.
             use_jto (bool, optional): use jto. Defaults to False.
+            priority_fee (float | None, optional): priority fee. Defaults to None.
 
         Returns:
             VersionedTransaction: The built transaction ready to be signed and sent
@@ -65,7 +67,11 @@ class Gmgn(TraderProtocol):
         else:
             raise ValueError("swap_direction must be buy or sell")
 
-        fee = settings.trading.unit_limit * settings.trading.unit_price / 10**15
+        if priority_fee is None:
+            fee = settings.trading.unit_limit * settings.trading.unit_price / 10**15
+        else:
+            fee = priority_fee
+
         slippage = slippage_bps / 100
         params = {
             "token_in_address": token_in,
@@ -130,6 +136,7 @@ class Gmgn(TraderProtocol):
         slippage_bps: int,
         in_type: SwapInType | None = None,
         use_jito: bool = False,
+        priority_fee: float | None = None,
     ) -> Signature | None:
         """Swap token with GMGN API.
 
@@ -140,6 +147,7 @@ class Gmgn(TraderProtocol):
             slippage (int): slippage, percentage
             in_type (SwapInType | None, optional): in type. Defaults to None.
             use_jto (bool, optional): use jto. Defaults to False.
+            priority_fee (float | None, optional): priority fee. Defaults to None.
         """
         transaction = await self.build_swap_transaction(
             keypair=keypair,
@@ -149,6 +157,7 @@ class Gmgn(TraderProtocol):
             slippage_bps=slippage_bps,
             in_type=in_type,
             use_jito=use_jito,
+            priority_fee=priority_fee,
         )
         if settings.trading.tx_simulate:
             await self.simulate_transaction(transaction)

@@ -57,6 +57,7 @@ class Pump(TraderProtocol):
         slippage_bps: int,
         in_type: SwapInType | None = None,
         use_jito: bool = False,
+        priority_fee: float | None = None,
     ) -> VersionedTransaction:
         if swap_direction == "sell" and in_type is None:
             raise ValueError("in_type must be specified when selling")
@@ -226,6 +227,7 @@ class Pump(TraderProtocol):
         return await build_transaction(
             keypair=keypair,
             instructions=instructions,
+            priority_fee=priority_fee,
             use_jito=use_jito,
         )
 
@@ -267,6 +269,7 @@ class Pump(TraderProtocol):
         slippage_bps: int,
         in_type: SwapInType | None = None,
         use_jito: bool = False,
+        priority_fee: float | None = None,
     ) -> Signature | None:
         """Swap token
 
@@ -277,6 +280,7 @@ class Pump(TraderProtocol):
             slippage (int): slippage, percentage
             in_type (SwapInType | None, optional): in type. Defaults to None.
             use_jito (bool, optional): use jto. Defaults to False.
+            priority_fee (float | None, optional): priority fee. Defaults to None.
         """
         transaction = await self.build_swap_transaction(
             keypair=keypair,
@@ -286,6 +290,7 @@ class Pump(TraderProtocol):
             slippage_bps=slippage_bps,
             in_type=in_type,
             use_jito=use_jito,
+            priority_fee=priority_fee,
         )
         logger.debug(f"Swap transaction: {transaction}")
         if settings.trading.tx_simulate:

@@ -142,3 +142,27 @@ def max_amount_with_slippage(input_amount: int, slippage_bps: int) -> int:
 async def get_latest_blockhash(client: AsyncClient) -> Hash:
     # PERF: 应该从 redis 缓存中获取 blockhash
     return (await client.get_latest_blockhash()).value.blockhash
+
+
+def calculate_unit_price_and_limit_by_fee(fee: float) -> tuple[int, int]:
+    """根据期望的优先费用计算 unit price 和 unit limit
+
+    Args:
+        fee: 期望支付的优先费用，单位是 SOL
+
+    Returns:
+        tuple[int, int]: (unit_price, unit_limit)
+        - unit_price: 每个计算单位的价格（以 micro-lamports 为单位）
+        - unit_limit: 交易的计算单位上限
+    """
+    # 设置固定的计算单位上限
+    unit_limit = 200_000
+
+    # 将 SOL 转换为 lamports (1 SOL = 10^9 lamports)
+    fee_in_lamports = int(fee * 1e9)
+
+    # 计算每个计算单位的价格
+    # 由于 unit_price 是以 micro-lamports 为单位，所以需要再乘以 1e6
+    unit_price = int((fee_in_lamports * 1e6) / unit_limit)
+
+    return unit_price, unit_limit

@@ -418,7 +418,7 @@ async def get_preferred_pool(mint: Pubkey | str) -> AMMData | None:
         data = await RaydiumAPI().get_pool_info_by_mint(str(mint))
         count = data["count"]
         if count == 0:
-            raise ValueError(f"No pool found for mint: {mint}")
+            return None
         pool_id = cast(str, data["data"][0]["id"])
 
         pool_pubkey = Pubkey.from_string(pool_id)
