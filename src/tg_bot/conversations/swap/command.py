@@ -12,10 +12,48 @@ from tg_bot.services.setting import SettingService
 from tg_bot.services.user import UserService
 from tg_bot.templates import BUY_SELL_TEMPLATE
 from tg_bot.utils.slippage import calculate_auto_slippage
+from tg_bot.utils.solana import validate_solana_address
+from .render import render
 
 setting_service = SettingService()
 user_service = UserService()
 token_info_cache = TokenInfoCache()
+
+
+async def info_command(message: Message):
+    """发送 Token Addres，回复代币交易界面"""
+    logger.debug(message)
+    if message.from_user is None:
+        logger.warning("No message found in update")
+        return
+
+    if message.text is None:
+        logger.warning("No text found in message")
+        return
+
+    text = message.text.strip()
+    valid = validate_solana_address(text)
+    if not valid:
+        await message.answer(
+            text="❌ 无效的 Token Address，请重新输入：",
+        )
+        return
+
+    token_info = await token_info_cache.get(text)
+    if token_info is None:
+        logger.info(f"❌ 未找到 {text} 代币信息")
+        return
+
+    chat_id = message.from_user.id
+    wallet = await user_service.get_pubkey(chat_id)
+    setting = await setting_service.get(chat_id, wallet)
+
+    await message.answer(
+        **render(
+            token_info=token_info,
+            setting=setting,
+        ),
+    )
 
 
 async def swap_command(message: Message):

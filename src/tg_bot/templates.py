@@ -213,7 +213,7 @@ def render_setting_message(setting: Setting):
 
 
 SWAP_TOKEN_TEMPLATE = env.from_string(
-    """{{ symbol }}
+    """{{ symbol }}({{ name }})
 <code>{{ mint }}</code>
 (长按复制)
 
@@ -231,6 +231,7 @@ SWAP_TOKEN_TEMPLATE = env.from_string(
 def render_swap_token_message(token_info: TokenInfo, setting: Setting):
     return SWAP_TOKEN_TEMPLATE.render(
         symbol=token_info.symbol,
+        name=token_info.token_name,
         mint=token_info.mint,
         buy_priority_fee=setting.buy_priority_fee,
         sell_priority_fee=setting.sell_priority_fee,

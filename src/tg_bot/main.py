@@ -1,7 +1,7 @@
 import asyncio
 import re
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, F
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
@@ -52,6 +52,7 @@ async def start_bot():
     dp.message.register(setting.setting_command, Command("set"))
     dp.message.register(wallet.wallet_command, Command("wallet"))
     dp.message.register(asset.asset_command, Command("asset"))
+    dp.message.register(swap.info_command, F.text.regexp(r"^[a-zA-Z0-9]{44}$"))
     dp.message.register(
         swap.swap_command, Command(re.compile(r"^buy.*"), re.compile(r"^sell.*"))
     )
