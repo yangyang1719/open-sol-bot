@@ -6,17 +6,20 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, ForceReply, Message
 from loguru import logger
 
-from common.config import settings
 from tg_bot.conversations.copytrade.render import render
 from tg_bot.conversations.states import CopyTradeStates
 from tg_bot.keyboards.copytrade import create_copytrade_keyboard
 from tg_bot.models.copytrade import CopyTrade
 from tg_bot.services.copytrade import CopyTradeService
+from tg_bot.services.setting import SettingService
+from tg_bot.services.user import UserService
 from tg_bot.templates import CREATE_COPYTRADE_MESSAGE
 from tg_bot.utils import validate_solana_address
 
 router = Router()
 copy_trade_service = CopyTradeService()
+setting_service = SettingService()
+user_service = UserService()
 
 
 @router.callback_query(F.data == "create_copytrade")
@@ -31,10 +34,11 @@ async def start_create_copytrade(callback: CallbackQuery, state: FSMContext):
         return
 
     chat_id = callback.message.chat.id
+    pubkey = await user_service.get_pubkey(chat_id=chat_id)
 
     # Initialize copytrade settings
     copytrade_settings = CopyTrade(
-        owner=settings.wallet.keypair.pubkey().__str__(),
+        owner=pubkey,
         chat_id=chat_id,
     )
 
