@@ -4,7 +4,7 @@ import re
 from aiogram import Bot, Dispatcher, F
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.filters import Command
+from aiogram.filters import Command, StateFilter
 from aiogram.fsm.storage.memory import MemoryStorage
 from loguru import logger
 
@@ -22,6 +22,7 @@ from tg_bot.conversations import (
     wallet,
 )
 from tg_bot.conversations.router import router
+from tg_bot.conversations.states import CopyTradeStates, MonitorStates, WalletStates
 from tg_bot.middlewares import AuthorizationMiddleware, DebugMiddleware
 from tg_bot.notify.notify import Notify
 
@@ -52,7 +53,17 @@ async def start_bot():
     dp.message.register(setting.setting_command, Command("set"))
     dp.message.register(wallet.wallet_command, Command("wallet"))
     dp.message.register(asset.asset_command, Command("asset"))
-    dp.message.register(swap.info_command, F.text.regexp(r"^[a-zA-Z0-9]{44}$"))
+    excluded_states = [
+        CopyTradeStates.CREATE_WAITING_FOR_ADDRESS,
+        CopyTradeStates.EDIT_WAITING_FOR_ADDRESS,
+        MonitorStates.CREATE_WAITING_FOR_ADDRESS,
+        WalletStates.WAITING_FOR_NEW_PRIVATE_KEY,
+    ]
+    dp.message.register(
+        swap.info_command,
+        F.text.regexp(r"^[a-zA-Z0-9]{44}$"),
+        ~StateFilter(*excluded_states),
+    )
     dp.message.register(
         swap.swap_command, Command(re.compile(r"^buy.*"), re.compile(r"^sell.*"))
     )
