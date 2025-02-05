@@ -4,29 +4,51 @@ from aiogram.types import LinkPreviewOptions
 import aioredis
 from aiogram import Bot
 from aiogram.enums import ParseMode
+from jinja2 import BaseLoader, Environment
 
 from cache.token_info import TokenInfoCache
 from common.cp.swap_result import SwapResultConsumer
 from common.log import logger
+from common.models.swap_record import TransactionStatus
 from common.types.swap import SwapResult
 from tg_bot.services.user import UserService
 
 
-_BUY_SUCCESS_TEMPLATE = """✅ 购买成功
-├ 买入 {token_ui_amount} ${symbol}({name})
-├ 支出 {sol_ui_amount} SOL
-└ <a href="https://solscan.io/tx/{signature}">查看交易</a>
+env = Environment(
+    loader=BaseLoader(),
+)
+
+_BUY_SUCCESS_TEMPLATE = env.from_string(
+    """✅ 购买成功
+├ 买入 {{token_ui_amount}} ${{symbol}}({{name}})
+├ 支出 {{sol_ui_amount}} SOL
+└ <a href="https://solscan.io/tx/{{signature}}">查看交易</a>
 """
+)
 
-_BUY_FAILED_TEMPLATE = """❌ 购买失败 ${symbol}({name})"""
-
-_SELL_SUCCESS_TEMPLATE = """✅ 卖出成功
-├ 卖出 {token_ui_amount} ${symbol}({name})
-├ 收到 {sol_ui_amount} SOL
-└ <a href="https://solscan.io/tx/{signature}">查看交易</a>
+_BUY_FAILED_TEMPLATE = env.from_string(
+    """❌ 购买失败 ${{symbol}}({{name}})
+{%- if signature %}
+└ <a href="https://solscan.io/tx/{{signature}}">查看交易</a>
+{%- endif %}
 """
+)
 
-_SELL_FAILED_TEMPLATE = """❌ 卖出失败 ${symbol}({name})"""
+_SELL_SUCCESS_TEMPLATE = env.from_string(
+    """✅ 卖出成功
+├ 卖出 {{token_ui_amount}} ${{symbol}}({{name}})
+├ 收到 {{sol_ui_amount}} SOL
+└ <a href="https://solscan.io/tx/{{signature}}">查看交易</a>
+"""
+)
+
+_SELL_FAILED_TEMPLATE = env.from_string(
+    """❌ 卖出失败 ${{symbol}}({{name}})
+{%- if signature %}
+└ <a href="https://solscan.io/tx/{{signature}}">查看交易</a>
+{%- endif %}
+"""
+)
 
 
 class SwapResultNotify:
@@ -80,9 +102,13 @@ class SwapResultNotify:
             token_ui_amount = swap_record.output_ui_amount
 
             if swap_record is None:
-                return _BUY_FAILED_TEMPLATE.format(symbol=symbol, name=name)
+                return _BUY_FAILED_TEMPLATE.render(symbol=symbol, name=name)
+            elif swap_record.status != TransactionStatus.SUCCESS:
+                return _BUY_FAILED_TEMPLATE.render(
+                    symbol=symbol, name=name, signature=swap_record.signature
+                )
             else:
-                return _BUY_SUCCESS_TEMPLATE.format(
+                return _BUY_SUCCESS_TEMPLATE.render(
                     symbol=symbol,
                     sol_ui_amount=sol_ui_amount,
                     token_ui_amount=token_ui_amount,
@@ -99,11 +125,15 @@ class SwapResultNotify:
             name = token_info.token_name
 
             if swap_record is None:
-                return _SELL_FAILED_TEMPLATE.format(symbol=symbol, name=name)
+                return _SELL_FAILED_TEMPLATE.render(symbol=symbol, name=name)
+            elif swap_record.status != TransactionStatus.SUCCESS:
+                return _SELL_FAILED_TEMPLATE.render(
+                    symbol=symbol, name=name, signature=swap_record.signature
+                )
             else:
                 token_ui_amount = swap_record.input_ui_amount
                 sol_ui_amount = swap_record.output_ui_amount
-                return _SELL_SUCCESS_TEMPLATE.format(
+                return _SELL_SUCCESS_TEMPLATE.render(
                     symbol=symbol,
                     token_ui_amount=token_ui_amount,
                     sol_ui_amount=sol_ui_amount,
