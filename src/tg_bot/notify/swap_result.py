@@ -12,27 +12,21 @@ from common.types.swap import SwapResult
 from tg_bot.services.user import UserService
 
 
-_BUY_SUCCESS_TEMPLATE = """💰 ${symbol} 买入成功 🎉
-{mint}
-
-花费 {sol_ui_amount} SOL，获得 {token_ui_amount} 个 {symbol}
-🔗 <a href="https://solscan.io/tx/{signature}">查看交易</a>
+_BUY_SUCCESS_TEMPLATE = """✅ 购买成功
+├ 买入 {token_ui_amount} ${symbol}({name})
+├ 支出 {sol_ui_amount} SOL
+└ <a href="https://solscan.io/tx/{signature}">查看交易</a>
 """
 
-_BUY_FAILED_TEMPLATE = """❌ ${symbol} 买入失败 😞
-{mint}
+_BUY_FAILED_TEMPLATE = """❌ 购买失败 ${symbol}({name})"""
+
+_SELL_SUCCESS_TEMPLATE = """✅ 卖出成功
+├ 卖出 {token_ui_amount} ${symbol}({name})
+├ 收到 {sol_ui_amount} SOL
+└ <a href="https://solscan.io/tx/{signature}">查看交易</a>
 """
 
-_SELL_SUCCESS_TEMPLATE = """💸 ${symbol} 卖出成功 ✅
-{mint}
-
-卖出 {token_ui_amount} 个 {symbol}，获得 {sol_ui_amount} SOL
-🔗 <a href="https://solscan.io/tx/{signature}">查看交易</a>
-"""
-
-_SELL_FAILED_TEMPLATE = """❌ ${symbol} 卖出失败 😞
-{mint}
-"""
+_SELL_FAILED_TEMPLATE = """❌ 卖出失败 ${symbol}({name})"""
 
 
 class SwapResultNotify:
@@ -80,21 +74,20 @@ class SwapResultNotify:
             if token_info is None:
                 raise ValueError(f"No token info found for {mint}")
             symbol = token_info.symbol
+            name = token_info.token_name
 
             sol_ui_amount = swap_record.input_ui_amount
             token_ui_amount = swap_record.output_ui_amount
 
             if swap_record is None:
-                return _BUY_FAILED_TEMPLATE.format(
-                    symbol=symbol,
-                    mint=mint,
-                )
+                return _BUY_FAILED_TEMPLATE.format(symbol=symbol, name=name)
             else:
                 return _BUY_SUCCESS_TEMPLATE.format(
                     symbol=symbol,
                     sol_ui_amount=sol_ui_amount,
                     token_ui_amount=token_ui_amount,
                     mint=mint,
+                    name=name,
                     signature=data.transaction_hash,
                 )
         elif event.swap_mode == "ExactOut":
@@ -103,12 +96,10 @@ class SwapResultNotify:
             if token_info is None:
                 raise ValueError(f"No token info found for {mint}")
             symbol = token_info.symbol
+            name = token_info.token_name
 
             if swap_record is None:
-                return _SELL_FAILED_TEMPLATE.format(
-                    symbol=symbol,
-                    mint=mint,
-                )
+                return _SELL_FAILED_TEMPLATE.format(symbol=symbol, name=name)
             else:
                 token_ui_amount = swap_record.input_ui_amount
                 sol_ui_amount = swap_record.output_ui_amount
@@ -117,6 +108,7 @@ class SwapResultNotify:
                     token_ui_amount=token_ui_amount,
                     sol_ui_amount=sol_ui_amount,
                     mint=mint,
+                    name=name,
                     signature=data.transaction_hash,
                 )
 
