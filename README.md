@@ -116,6 +116,9 @@ unit_price = 3000000  # 每计算单位的价格（lamports）
 - 💡 建议先使用小额资金测试
 - 🌟 确保 RPC 节点的稳定性和可用性
 
-## 📄 许可证
+## 🙏 特别致谢
+- Raydium 交易模块参考自 [AL-THE-BOT-FATHER/raydium_py](https://github.com/AL-THE-BOT-FATHER/raydium_py)
+- Pump 交易模块参考自 [wisarmy/raytx](https://github.com/wisarmy/raytx/blob/main/src/pump.rs)
 
+## 📄 许可证
 [MIT License](./LICENSE)
