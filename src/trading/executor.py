@@ -42,6 +42,15 @@ class TradingExecutor:
         return Keypair.from_bytes(private_key)
 
     async def exec(self, swap_event: SwapEvent):
+        """执行交易
+
+        Args:
+            swap_event (SwapEvent): 交易事件
+
+        Raises:
+            ConnectTimeout: If connection to the RPC node times out
+            ConnectError: If connection to the RPC node fails
+        """
         if swap_event.slippage_bps is not None:
             slippage_bps = swap_event.slippage_bps
         else:
