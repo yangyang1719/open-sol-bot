@@ -58,8 +58,10 @@ class TradingExecutor:
 
         if swap_event.swap_mode == "ExactIn":
             swap_direction = SwapDirection.Buy
+            token_address = swap_event.output_mint
         elif swap_event.swap_mode == "ExactOut":
             swap_direction = SwapDirection.Sell
+            token_address = swap_event.input_mint
         else:
             raise ValueError("swap_mode must be ExactIn or ExactOut")
 
@@ -69,23 +71,18 @@ class TradingExecutor:
 
         # 检查是否需要使用 Pump 协议进行交易
         should_use_pump = False
-        check_mint = None
         program_id = swap_event.program_id
 
-        if swap_event.input_mint.endswith("pump"):
-            check_mint = swap_event.input_mint
-        elif swap_event.output_mint.endswith("pump"):
-            check_mint = swap_event.output_mint
-        elif program_id == PUMP_FUN_PROGRAM_ID:
+        if program_id == PUMP_FUN_PROGRAM_ID:
             should_use_pump = True
             logger.info("Program ID is PumpFun, using Pump protocol to trade")
 
         try:
-            is_lanuch_on_raydium = await self._is_lanuch_on_raydium(check_mint)
-            if check_mint and not is_lanuch_on_raydium:
+            is_lanuch_on_raydium = await self._is_lanuch_on_raydium(token_address)
+            if token_address and not is_lanuch_on_raydium:
                 should_use_pump = True
                 logger.info(
-                    f"Token {check_mint} is not launched on Raydium, using Pump protocol to trade"
+                    f"Token {token_address} is not launched on Raydium, using Pump protocol to trade"
                 )
         except Exception as e:
             logger.warning(f"Failed to check launch status, cause: {e}")
@@ -94,7 +91,7 @@ class TradingExecutor:
             logger.info("Program ID is PUMP")
             sig = await Pump(self._client).swap(
                 keypair=keypair,
-                token_address=swap_event.output_mint,
+                token_address=token_address,
                 ui_amount=swap_event.ui_amount,
                 swap_direction=swap_direction,
                 slippage_bps=slippage_bps,
@@ -106,7 +103,7 @@ class TradingExecutor:
             logger.info("Program ID is RayV4")
             sig = await Gmgn(self._client).swap(
                 keypair=keypair,
-                token_address=swap_event.output_mint,
+                token_address=token_address,
                 ui_amount=swap_event.ui_amount,
                 swap_direction=swap_direction,
                 slippage_bps=slippage_bps,
@@ -117,7 +114,7 @@ class TradingExecutor:
             logger.warning("Program ID is Unknown, So We use thrid party to trade")
             sig = await Gmgn(self._client).swap(
                 keypair=keypair,
-                token_address=swap_event.output_mint,
+                token_address=token_address,
                 ui_amount=swap_event.ui_amount,
                 swap_direction=swap_direction,
                 slippage_bps=slippage_bps,
