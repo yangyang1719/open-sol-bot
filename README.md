@@ -17,6 +17,32 @@
 
 ![Trading Bot Demo](./assets/start.png)
 
+<details><summary>SWAP</summary>
+<p>
+
+![Image](https://github.com/user-attachments/assets/7005e10f-e599-414c-9520-b2e558f9e86b)
+
+</p>
+</details> 
+
+<details><summary>跟单</summary>
+<p>
+
+![Image](https://github.com/user-attachments/assets/653eb952-b8f9-4084-a0d3-42e719cc3043)
+
+</p>
+</details> 
+
+<details><summary>监控</summary>
+<p>
+
+![Image](https://github.com/user-attachments/assets/095f87f9-f95c-437a-b5ff-9a6a19e37fc6)
+
+</p>
+</details> 
+
+
+
 > 🤖 前往体验: [https://t.me/open_sol_bot](https://t.me/open_sol_bot)  
 > 💬 交流群组: [https://t.me/opensolbot](https://t.me/opensolbot)
 > 
@@ -59,7 +85,7 @@ cp example.config.toml config.toml
 ### 必要配置
 
 - `tg_bot.token`: Telegram Bot Token（[如何创建 Bot Token](https://core.telegram.org/bots#how-do-i-create-a-bot)）
-- `rpc.endpoints`: RPC 节点列表
+- `rpc.endpoints`: RPC 节点列表，建议使用私有 RPC 节点，例如：Helius、Quicknode 等
 - `api`: API 配置, 包括 [Helius](https://helius.dev) 和 [Shyft](https://shyft.to)，这些 API 有一定的免费额度，对于个人而言已经足够了。
   ```
   [api]
@@ -69,14 +95,7 @@ cp example.config.toml config.toml
   shyft_api_key = ""
   ```
 
-### 优化配置（可选）
-
-为了获得更快的跟单速度，建议：
-
-- 将 `monitor.mode` 设置为 `geyser`（默认为 wss）
-- 配置 `rpc.geyser` 节点信息
-
-> 💡 使用 Geyser 模式可以显著提高监听速度，建议在正式环境中使用。
+> 💡 为了获得更快的跟单速度，默认使用 `geyser` 模式，同时也支持 WebSocket 订阅方式
 
 ## 🚀 使用说明
 
@@ -93,22 +112,6 @@ make down
 ```
 
 详细部署文档：[https://github.com/mkdir700/open-sol-bot/wiki/Deployment](https://github.com/mkdir700/open-sol-bot/wiki/Deployment)
-
-## ❓ 常见问题
-
-### 交易未上链，在 Solscan 上查询不到？
-
-这通常是由于网络拥堵导致的。如果默认的交易费用参数（`unit_price` 和 `unit_limit`）设置过低，交易可能无法被及时处理。建议调整配置文件中的这两个参数到更高的值，例如：
-
-```toml
-unit_limit = 81000  # 计算单位上限
-unit_price = 3000000  # 每计算单位的价格（lamports）
-```
-
-> 💡 提示：
-> - 这些参数决定了交易的优先级
-> - 网络拥堵时适当提高可以加快交易处理速度
-> - 后续版本将支持自动动态调整交易费用
 
 ## ⚠️ 注意事项
 
