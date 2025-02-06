@@ -91,6 +91,7 @@ class TradingExecutor:
             logger.warning(f"Failed to check launch status, cause: {e}")
 
         if should_use_pump:
+            logger.info("Program ID is PUMP")
             sig = await Pump(self._client).swap(
                 keypair=keypair,
                 token_address=swap_event.output_mint,
@@ -100,17 +101,18 @@ class TradingExecutor:
                 in_type=swap_in_type,
                 priority_fee=swap_event.priority_fee,
             )
-        # NOTE: 测试下来不是很理想，暂时不启用
-        # elif swap_event.program_id == RAY_V4_PROGRAM_ID:
-        #     logger.info("Program ID is RayV4, So We use ray to trade")
-        #     sig = await RayV4(self._client).swap(
-        #         keypair=keypair,
-        #         token_address=swap_event.output_mint,
-        #         ui_amount=swap_event.ui_amount,
-        #         swap_direction=swap_direction,
-        #         slippage_bps=slippage_bps,
-        #         in_type=swap_in_type,
-        #     )
+        # NOTE: 测试下来不是很理想，暂时使用备选方案
+        elif swap_event.program_id == RAY_V4_PROGRAM_ID:
+            logger.info("Program ID is RayV4")
+            sig = await Gmgn(self._client).swap(
+                keypair=keypair,
+                token_address=swap_event.output_mint,
+                ui_amount=swap_event.ui_amount,
+                swap_direction=swap_direction,
+                slippage_bps=slippage_bps,
+                in_type=swap_in_type,
+                priority_fee=swap_event.priority_fee,
+            )
         elif program_id is None or program_id == RAY_V4_PROGRAM_ID:
             logger.warning("Program ID is Unknown, So We use thrid party to trade")
             sig = await Gmgn(self._client).swap(
