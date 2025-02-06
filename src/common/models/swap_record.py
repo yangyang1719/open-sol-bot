@@ -1,14 +1,9 @@
 from enum import Enum
-from typing import TYPE_CHECKING
 
-from solders.signature import Signature  # type: ignore
 from sqlalchemy import BIGINT
 from sqlmodel import Field
 
 from common.models.base import Base
-
-if TYPE_CHECKING:
-    from common.types.swap import SwapEvent
 
 
 class TransactionStatus(str, Enum):
@@ -60,3 +55,11 @@ class SwapRecord(Base, table=True):
         sa_type=BIGINT,
         description="其他 SOL 改变量",
     )
+
+    @property
+    def input_ui_amount(self) -> float:
+        return self.input_amount / 10**self.input_token_decimals
+
+    @property
+    def output_ui_amount(self) -> float:
+        return self.output_amount / 10**self.output_token_decimals
