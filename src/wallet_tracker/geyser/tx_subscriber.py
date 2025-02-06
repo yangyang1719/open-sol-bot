@@ -230,6 +230,25 @@ class TransactionDetailSubscriber:
                             await asyncio.sleep(self.retry_delay)
                             await self._connect()
 
+                            if self.geyser_client is None:
+                                raise Exception("Geyser client is not connected")
+
+                            # Create subscription request
+                            subscribe_request = SubscribeRequest(
+                                ping=SubscribeRequestPing(id=1)
+                            )
+                            json_str = subscribe_request.model_dump_json()
+                            pb_request = Parse(json_str, geyser_pb2.SubscribeRequest())
+
+                            # Subscribe to updates
+                            logger.info("Subscribing to account updates...")
+                            (
+                                self.request_queue,
+                                self.responses,
+                            ) = await self.geyser_client.subscribe_with_request(
+                                pb_request
+                            )
+
             asyncio.create_task(_f())
         except asyncio.CancelledError:
             logger.info("Monitor cancelled, shutting down...")
