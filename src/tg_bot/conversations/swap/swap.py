@@ -542,8 +542,8 @@ async def sell(callback: CallbackQuery, state: FSMContext):
         swap_event = SwapEvent(
             user_pubkey=wallet,
             swap_mode="ExactOut",
-            input_mint=WSOL.__str__(),
-            output_mint=token_info.mint,
+            input_mint=token_info.mint,
+            output_mint=WSOL.__str__(),
             amount=amount,
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
@@ -553,16 +553,16 @@ async def sell(callback: CallbackQuery, state: FSMContext):
     elif setting.auto_slippage:
         # 需要计算出 slippage
         slippage_bps = await calculate_auto_slippage(
-            input_mint=WSOL.__str__(),
-            output_mint=token_info.mint,
+            input_mint=token_info.mint,
+            output_mint=WSOL.__str__(),
             amount=int(ui_amount * SOL_DECIMAL),
             swap_mode="ExactOut",
         )
         swap_event = SwapEvent(
             user_pubkey=wallet,
             swap_mode="ExactOut",
-            input_mint=WSOL.__str__(),
-            output_mint=token_info.mint,
+            input_mint=token_info.mint,
+            output_mint=WSOL.__str__(),
             amount=amount,
             ui_amount=ui_amount,
             timestamp=timestamp,
@@ -577,8 +577,8 @@ async def sell(callback: CallbackQuery, state: FSMContext):
         swap_event = SwapEvent(
             user_pubkey=wallet,
             swap_mode="ExactOut",
-            input_mint=WSOL.__str__(),
-            output_mint=token_info.mint,
+            input_mint=token_info.mint,
+            output_mint=WSOL.__str__(),
             amount=amount,
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
@@ -745,8 +745,8 @@ async def handle_sellx(message: Message, state: FSMContext):
         swap_event = SwapEvent(
             user_pubkey=wallet,
             swap_mode="ExactOut",
-            input_mint=WSOL.__str__(),
-            output_mint=token_info.mint,
+            input_mint=token_info.mint,
+            output_mint=WSOL.__str__(),
             amount=amount,
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
@@ -756,16 +756,16 @@ async def handle_sellx(message: Message, state: FSMContext):
     elif setting.auto_slippage:
         # 需要计算出 slippage
         slippage_bps = await calculate_auto_slippage(
-            input_mint=WSOL.__str__(),
-            output_mint=token_info.mint,
+            input_mint=token_info.mint,
+            output_mint=WSOL.__str__(),
             amount=int(ui_amount * SOL_DECIMAL),
             swap_mode="ExactOut",
         )
         swap_event = SwapEvent(
             user_pubkey=wallet,
             swap_mode="ExactOut",
-            input_mint=WSOL.__str__(),
-            output_mint=token_info.mint,
+            input_mint=token_info.mint,
+            output_mint=WSOL.__str__(),
             amount=amount,
             ui_amount=ui_amount,
             timestamp=timestamp,
@@ -780,8 +780,8 @@ async def handle_sellx(message: Message, state: FSMContext):
         swap_event = SwapEvent(
             user_pubkey=wallet,
             swap_mode="ExactOut",
-            input_mint=WSOL.__str__(),
-            output_mint=token_info.mint,
+            input_mint=token_info.mint,
+            output_mint=WSOL.__str__(),
             amount=amount,
             ui_amount=ui_amount,
             slippage_bps=slippage_bps,
