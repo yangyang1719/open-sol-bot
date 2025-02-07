@@ -9,9 +9,8 @@ from common.types.swap import SwapEvent
 from db.session import NEW_ASYNC_SESSION, provide_session
 from trading.swap import SwapDirection, SwapInType
 from common.utils.raydium import RaydiumAPI
-
+from cache.launch import LaunchCache
 from .swap_protocols import Gmgn, Pump
-from cache import get_preferred_pool
 
 PUMP_FUN_PROGRAM_ID = str(PUMP_FUN_PROGRAM)
 RAY_V4_PROGRAM_ID = str(RAY_V4)
@@ -21,17 +20,7 @@ class TradingExecutor:
     def __init__(self, client: AsyncClient):
         self._client = client
         self._raydium_api = RaydiumAPI()
-
-    async def _is_lanuch_on_raydium(self, mint: str) -> bool:
-        """Check if a token is launch on raydium.
-
-        Args:
-            mint (str): Token mint.
-
-        Returns:
-            bool: True if launch on raydium, False otherwise.
-        """
-        return await get_preferred_pool(mint) is not None
+        self._launch_cache = LaunchCache()
 
     @provide_session
     async def __get_keypair(self, pubkey: str, *, session=NEW_ASYNC_SESSION) -> Keypair:
@@ -73,19 +62,25 @@ class TradingExecutor:
         should_use_pump = False
         program_id = swap_event.program_id
 
-        if program_id == PUMP_FUN_PROGRAM_ID:
-            should_use_pump = True
-            logger.info("Program ID is PumpFun, using Pump protocol to trade")
-
         try:
-            is_lanuch_on_raydium = await self._is_lanuch_on_raydium(token_address)
-            if token_address and not is_lanuch_on_raydium:
+            is_pump_token_launched = await self._launch_cache.is_pump_token_launched(
+                token_address
+            )
+            if (
+                program_id == PUMP_FUN_PROGRAM_ID
+                or token_address.endswith("pump")
+                and not is_pump_token_launched
+            ):
                 should_use_pump = True
                 logger.info(
                     f"Token {token_address} is not launched on Raydium, using Pump protocol to trade"
                 )
+            else:
+                logger.info(
+                    f"Token {token_address} is launched on Raydium, using Raydium protocol to trade"
+                )
         except Exception as e:
-            logger.warning(f"Failed to check launch status, cause: {e}")
+            logger.exception(f"Failed to check launch status, cause: {e}")
 
         if should_use_pump:
             logger.info("Program ID is PUMP")
