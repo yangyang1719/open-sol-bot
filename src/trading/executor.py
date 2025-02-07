@@ -9,9 +9,8 @@ from common.types.swap import SwapEvent
 from db.session import NEW_ASYNC_SESSION, provide_session
 from trading.swap import SwapDirection, SwapInType
 from common.utils.raydium import RaydiumAPI
-
+from cache.launch import LaunchCache
 from .swap_protocols import Gmgn, Pump
-from cache import get_preferred_pool
 
 PUMP_FUN_PROGRAM_ID = str(PUMP_FUN_PROGRAM)
 RAY_V4_PROGRAM_ID = str(RAY_V4)
@@ -21,17 +20,7 @@ class TradingExecutor:
     def __init__(self, client: AsyncClient):
         self._client = client
         self._raydium_api = RaydiumAPI()
-
-    async def _is_lanuch_on_raydium(self, mint: str) -> bool:
-        """Check if a token is launch on raydium.
-
-        Args:
-            mint (str): Token mint.
-
-        Returns:
-            bool: True if launch on raydium, False otherwise.
-        """
-        return await get_preferred_pool(mint) is not None
+        self._launch_cache = LaunchCache()
 
     @provide_session
     async def __get_keypair(self, pubkey: str, *, session=NEW_ASYNC_SESSION) -> Keypair:
@@ -58,8 +47,10 @@ class TradingExecutor:
 
         if swap_event.swap_mode == "ExactIn":
             swap_direction = SwapDirection.Buy
+            token_address = swap_event.output_mint
         elif swap_event.swap_mode == "ExactOut":
             swap_direction = SwapDirection.Sell
+            token_address = swap_event.input_mint
         else:
             raise ValueError("swap_mode must be ExactIn or ExactOut")
 
@@ -69,53 +60,56 @@ class TradingExecutor:
 
         # 检查是否需要使用 Pump 协议进行交易
         should_use_pump = False
-        check_mint = None
         program_id = swap_event.program_id
 
-        if swap_event.input_mint.endswith("pump"):
-            check_mint = swap_event.input_mint
-        elif swap_event.output_mint.endswith("pump"):
-            check_mint = swap_event.output_mint
-        elif program_id == PUMP_FUN_PROGRAM_ID:
-            should_use_pump = True
-            logger.info("Program ID is PumpFun, using Pump protocol to trade")
-
         try:
-            is_lanuch_on_raydium = await self._is_lanuch_on_raydium(check_mint)
-            if check_mint and not is_lanuch_on_raydium:
+            is_pump_token_launched = await self._launch_cache.is_pump_token_launched(
+                token_address
+            )
+            if (
+                program_id == PUMP_FUN_PROGRAM_ID
+                or token_address.endswith("pump")
+                and not is_pump_token_launched
+            ):
                 should_use_pump = True
                 logger.info(
-                    f"Token {check_mint} is not launched on Raydium, using Pump protocol to trade"
+                    f"Token {token_address} is not launched on Raydium, using Pump protocol to trade"
+                )
+            else:
+                logger.info(
+                    f"Token {token_address} is launched on Raydium, using Raydium protocol to trade"
                 )
         except Exception as e:
-            logger.warning(f"Failed to check launch status, cause: {e}")
+            logger.exception(f"Failed to check launch status, cause: {e}")
 
         if should_use_pump:
+            logger.info("Program ID is PUMP")
             sig = await Pump(self._client).swap(
                 keypair=keypair,
-                token_address=swap_event.output_mint,
+                token_address=token_address,
                 ui_amount=swap_event.ui_amount,
                 swap_direction=swap_direction,
                 slippage_bps=slippage_bps,
                 in_type=swap_in_type,
                 priority_fee=swap_event.priority_fee,
             )
-        # NOTE: 测试下来不是很理想，暂时不启用
-        # elif swap_event.program_id == RAY_V4_PROGRAM_ID:
-        #     logger.info("Program ID is RayV4, So We use ray to trade")
-        #     sig = await RayV4(self._client).swap(
-        #         keypair=keypair,
-        #         token_address=swap_event.output_mint,
-        #         ui_amount=swap_event.ui_amount,
-        #         swap_direction=swap_direction,
-        #         slippage_bps=slippage_bps,
-        #         in_type=swap_in_type,
-        #     )
+        # NOTE: 测试下来不是很理想，暂时使用备选方案
+        elif swap_event.program_id == RAY_V4_PROGRAM_ID:
+            logger.info("Program ID is RayV4")
+            sig = await Gmgn(self._client).swap(
+                keypair=keypair,
+                token_address=token_address,
+                ui_amount=swap_event.ui_amount,
+                swap_direction=swap_direction,
+                slippage_bps=slippage_bps,
+                in_type=swap_in_type,
+                priority_fee=swap_event.priority_fee,
+            )
         elif program_id is None or program_id == RAY_V4_PROGRAM_ID:
             logger.warning("Program ID is Unknown, So We use thrid party to trade")
             sig = await Gmgn(self._client).swap(
                 keypair=keypair,
-                token_address=swap_event.output_mint,
+                token_address=token_address,
                 ui_amount=swap_event.ui_amount,
                 swap_direction=swap_direction,
                 slippage_bps=slippage_bps,

@@ -165,6 +165,6 @@ class SwapSettlementProcessor:
                     other_sol_change=int(data["other_sol_change"] * SOL_DECIMAL),
                 )
 
-        swap_record_clone = swap_record.copy()
+        swap_record_clone = swap_record.model_copy()
         await self.record(swap_record)
         return swap_record_clone

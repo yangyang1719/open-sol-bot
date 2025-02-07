@@ -17,28 +17,30 @@ from tg_bot.utils.text import short_text
 env = Environment(
     loader=BaseLoader(),
 )
-_BUY_TEMPLATE = env.from_string("""🎯 触发跟单：买入
+_BUY_TEMPLATE = env.from_string(
+    """🎯 触发跟单：买入
 🟢 {{wallet_name}} 买入 {{token_ui_amount}} ${{symbol}}
 
 钱包地址
 <code>{{wallet_address}}</code>
 代币地址
 <code>{{mint}}</code>
-
 <a href="https://solscan.io/tx/{{signature}}">查看交易</a>
-""")
+"""
+)
 
 
-_SELL_TEMPLATE = env.from_string("""🎯 触发跟单：卖出
+_SELL_TEMPLATE = env.from_string(
+    """🎯 触发跟单：卖出
 🔴 {{wallet_name}} 卖出 {{token_ui_amount}} ${{symbol}}
 
 钱包地址
 <code>{{wallet_address}}</code>
 代币地址
 <code>{{mint}}</code>
-
 <a href="https://solscan.io/tx/{{signature}}">查看交易</a>
-""")
+"""
+)
 
 
 class CopyTradeNotify:
