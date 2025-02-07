@@ -87,7 +87,7 @@ def create_copytrade_keyboard(udata: CopyTrade) -> InlineKeyboardMarkup:
             ],
             [
                 InlineKeyboardButton(
-                    text="{} 自动跟卖".format(
+                    text="{} 自动跟买/卖".format(
                         "✅" if udata.auto_follow else "",
                     ),
                     callback_data="toggle_auto_follow",

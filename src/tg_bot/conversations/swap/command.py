@@ -106,6 +106,7 @@ async def swap_command(message: Message):
         input_mint = WSOL.__str__()
         output_mint = token_info.mint
         from_amount = int(float(ui_amount) * SOL_DECIMAL)
+        swap_mode = "ExactIn"
     else:
         if ui_amount.endswith("%"):
             await message.answer(
@@ -115,10 +116,6 @@ async def swap_command(message: Message):
         from_amount = int(float(ui_amount) * 10**token_info.decimals)
         input_mint = token_info.mint
         output_mint = WSOL.__str__()
-
-    if cmd == "buy":
-        swap_mode = "ExactIn"
-    else:
         swap_mode = "ExactOut"
 
     if setting.sandwich_mode:

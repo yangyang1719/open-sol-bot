@@ -48,6 +48,26 @@ async def test_get_bonding_curve_account():
 
 
 @pytest.mark.asyncio
+async def test_get_bonding_curve_account_already_launched():
+    client = get_async_client()
+    mint = Pubkey.from_string("MGj4gwN6f5Mna85uiiWRohwQ2cDHWPHVMMpkeJJpump")
+    result = await get_bonding_curve_account(
+        client,
+        mint,
+        PUMP_FUN_PROGRAM,
+    )
+    assert result
+    bonding_curve, associated_bonding_curve, account = result
+    assert account.discriminator == 6966180631402821399
+    assert account.virtual_token_reserves == 0
+    assert account.virtual_sol_reserves == 0
+    assert account.real_token_reserves == 0
+    assert account.real_sol_reserves == 0
+    assert account.token_total_supply == 1000000000000000
+    assert account.complete
+
+
+@pytest.mark.asyncio
 async def test_get_global_account():
     client = get_async_client()
     result = await get_global_account(client, PUMP_FUN_PROGRAM)

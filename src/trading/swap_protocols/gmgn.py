@@ -9,6 +9,7 @@ from solders.transaction import VersionedTransaction  # type: ignore
 from cache.token_info import TokenInfoCache
 from common.config import settings
 from common.constants import SOL_DECIMAL, WSOL
+from trading.exceptions import NoRouteFound
 from trading.swap import SwapDirection, SwapInType
 from trading.tx import sign_transaction_from_raw
 
@@ -89,6 +90,9 @@ class Gmgn(TraderProtocol):
 
         js = resp.json()
         if js["code"] != 0:
+            msg = js["msg"]
+            if "no route" in msg:
+                raise NoRouteFound(msg)
             raise Exception("Error: {}, Argument: {}".format(js["msg"], params))
 
         data = js["data"]
