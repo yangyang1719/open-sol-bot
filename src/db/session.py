@@ -16,8 +16,6 @@ from common.config import settings
 from common.log import logger
 from common.models import *  # noqa: F403
 
-print(settings.db.mysql_url)
-print(settings.db.async_mysql_url)
 # 创建全局引擎实例
 engine = create_engine(
     settings.db.mysql_url,
