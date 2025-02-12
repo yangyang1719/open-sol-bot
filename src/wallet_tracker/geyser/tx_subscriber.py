@@ -310,6 +310,7 @@ class TransactionDetailSubscriber:
             transactions={
                 "key": SubscribeRequestFilterTransactions(
                     account_include=list(self.subscribed_wallets),
+                    failed=False,
                 )
             }
         )
@@ -342,6 +343,7 @@ class TransactionDetailSubscriber:
             transactions={
                 "key": SubscribeRequestFilterTransactions(
                     account_include=list(self.subscribed_wallets),
+                    failed=False,
                 )
             }
         )
