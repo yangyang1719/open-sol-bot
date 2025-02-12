@@ -9,8 +9,8 @@ from common.cp.swap_event import SwapEventConsumer
 from common.cp.swap_result import SwapResultProducer
 from common.log import logger
 from common.types.swap import SwapEvent, SwapResult
+from common.prestart import pre_start
 from db.redis import RedisClient
-from db.session import init_db
 from trading.copytrade import CopyTradeProcessor
 from trading.executor import TradingExecutor
 from trading.settlement import SwapSettlementProcessor
@@ -147,7 +147,7 @@ class Trading:
 
 
 if __name__ == "__main__":
-    init_db()
+    pre_start()
     trading = Trading()
     try:
         asyncio.run(trading.start())
