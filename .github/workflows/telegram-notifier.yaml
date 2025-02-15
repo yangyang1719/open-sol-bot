@@ -1,13 +1,12 @@
 name: Telegram Notification
 
 on:
-  push:
   pull_request:
     types: [opened, closed, reopened]
   issues:
     types: [opened, closed, reopened]
   release:
-    types: [published]
+    types: [published, created, edited, released, prereleased]
   discussion:
     types: [created]
   fork:
