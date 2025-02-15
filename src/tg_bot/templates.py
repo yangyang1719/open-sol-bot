@@ -8,7 +8,6 @@ from jinja2 import BaseLoader, Environment
 from solders.keypair import Keypair  # type: ignore
 
 from common.models.token_info import TokenInfo
-from common.utils.shyft import WalletToken
 from common.utils.utils import keypair_to_private_key
 from tg_bot.models.monitor import Monitor
 from tg_bot.models.setting import Setting

@@ -31,7 +31,7 @@ def from_db_model(obj: CopyTradeModel) -> CopyTrade:
         copytrade.fixed_buy_amount = round(obj.fixed_buy_amount, 4)
 
     if obj.custom_slippage_bps is not None:
-        copytrade.custom_slippage = round(obj.custom_slippage_bps, 4)
+        copytrade.custom_slippage = round(obj.custom_slippage_bps // 100, 4)
     return copytrade
 
 
