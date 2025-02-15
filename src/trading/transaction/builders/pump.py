@@ -1,9 +1,5 @@
-from solana.rpc.async_api import AsyncClient
-from solana.rpc.types import TxOpts
 from solders.keypair import Keypair  # type: ignore
 from solders.pubkey import Pubkey  # type: ignore
-from solders.rpc.responses import RpcSimulateTransactionResult  # type: ignore
-from solders.signature import Signature  # type: ignore
 from solders.transaction import VersionedTransaction  # type: ignore
 from spl.token.instructions import (
     CloseAccountParams,
@@ -13,7 +9,6 @@ from spl.token.instructions import (
 )
 
 from cache import AccountAmountCache, MintAccountCache
-from common.config import settings
 from common.constants import (
     ASSOCIATED_TOKEN_PROGRAM,
     PUMP_BUY_METHOD,
@@ -40,13 +35,11 @@ from trading.utils import (
     min_amount_with_slippage,
 )
 
-from .proto import TraderProtocol
+from .base import TransactionBuilder
 
 
 # Reference: https://github.com/wisarmy/raytx/blob/main/src/pump.rs
-class Pump(TraderProtocol):
-    def __init__(self, rpc_client: AsyncClient) -> None:
-        self.client = rpc_client
+class PumpTransactionBuilder(TransactionBuilder):
 
     async def build_swap_transaction(
         self,
@@ -79,12 +72,12 @@ class Pump(TraderProtocol):
             raise ValueError("swap_direction must be buy or sell")
 
         pump_program = PUMP_FUN_PROGRAM
-        result = await get_bonding_curve_account(self.client, mint, pump_program)
+        result = await get_bonding_curve_account(self.rpc_client, mint, pump_program)
         if result is None:
             raise BondingCurveNotFound("bonding curve account not found")
         bonding_curve, associated_bonding_curve, bonding_curve_account = result
 
-        global_account = await get_global_account(self.client, pump_program)
+        global_account = await get_global_account(self.rpc_client, pump_program)
         if global_account is None:
             raise ValueError("global account not found")
 
@@ -98,7 +91,7 @@ class Pump(TraderProtocol):
         if swap_direction == SwapDirection.Buy:
             # 如果 ata 账户不存在，需要创建
             if not await has_ata(
-                self.client,
+                self.rpc_client,
                 owner,
                 token_out,
             ):
@@ -200,7 +193,7 @@ class Pump(TraderProtocol):
         )
 
         instructions = []
-        pumpfun = PumpFunInterface(keypair, self.client)
+        pumpfun = PumpFunInterface(keypair, self.rpc_client)
         pump_method = pumpfun.program.methods[swap_direction]
         build_swap_instruction = (
             pump_method.args([token_amount, sol_amount_threshold])
@@ -230,71 +223,3 @@ class Pump(TraderProtocol):
             priority_fee=priority_fee,
             use_jito=use_jito,
         )
-
-    async def send_transaction(self, transaction: VersionedTransaction) -> Signature:
-        """Send a signed transaction.
-
-        Args:
-            transaction (VersionedTransaction): The signed transaction to send
-
-        Returns:
-            Signature: The transaction signature
-        """
-        resp = await self.client.send_transaction(
-            transaction,
-            opts=TxOpts(skip_preflight=not settings.trading.preflight_check),
-        )
-        return resp.value
-
-    async def simulate_transaction(
-        self, transaction: VersionedTransaction
-    ) -> RpcSimulateTransactionResult:
-        """Simulate a signed transaction.
-
-        Args:
-            transaction (VersionedTransaction): The signed transaction to simulate
-
-        Returns:
-            SimulationResult: The simulation result
-        """
-        resp = await self.client.simulate_transaction(transaction)
-        return resp.value
-
-    async def swap(
-        self,
-        keypair: Keypair,
-        token_address: str,
-        ui_amount: float,
-        swap_direction: SwapDirection,
-        slippage_bps: int,
-        in_type: SwapInType | None = None,
-        use_jito: bool = False,
-        priority_fee: float | None = None,
-    ) -> Signature | None:
-        """Swap token
-
-        Args:
-            token_address (str): token address
-            amount_in (float): amount in
-            swap_direction (Literal["buy", "sell"]): swap direction
-            slippage (int): slippage, percentage
-            in_type (SwapInType | None, optional): in type. Defaults to None.
-            use_jito (bool, optional): use jto. Defaults to False.
-            priority_fee (float | None, optional): priority fee. Defaults to None.
-        """
-        transaction = await self.build_swap_transaction(
-            keypair=keypair,
-            token_address=token_address,
-            ui_amount=ui_amount,
-            swap_direction=swap_direction,
-            slippage_bps=slippage_bps,
-            in_type=in_type,
-            use_jito=use_jito,
-            priority_fee=priority_fee,
-        )
-        logger.debug(f"Swap transaction: {transaction}")
-        if settings.trading.tx_simulate:
-            await self.simulate_transaction(transaction)
-            return
-        else:
-            return await self.send_transaction(transaction)

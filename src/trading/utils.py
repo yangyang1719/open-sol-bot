@@ -144,7 +144,7 @@ async def get_latest_blockhash(client: AsyncClient) -> Hash:
     return (await client.get_latest_blockhash()).value.blockhash
 
 
-def calculate_unit_price_and_limit_by_fee(fee: float) -> tuple[int, int]:
+def calc_tx_units(fee: float) -> tuple[int, int]:
     """根据期望的优先费用计算 unit price 和 unit limit
 
     Args:
@@ -166,3 +166,25 @@ def calculate_unit_price_and_limit_by_fee(fee: float) -> tuple[int, int]:
     unit_price = int((fee_in_lamports * 1e6) / unit_limit)
 
     return unit_price, unit_limit
+
+
+def calc_tx_units_and_split_fees(
+    fee: float,
+) -> tuple[int, int, float]:
+    """根据期望的优先费用计算 unit price 和 unit limit,同时计算 Jito 的小费
+
+    优先费用占比为 70%, Jito 小费占比为 30%,参考https://docs.jito.wtf/lowlatencytxnsend/#id19
+
+    Args:
+        fee (float): 总费用，单位是 SOL
+
+    Returns:
+        tuple[int, int, float]: (unit_price, unit_limit, jito_fee)
+        - unit_price: 每个计算单位的价格（以 micro-lamports 为单位）
+        - unit_limit: 交易的计算单位上限
+        - jito_fee: Jito 的小费，单位是 SOL
+    """
+    priority_fee = fee * 0.7
+    jito_fee = fee * 0.3
+    unit_price, unit_limit = calc_tx_units(priority_fee)
+    return unit_price, unit_limit, jito_fee

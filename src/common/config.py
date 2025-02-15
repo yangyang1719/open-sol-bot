@@ -11,6 +11,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
+    HttpUrl,
     MySQLDsn,
     RedisDsn,
     field_validator,
@@ -152,6 +153,16 @@ class TradingConfig(BaseModel):
     unit_limit: int
     tx_simulate: bool = False
     preflight_check: bool = False
+    use_jito: bool = True
+    jito_api: str = "https://mainnet.block-engine.jito.wtf"
+
+    @field_validator("jito_api", mode="before")
+    def validate_jito_api(cls, value: str) -> str:
+        try:
+            HttpUrl(value)
+        except ValueError:
+            raise ValueError(f"Invalid Jito API URL: {value}")
+        return value
 
 
 class APIConfig(BaseModel):

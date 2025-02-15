@@ -6,11 +6,13 @@ from common.constants import PUMP_FUN_PROGRAM, RAY_V4
 from common.log import logger
 from common.models.tg_bot.user import User
 from common.types.swap import SwapEvent
+from common.utils.jito import JitoClient
 from db.session import NEW_ASYNC_SESSION, provide_session
 from trading.swap import SwapDirection, SwapInType
 from common.utils.raydium import RaydiumAPI
 from cache.launch import LaunchCache
-from .swap_protocols import Gmgn, Pump
+from trading.transaction import TradingRoute, TradingService
+from common.config import settings
 
 PUMP_FUN_PROGRAM_ID = str(PUMP_FUN_PROGRAM)
 RAY_V4_PROGRAM_ID = str(RAY_V4)
@@ -18,7 +20,8 @@ RAY_V4_PROGRAM_ID = str(RAY_V4)
 
 class TradingExecutor:
     def __init__(self, client: AsyncClient):
-        self._client = client
+        self._rpc_client = client
+        self._jito_client = JitoClient()
         self._raydium_api = RaydiumAPI()
         self._launch_cache = LaunchCache()
 
@@ -84,39 +87,31 @@ class TradingExecutor:
 
         if should_use_pump:
             logger.info("Program ID is PUMP")
-            sig = await Pump(self._client).swap(
-                keypair=keypair,
-                token_address=token_address,
-                ui_amount=swap_event.ui_amount,
-                swap_direction=swap_direction,
-                slippage_bps=slippage_bps,
-                in_type=swap_in_type,
-                priority_fee=swap_event.priority_fee,
-            )
+            trade_route = TradingRoute.PUMP
         # NOTE: 测试下来不是很理想，暂时使用备选方案
         elif swap_event.program_id == RAY_V4_PROGRAM_ID:
             logger.info("Program ID is RayV4")
-            sig = await Gmgn(self._client).swap(
-                keypair=keypair,
-                token_address=token_address,
-                ui_amount=swap_event.ui_amount,
-                swap_direction=swap_direction,
-                slippage_bps=slippage_bps,
-                in_type=swap_in_type,
-                priority_fee=swap_event.priority_fee,
-            )
+            trade_route = TradingRoute.GMGN
         elif program_id is None or program_id == RAY_V4_PROGRAM_ID:
             logger.warning("Program ID is Unknown, So We use thrid party to trade")
-            sig = await Gmgn(self._client).swap(
-                keypair=keypair,
-                token_address=token_address,
-                ui_amount=swap_event.ui_amount,
-                swap_direction=swap_direction,
-                slippage_bps=slippage_bps,
-                in_type=swap_in_type,
-                priority_fee=swap_event.priority_fee,
-            )
+            trade_route = TradingRoute.GMGN
         else:
             raise ValueError(f"Program ID is not supported, {swap_event.program_id}")
+
+        sig = await TradingService.create(
+            trade_route,
+            self._rpc_client,
+            use_jito=settings.trading.use_jito,
+            jito_client=self._jito_client,
+        ).swap(
+            keypair,
+            token_address,
+            swap_event.ui_amount,
+            swap_direction,
+            slippage_bps,
+            swap_in_type,
+            use_jito=settings.trading.use_jito,
+            priority_fee=swap_event.priority_fee,
+        )
 
         return sig

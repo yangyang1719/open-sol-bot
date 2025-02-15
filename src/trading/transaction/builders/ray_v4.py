@@ -37,13 +37,10 @@ from common.utils.utils import get_token_balance
 from trading.swap import SwapDirection, SwapInType
 from trading.tx import build_transaction
 
-from .proto import TraderProtocol
+from .base import TransactionBuilder
 
 
-class RayV4(TraderProtocol):
-    def __init__(self, rpc_client: AsyncClient) -> None:
-        self.rpc_client = rpc_client
-
+class RaydiumV4TransactionBuilder(TransactionBuilder):
     async def build_buy_instructions(
         self,
         payer_keypair: Keypair,
@@ -102,67 +99,3 @@ class RayV4(TraderProtocol):
             instructions=instructions,
             use_jito=use_jito,
         )
-
-    async def send_transaction(self, transaction: VersionedTransaction) -> Signature:
-        """Send a signed transaction.
-
-        Args:
-            transaction (VersionedTransaction): The signed transaction to send
-
-        Returns:
-            Signature: The transaction signature
-        """
-        resp = await self.rpc_client.send_transaction(
-            transaction,
-            opts=TxOpts(skip_preflight=True),
-        )
-        return resp.value
-
-    async def simulate_transaction(
-        self, transaction: VersionedTransaction
-    ) -> RpcSimulateTransactionResult:
-        """Simulate a signed transaction.
-
-        Args:
-            transaction (VersionedTransaction): The signed transaction to simulate
-
-        Returns:
-            SimulationResult: The simulation result
-        """
-        resp = await self.rpc_client.simulate_transaction(transaction)
-        return resp.value
-
-    async def swap(
-        self,
-        keypair: Keypair,
-        token_address: str,
-        ui_amount: float,
-        swap_direction: SwapDirection,
-        slippage_bps: int,
-        in_type: SwapInType | None = None,
-        use_jito: bool = False,
-    ) -> Signature | None:
-        """Swap token with GMGN API.
-
-        Args:
-            token_address (str): token address
-            amount_in (float): amount in
-            swap_direction (Literal["buy", "sell"]): swap direction
-            slippage (int): slippage, percentage
-            in_type (SwapInType | None, optional): in type. Defaults to None.
-            use_jto (bool, optional): use jto. Defaults to False.
-        """
-        transaction = await self.build_swap_transaction(
-            keypair=keypair,
-            token_address=token_address,
-            ui_amount=ui_amount,
-            swap_direction=swap_direction,
-            slippage_bps=slippage_bps,
-            in_type=in_type,
-            use_jito=use_jito,
-        )
-        if settings.trading.tx_simulate:
-            await self.simulate_transaction(transaction)
-            return
-        else:
-            return await self.send_transaction(transaction)

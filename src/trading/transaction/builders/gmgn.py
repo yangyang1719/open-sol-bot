@@ -1,9 +1,6 @@
 import httpx
 from solana.rpc.async_api import AsyncClient
-from solana.rpc.types import TxOpts
 from solders.keypair import Keypair  # type: ignore
-from solders.rpc.responses import RpcSimulateTransactionResult  # type: ignore
-from solders.signature import Signature  # type: ignore
 from solders.transaction import VersionedTransaction  # type: ignore
 
 from cache.token_info import TokenInfoCache
@@ -13,10 +10,12 @@ from trading.exceptions import NoRouteFound
 from trading.swap import SwapDirection, SwapInType
 from trading.tx import sign_transaction_from_raw
 
-from .proto import TraderProtocol
+from .base import TransactionBuilder
 
 
-class Gmgn(TraderProtocol):
+class GMGNTransactionBuilder(TransactionBuilder):
+    """GMGN 交易构建器"""
+
     def __init__(self, rpc_client: AsyncClient) -> None:
         self.client = httpx.AsyncClient(base_url="https://gmgn.ai")
         self.api_path = "/defi/router/v1/sol/tx/get_swap_route"
@@ -101,70 +100,3 @@ class Gmgn(TraderProtocol):
 
         signed_tx = await sign_transaction_from_raw(swap_tx, keypair)
         return signed_tx
-
-    async def send_transaction(self, transaction: VersionedTransaction) -> Signature:
-        """Send a signed transaction.
-
-        Args:
-            transaction (VersionedTransaction): The signed transaction to send
-
-        Returns:
-            Signature: The transaction signature
-        """
-        resp = await self.rpc_client.send_transaction(
-            transaction,
-            opts=TxOpts(skip_preflight=not settings.trading.preflight_check),
-        )
-        return resp.value
-
-    async def simulate_transaction(
-        self, transaction: VersionedTransaction
-    ) -> RpcSimulateTransactionResult:
-        """Simulate a signed transaction.
-
-        Args:
-            transaction (VersionedTransaction): The signed transaction to simulate
-
-        Returns:
-            SimulationResult: The simulation result
-        """
-        resp = await self.rpc_client.simulate_transaction(transaction)
-        return resp.value
-
-    async def swap(
-        self,
-        keypair: Keypair,
-        token_address: str,
-        ui_amount: float,
-        swap_direction: SwapDirection,
-        slippage_bps: int,
-        in_type: SwapInType | None = None,
-        use_jito: bool = False,
-        priority_fee: float | None = None,
-    ) -> Signature | None:
-        """Swap token with GMGN API.
-
-        Args:
-            token_address (str): token address
-            amount_in (float): amount in
-            swap_direction (Literal["buy", "sell"]): swap direction
-            slippage (int): slippage, percentage
-            in_type (SwapInType | None, optional): in type. Defaults to None.
-            use_jto (bool, optional): use jto. Defaults to False.
-            priority_fee (float | None, optional): priority fee. Defaults to None.
-        """
-        transaction = await self.build_swap_transaction(
-            keypair=keypair,
-            token_address=token_address,
-            ui_amount=ui_amount,
-            swap_direction=swap_direction,
-            slippage_bps=slippage_bps,
-            in_type=in_type,
-            use_jito=use_jito,
-            priority_fee=priority_fee,
-        )
-        if settings.trading.tx_simulate:
-            await self.simulate_transaction(transaction)
-            return
-        else:
-            return await self.send_transaction(transaction)

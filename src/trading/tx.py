@@ -7,11 +7,14 @@ from solders.keypair import Keypair  # type: ignore
 from solders.message import MessageV0  # type: ignore
 from solders.signature import Signature  # type: ignore
 from solders.transaction import VersionedTransaction  # type: ignore
+from solders.system_program import transfer, TransferParams
+from solders.pubkey import Pubkey  # type: ignore
+from common.constants import SOL_DECIMAL
 
 from cache import BlockhashCache
 from common.config import settings
 from common.log import logger
-from trading.utils import calculate_unit_price_and_limit_by_fee
+from trading.utils import calc_tx_units, calc_tx_units_and_split_fees
 
 
 async def sign_transaction_from_raw(
@@ -32,7 +35,7 @@ async def sign_transaction_from_raw(
 async def build_transaction(
     keypair: Keypair,
     instructions: list,
-    use_jito: bool,
+    use_jito: bool | None = None,
     priority_fee: float | None = None,
 ) -> VersionedTransaction:
     """Build transaction with instructions.
@@ -41,28 +44,47 @@ async def build_transaction(
         keypair (Keypair): Keypair of the transaction signer
         instructions (list): List of instructions to include in the transaction
         use_jito (bool): Whether to use Jito or not
+        priority_fee (float): Priority fee
 
     Returns:
         VersionedTransaction: The built transaction
     """
-    if not use_jito:
-        if priority_fee is None:
-            logger.info(
-                "Using default priority fee, unit limit: {}, unit price: {}".format(
-                    settings.trading.unit_limit, settings.trading.unit_price
+    if use_jito and priority_fee is not None:
+        unit_price, unit_limit, jito_fee = calc_tx_units_and_split_fees(priority_fee)
+        # 96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5
+        instructions.append(
+            transfer(
+                TransferParams(
+                    from_pubkey=keypair.pubkey(),
+                    to_pubkey=Pubkey.from_string(
+                        "96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5"
+                    ),
+                    lamports=int(jito_fee * SOL_DECIMAL),
                 )
             )
-            instructions.insert(0, set_compute_unit_limit(settings.trading.unit_limit))
-            instructions.insert(1, set_compute_unit_price(settings.trading.unit_price))
-        else:
-            unit_price, unit_limit = calculate_unit_price_and_limit_by_fee(priority_fee)
-            logger.info(
-                "Using custom priority fee, unit limit: {}, unit price: {}".format(
-                    unit_limit, unit_price
-                )
+        )
+    elif priority_fee is not None:
+        unit_price, unit_limit = calc_tx_units(priority_fee)
+        logger.info(
+            "Using custom priority fee, unit limit: {}, unit price: {}".format(
+                unit_limit, unit_price
             )
-            instructions.insert(0, set_compute_unit_limit(unit_limit))
-            instructions.insert(1, set_compute_unit_price(unit_price))
+        )
+        instructions.insert(0, set_compute_unit_limit(unit_limit))
+        instructions.insert(1, set_compute_unit_price(unit_price))
+    else:
+        logger.info(
+            "Using default priority fee, unit limit: {}, unit price: {}".format(
+                settings.trading.unit_limit, settings.trading.unit_price
+            )
+        )
+        unit_price, unit_limit = (
+            settings.trading.unit_price,
+            settings.trading.unit_limit,
+        )
+
+    instructions.insert(0, set_compute_unit_limit(unit_limit))
+    instructions.insert(1, set_compute_unit_price(unit_price))
 
     # init tx
     recent_blockhash, _ = await BlockhashCache.get()
