@@ -21,6 +21,12 @@ from tg_bot.services.setting import SettingService
 from tg_bot.utils.slippage import calculate_auto_slippage
 
 
+IGNORED_MINTS = {
+    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",  # USDC
+    "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",  # USDT
+    "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",  # mSOL
+}
+
 class CopyTradeProcessor:
     """跟单交易"""
 
@@ -97,6 +103,12 @@ class CopyTradeProcessor:
         timestamp: int,
         copytrade: CopyTrade,
     ):
+        if input_mint in IGNORED_MINTS or output_mint in IGNORED_MINTS:
+            logger.info(
+                f"Skipping swap due to ignored mint: {input_mint} {output_mint}"
+            )
+            return
+
         try:
             # 根据不同的根据设置，创建不同的 swap_event
             setting = await self.setting_service.get(copytrade.chat_id, copytrade.owner)
