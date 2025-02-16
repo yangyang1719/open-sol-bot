@@ -126,7 +126,7 @@ class TxEventConsumer:
             # Acknowledge the message
             await self.redis.xack(NEW_TX_EVENT_CHANNEL, self.consumer_group, message_id)
         except Exception as e:
-            logger.error(f"Error processing message {message_id}: {e}")
+            logger.exception(f"Error processing message {message_id}: {e}")
             # Could implement retry logic here
 
     def _create_task(self, message_id: str, fields: dict) -> None:

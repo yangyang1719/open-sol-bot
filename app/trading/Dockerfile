@@ -1,33 +1,11 @@
-FROM python:3.10-slim as builder
-
-WORKDIR /app
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app/libs \
-    PDM_USE_VENV=false \
-    PDM_INSTALL_PATH=/app \
-    PROJECT_ROOT=/app
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    git \
-    libssl-dev \
-    pkg-config \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install PDM
-RUN curl -sSL https://pdm.fming.dev/install-pdm.py | python3 - && \
-    ln -s /root/.local/bin/pdm /usr/bin/pdm
+FROM localhost/open-sol-bot-base:latest
 
 # Create necessary directories
-RUN mkdir -p /app/libs /app/trading /app/logs
+RUN mkdir -p /app/trading
 
 # Install dependencies
-COPY ./app/trading/pyproject.toml /app/
 COPY ./libs /app/libs
+COPY ./app/trading/pyproject.toml /app/
 RUN pdm config python.use_venv false && \
     pdm install -G local
 
