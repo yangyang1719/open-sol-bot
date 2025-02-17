@@ -5,7 +5,7 @@
 groups = ["default", "dev", "local"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:a2cf0d5f09c10b7ca1bc8a3d167eb319d70942b809c8ca20effe2d88a15da96b"
+content_hash = "sha256:bd89298981cd02b066132f7a74f04fb31361dbefda81a9bbacaeabe858978e0f"
 
 [[metadata.targets]]
 requires_python = "==3.10.*"
@@ -14,7 +14,7 @@ requires_python = "==3.10.*"
 name = "aiocache"
 version = "0.12.3"
 summary = "multi backend asyncio cache"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "aiocache-0.12.3-py2.py3-none-any.whl", hash = "sha256:889086fc24710f431937b87ad3720a289f7fc31c4fd8b68e9f918b9bacd8270d"},
     {file = "aiocache-0.12.3.tar.gz", hash = "sha256:f528b27bf4d436b497a1d0d1a8f59a542c153ab1e37c3621713cb376d44c4713"},
@@ -25,7 +25,7 @@ name = "aiocache"
 version = "0.12.3"
 extras = ["redis"]
 summary = "multi backend asyncio cache"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "aiocache==0.12.3",
     "redis>=4.2.0",
@@ -40,7 +40,7 @@ name = "aiofiles"
 version = "24.1.0"
 requires_python = ">=3.8"
 summary = "File support for asyncio."
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "aiofiles-24.1.0-py3-none-any.whl", hash = "sha256:b4ec55f4195e3eb5d7abd1bf7e061763e864dd4954231fb8539a0ef8bb8260e5"},
     {file = "aiofiles-24.1.0.tar.gz", hash = "sha256:22a075c9e5a3810f0c2e48f3008c94d68c65d763b9b03857924c99e57355166c"},
@@ -51,7 +51,7 @@ name = "aiogram"
 version = "3.17.0"
 requires_python = ">=3.9"
 summary = "Modern and fully asynchronous framework for Telegram Bot API"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "aiofiles<24.2,>=23.2.1",
     "aiohttp<3.12,>=3.9.0",
@@ -70,7 +70,7 @@ name = "aiohappyeyeballs"
 version = "2.4.6"
 requires_python = ">=3.9"
 summary = "Happy Eyeballs for asyncio"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "aiohappyeyeballs-2.4.6-py3-none-any.whl", hash = "sha256:147ec992cf873d74f5062644332c539fcd42956dc69453fe5204195e560517e1"},
     {file = "aiohappyeyeballs-2.4.6.tar.gz", hash = "sha256:9b05052f9042985d32ecbe4b59a77ae19c006a78f1344d7fdad69d28ded3d0b0"},
@@ -81,7 +81,7 @@ name = "aiohttp"
 version = "3.10.11"
 requires_python = ">=3.8"
 summary = "Async http client/server framework (asyncio)"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "aiohappyeyeballs>=2.3.0",
     "aiosignal>=1.1.2",
@@ -115,7 +115,7 @@ name = "aiomysql"
 version = "0.2.0"
 requires_python = ">=3.7"
 summary = "MySQL driver for asyncio."
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "PyMySQL>=1.0",
 ]
@@ -129,7 +129,7 @@ name = "aioredis"
 version = "2.0.1"
 requires_python = ">=3.6"
 summary = "asyncio (PEP 3156) Redis support"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "async-timeout",
     "typing-extensions",
@@ -145,7 +145,7 @@ version = "2.0.1"
 extras = ["hiredis"]
 requires_python = ">=3.6"
 summary = "asyncio (PEP 3156) Redis support"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "aioredis==2.0.1",
     "hiredis>=1.0; implementation_name == \"cpython\"",
@@ -160,7 +160,7 @@ name = "aiosignal"
 version = "1.3.2"
 requires_python = ">=3.9"
 summary = "aiosignal: a list of registered asynchronous callbacks"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "frozenlist>=1.1.0",
 ]
@@ -174,7 +174,7 @@ name = "anchorpy"
 version = "0.20.1"
 requires_python = "<4.0,>=3.9"
 summary = "The Python Anchor client."
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "anchorpy-core<0.3.0,>=0.2.0",
     "based58<0.2.0,>=0.1.1",
@@ -198,7 +198,7 @@ name = "anchorpy-core"
 version = "0.2.0"
 requires_python = ">=3.9"
 summary = "Python bindings for Anchor Rust code"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "jsonalias==0.1.1",
 ]
@@ -221,7 +221,7 @@ name = "annotated-types"
 version = "0.7.0"
 requires_python = ">=3.8"
 summary = "Reusable constraint types to use with typing.Annotated"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "typing-extensions>=4.0.0; python_version < \"3.9\"",
 ]
@@ -235,7 +235,7 @@ name = "anyio"
 version = "4.8.0"
 requires_python = ">=3.9"
 summary = "High level compatibility layer for multiple asynchronous event loop implementations"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "exceptiongroup>=1.0.2; python_version < \"3.11\"",
     "idna>=2.8",
@@ -342,7 +342,7 @@ name = "async-timeout"
 version = "5.0.1"
 requires_python = ">=3.8"
 summary = "Timeout context manager for asyncio programs"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "async_timeout-5.0.1-py3-none-any.whl", hash = "sha256:39e3809566ff85354557ec2398b55e096c8364bacac9405a7a1fa429e77fe76c"},
     {file = "async_timeout-5.0.1.tar.gz", hash = "sha256:d9321a7a3d5a6a5e187e824d2fa0793ce379a202935782d555d6e9d2735677d3"},
@@ -353,7 +353,7 @@ name = "attrs"
 version = "25.1.0"
 requires_python = ">=3.8"
 summary = "Classes Without Boilerplate"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "attrs-25.1.0-py3-none-any.whl", hash = "sha256:c75a69e28a550a7e93789579c22aa26b0f5b83b75dc4e08fe092980051e1090a"},
     {file = "attrs-25.1.0.tar.gz", hash = "sha256:1c97078a80c814273a76b2a298a932eb681c87415c11dee0a6921de7f1b02c3e"},
@@ -378,7 +378,7 @@ name = "backoff"
 version = "2.2.1"
 requires_python = ">=3.7,<4.0"
 summary = "Function decoration for backoff and retry"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "backoff-2.2.1-py3-none-any.whl", hash = "sha256:63579f9a0628e06278f7e47b7d7d5b6ce20dc65c5e96a6f3ca99a6adca0396e8"},
     {file = "backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba"},
@@ -389,7 +389,7 @@ name = "base58"
 version = "2.1.1"
 requires_python = ">=3.5"
 summary = "Base58 and Base58Check implementation."
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "base58-2.1.1-py3-none-any.whl", hash = "sha256:11a36f4d3ce51dfc1043f3218591ac4eb1ceb172919cebe05b52a5bcc8d245c2"},
     {file = "base58-2.1.1.tar.gz", hash = "sha256:c5d0cb3f5b6e81e8e35da5754388ddcc6d0d14b6c6a132cb93d69ed580a7278c"},
@@ -400,7 +400,7 @@ name = "based58"
 version = "0.1.1"
 requires_python = ">=3.7"
 summary = "A fast Python library for Base58 and Base58Check"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "based58-0.1.1-cp37-abi3-macosx_10_7_x86_64.whl", hash = "sha256:745851792ce5fada615f05ec61d7f360d19c76950d1e86163b2293c63a5d43bc"},
     {file = "based58-0.1.1-cp37-abi3-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:f8448a71678bd1edc0a464033695686461ab9d6d0bc3282cb29b94f883583572"},
@@ -470,7 +470,7 @@ name = "borsh-construct"
 version = "0.1.0"
 requires_python = ">=3.8.3,<4.0.0"
 summary = "Python implementation of Borsh serialization, built on the Construct library."
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "construct-typing<0.6.0,>=0.5.1",
     "sumtypes<0.2,>=0.1a5",
@@ -485,7 +485,7 @@ name = "certifi"
 version = "2025.1.31"
 requires_python = ">=3.6"
 summary = "Python package for providing Mozilla's CA Bundle."
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "certifi-2025.1.31-py3-none-any.whl", hash = "sha256:ca78db4565a652026a4db2bcdf68f2fb589ea80d0be70e03929ed730746b84fe"},
     {file = "certifi-2025.1.31.tar.gz", hash = "sha256:3d5da6925056f6f18f119200434a4780a94263f10d1c21d032a6f6b2baa20651"},
@@ -496,7 +496,7 @@ name = "cffi"
 version = "1.17.1"
 requires_python = ">=3.8"
 summary = "Foreign Function Interface for Python calling C code."
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "pycparser",
 ]
@@ -556,7 +556,7 @@ name = "colorama"
 version = "0.4.6"
 requires_python = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 summary = "Cross-platform colored terminal text."
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 marker = "sys_platform == \"win32\""
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
@@ -582,7 +582,7 @@ name = "construct"
 version = "2.10.68"
 requires_python = ">=3.6"
 summary = "A powerful declarative symmetric parser/builder for binary data"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "construct-2.10.68.tar.gz", hash = "sha256:7b2a3fd8e5f597a5aa1d614c3bd516fa065db01704c72a1efaaeec6ef23d8b45"},
 ]
@@ -592,7 +592,7 @@ name = "construct-typing"
 version = "0.5.6"
 requires_python = ">=3.7"
 summary = "Extension for the python package 'construct' that adds typing features"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "construct==2.10.68",
 ]
@@ -606,7 +606,7 @@ name = "cryptography"
 version = "44.0.1"
 requires_python = "!=3.9.0,!=3.9.1,>=3.7"
 summary = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "cffi>=1.12; platform_python_implementation != \"PyPy\"",
 ]
@@ -696,7 +696,7 @@ name = "exceptiongroup"
 version = "1.2.2"
 requires_python = ">=3.7"
 summary = "Backport of PEP 654 (exception groups)"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 marker = "python_version < \"3.11\""
 files = [
     {file = "exceptiongroup-1.2.2-py3-none-any.whl", hash = "sha256:3111b9d131c238bec2f8f516e123e14ba243563fb135d3fe885990585aa7795b"},
@@ -754,7 +754,7 @@ name = "frozenlist"
 version = "1.5.0"
 requires_python = ">=3.8"
 summary = "A list-like structure which implements collections.abc.MutableSequence"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "frozenlist-1.5.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:5b6a66c18b5b9dd261ca98dffcb826a525334b2f29e7caa54e182255c5f6a65a"},
     {file = "frozenlist-1.5.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d1b3eb7b05ea246510b43a7e53ed1653e55c2121019a97e60cad7efb881a97bb"},
@@ -780,7 +780,7 @@ name = "greenlet"
 version = "3.1.1"
 requires_python = ">=3.7"
 summary = "Lightweight in-process concurrent programming"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "greenlet-3.1.1-cp310-cp310-macosx_11_0_universal2.whl", hash = "sha256:0bbae94a29c9e5c7e4a2b7f0aae5c17e8e90acbfd3bf6270eeba60c39fce3563"},
     {file = "greenlet-3.1.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0fde093fb93f35ca72a556cf72c92ea3ebfda3d79fc35bb19fbe685853869a83"},
@@ -799,7 +799,7 @@ name = "grpcio"
 version = "1.70.0"
 requires_python = ">=3.8"
 summary = "HTTP/2-based RPC framework"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "grpcio-1.70.0-cp310-cp310-linux_armv7l.whl", hash = "sha256:95469d1977429f45fe7df441f586521361e235982a0b39e33841549143ae2851"},
     {file = "grpcio-1.70.0-cp310-cp310-macosx_12_0_universal2.whl", hash = "sha256:ed9718f17fbdb472e33b869c77a16d0b55e166b100ec57b016dc7de9c8d236bf"},
@@ -818,7 +818,7 @@ name = "grpcio-health-checking"
 version = "1.70.0"
 requires_python = ">=3.8"
 summary = "Standard Health Checking Service for gRPC"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "grpcio>=1.70.0",
     "protobuf<6.0dev,>=5.26.1",
@@ -833,7 +833,7 @@ name = "grpcio-tools"
 version = "1.70.0"
 requires_python = ">=3.8"
 summary = "Protobuf code generator for gRPC"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "grpcio>=1.70.0",
     "protobuf<6.0dev,>=5.26.1",
@@ -857,7 +857,7 @@ name = "h11"
 version = "0.14.0"
 requires_python = ">=3.7"
 summary = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "typing-extensions; python_version < \"3.8\"",
 ]
@@ -871,7 +871,7 @@ name = "hiredis"
 version = "3.1.0"
 requires_python = ">=3.8"
 summary = "Python wrapper for hiredis"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 marker = "implementation_name == \"cpython\""
 files = [
     {file = "hiredis-3.1.0-cp310-cp310-macosx_10_15_universal2.whl", hash = "sha256:2892db9db21f0cf7cc298d09f85d3e1f6dc4c4c24463ab67f79bc7a006d51867"},
@@ -903,7 +903,7 @@ name = "httpcore"
 version = "1.0.7"
 requires_python = ">=3.8"
 summary = "A minimal low-level HTTP client."
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "certifi",
     "h11<0.15,>=0.13",
@@ -918,7 +918,7 @@ name = "httpx"
 version = "0.28.1"
 requires_python = ">=3.8"
 summary = "The next generation HTTP client."
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "anyio",
     "certifi",
@@ -946,7 +946,7 @@ name = "idna"
 version = "3.10"
 requires_python = ">=3.6"
 summary = "Internationalized Domain Names in Applications (IDNA)"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "idna-3.10-py3-none-any.whl", hash = "sha256:946d195a0d259cbba61165e88e65941f16e9b36ea6ddb97f00452bae8b1287d3"},
     {file = "idna-3.10.tar.gz", hash = "sha256:12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"},
@@ -1064,7 +1064,7 @@ name = "jinja2"
 version = "3.1.5"
 requires_python = ">=3.7"
 summary = "A very fast and expressive template engine."
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "MarkupSafe>=2.0",
 ]
@@ -1089,7 +1089,7 @@ name = "jsonalias"
 version = "0.1.1"
 requires_python = ">=3.7,<4.0"
 summary = "A microlibrary that defines a Json type alias for Python."
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "jsonalias-0.1.1-py3-none-any.whl", hash = "sha256:a56d2888e6397812c606156504e861e8ec00e188005af149f003c787db3d3f18"},
     {file = "jsonalias-0.1.1.tar.gz", hash = "sha256:64f04d935397d579fc94509e1fcb6212f2d081235d9d6395bd10baedf760a769"},
@@ -1166,7 +1166,7 @@ files = [
 name = "jupiter-python-sdk"
 version = "0.0.2.0"
 summary = "Jupiter Python SDK"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "anchorpy",
     "base58",
@@ -1413,7 +1413,7 @@ name = "loguru"
 version = "0.7.3"
 requires_python = "<4.0,>=3.5"
 summary = "Python logging made (stupidly) simple"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "aiocontextvars>=0.2.0; python_version < \"3.7\"",
     "colorama>=0.3.4; sys_platform == \"win32\"",
@@ -1429,7 +1429,7 @@ name = "magic-filter"
 version = "1.0.12"
 requires_python = ">=3.7"
 summary = ""
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "magic_filter-1.0.12-py3-none-any.whl", hash = "sha256:e5929e544f310c2b1f154318db8c5cdf544dd658efa998172acd2e4ba0f6c6a6"},
     {file = "magic_filter-1.0.12.tar.gz", hash = "sha256:4751d0b579a5045d1dc250625c4c508c18c3def5ea6afaf3957cb4530d03f7f9"},
@@ -1440,7 +1440,7 @@ name = "markupsafe"
 version = "3.0.2"
 requires_python = ">=3.9"
 summary = "Safely add untrusted strings to HTML/XML markup."
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "MarkupSafe-3.0.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:7e94c425039cde14257288fd61dcfb01963e658efbc0ff54f5306b06054700f8"},
     {file = "MarkupSafe-3.0.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:9e2d922824181480953426608b81967de705c3cef4d1af983af849d7bd619158"},
@@ -1488,7 +1488,7 @@ name = "more-itertools"
 version = "8.14.0"
 requires_python = ">=3.5"
 summary = "More routines for operating on iterables, beyond itertools"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "more-itertools-8.14.0.tar.gz", hash = "sha256:c09443cd3d5438b8dafccd867a6bc1cb0894389e90cb53d227456b0b0bccb750"},
     {file = "more_itertools-8.14.0-py3-none-any.whl", hash = "sha256:1bc4f91ee5b1b31ac7ceacc17c09befe6a40a503907baf9c839c229b5095cfd2"},
@@ -1499,7 +1499,7 @@ name = "multidict"
 version = "6.1.0"
 requires_python = ">=3.8"
 summary = "multidict implementation"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "typing-extensions>=4.1.0; python_version < \"3.11\"",
 ]
@@ -1644,7 +1644,7 @@ name = "orjson"
 version = "3.10.15"
 requires_python = ">=3.8"
 summary = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "orjson-3.10.15-cp310-cp310-macosx_10_15_x86_64.macosx_11_0_arm64.macosx_10_15_universal2.whl", hash = "sha256:552c883d03ad185f720d0c09583ebde257e41b9521b74ff40e08b7dec4559c04"},
     {file = "orjson-3.10.15-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:616e3e8d438d02e4854f70bfdc03a6bcdb697358dbaa6bcd19cbe24d24ece1f8"},
@@ -1793,7 +1793,7 @@ name = "propcache"
 version = "0.2.1"
 requires_python = ">=3.9"
 summary = "Accelerated property cache"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "propcache-0.2.1-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:6b3f39a85d671436ee3d12c017f8fdea38509e4f25b28eb25877293c98c243f6"},
     {file = "propcache-0.2.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:39d51fbe4285d5db5d92a929e3e21536ea3dd43732c5b177c7ef03f918dff9f2"},
@@ -1820,7 +1820,7 @@ name = "protobuf"
 version = "5.29.3"
 requires_python = ">=3.8"
 summary = ""
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "protobuf-5.29.3-cp310-abi3-win32.whl", hash = "sha256:3ea51771449e1035f26069c4c7fd51fba990d07bc55ba80701c78f886bf9c888"},
     {file = "protobuf-5.29.3-cp310-abi3-win_amd64.whl", hash = "sha256:a4fa6f80816a9a0678429e84973f2f98cbc218cca434abe8db2ad0bffc98503a"},
@@ -1885,7 +1885,7 @@ name = "pycparser"
 version = "2.22"
 requires_python = ">=3.8"
 summary = "C parser in Python"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "pycparser-2.22-py3-none-any.whl", hash = "sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc"},
     {file = "pycparser-2.22.tar.gz", hash = "sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6"},
@@ -1896,7 +1896,7 @@ name = "pydantic"
 version = "2.10.6"
 requires_python = ">=3.8"
 summary = "Data validation using Python type hints"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "annotated-types>=0.6.0",
     "pydantic-core==2.27.2",
@@ -1912,7 +1912,7 @@ name = "pydantic-core"
 version = "2.27.2"
 requires_python = ">=3.8"
 summary = "Core functionality for Pydantic validation and serialization"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "typing-extensions!=4.7.0,>=4.6.0",
 ]
@@ -1947,7 +1947,7 @@ name = "pydantic-settings"
 version = "2.7.1"
 requires_python = ">=3.8"
 summary = "Settings management using Pydantic"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "pydantic>=2.7.0",
     "python-dotenv>=0.21.0",
@@ -1962,7 +1962,7 @@ name = "pydantic-settings-toml"
 version = "0.2.0"
 requires_python = ">=3.9"
 summary = "Custom pydantic setting source for loading settings from toml files"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "pydantic-settings<3.0.0,>=2.0.3",
 ]
@@ -1987,7 +1987,7 @@ name = "pyheck"
 version = "0.1.5"
 requires_python = ">=3.7"
 summary = "Python bindings for heck, the Rust case conversion library"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "pyheck-0.1.5-cp37-abi3-macosx_10_7_x86_64.whl", hash = "sha256:44caf2b7a49d71fdeb0469e9f35886987ad815a8638b3c5b5c83f351d6aed413"},
     {file = "pyheck-0.1.5-cp37-abi3-macosx_10_9_x86_64.macosx_11_0_arm64.macosx_10_9_universal2.whl", hash = "sha256:316a842b94beff6e59a97dbcc590e9be92a932e59126b0faa9ac750384f27eaf"},
@@ -2012,7 +2012,7 @@ name = "pymysql"
 version = "1.1.1"
 requires_python = ">=3.7"
 summary = "Pure Python MySQL Driver"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "PyMySQL-1.1.1-py3-none-any.whl", hash = "sha256:4de15da4c61dc132f4fb9ab763063e693d521a80fd0e87943b9a453dd4c19d6c"},
     {file = "pymysql-1.1.1.tar.gz", hash = "sha256:e127611aaf2b417403c60bf4dc570124aeb4a57f5f37b8e95ae399a42f904cd0"},
@@ -2085,7 +2085,7 @@ name = "python-dotenv"
 version = "1.0.1"
 requires_python = ">=3.8"
 summary = "Read key-value pairs from a .env file and set them as environment variables"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "python-dotenv-1.0.1.tar.gz", hash = "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca"},
     {file = "python_dotenv-1.0.1-py3-none-any.whl", hash = "sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a"},
@@ -2183,7 +2183,7 @@ name = "redis"
 version = "5.2.1"
 requires_python = ">=3.8"
 summary = "Python client for Redis database and key-value store"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "async-timeout>=4.0.3; python_full_version < \"3.11.3\"",
 ]
@@ -2301,7 +2301,7 @@ name = "sentry-sdk"
 version = "2.21.0"
 requires_python = ">=3.6"
 summary = "Python client for Sentry (https://sentry.io)"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "certifi",
     "urllib3>=1.26.11",
@@ -2316,7 +2316,7 @@ name = "setuptools"
 version = "75.8.0"
 requires_python = ">=3.9"
 summary = "Easily download, build, install, upgrade, and uninstall Python packages"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "setuptools-75.8.0-py3-none-any.whl", hash = "sha256:e3982f444617239225d675215d51f6ba05f845d4eec313da4418fdbb56fb27e3"},
     {file = "setuptools-75.8.0.tar.gz", hash = "sha256:c5afc8f407c626b8313a86e10311dd3f661c6cd9c09d4bf8c15c0e11f9f2b0e6"},
@@ -2338,7 +2338,7 @@ name = "sniffio"
 version = "1.3.1"
 requires_python = ">=3.7"
 summary = "Sniff out which async library your code is running under"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2"},
     {file = "sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc"},
@@ -2349,7 +2349,7 @@ name = "solana"
 version = "0.35.1"
 requires_python = "<4.0,>=3.8"
 summary = "Solana Python API"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "construct-typing<0.6.0,>=0.5.2",
     "httpx>=0.23.0",
@@ -2367,7 +2367,7 @@ name = "solana-tx-parser"
 version = "0.0.5"
 requires_python = ">=3.8"
 summary = "Python bindings for Solana Transaction Parser (tx-parser), enabling Python developers to easily parse and analyze Solana blockchain transactions. This package provides a high-performance C-API wrapper around the original Rust implementation, making blockchain data interpretation accessible in Python while maintaining native-like performance."
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "solana_tx_parser-0.0.5-py3-none-any.whl", hash = "sha256:7223d09b3c969dca8747568e1a5744229cfbbf06c534199d886b0b72d04d086c"},
     {file = "solana_tx_parser-0.0.5.tar.gz", hash = "sha256:f041004e383567b6602bceb45c74955eeb36ce9577e8dd6fba9f89295f5375c6"},
@@ -2494,7 +2494,7 @@ requires_python = "==3.10.*"
 editable = true
 path = "./app/tg-bot"
 summary = "Telegram bot for Solana trading"
-groups = ["local"]
+groups = ["dev"]
 dependencies = [
     "aiocache[redis]>=0.12.3",
     "aiogram>=3.15.0",
@@ -2505,23 +2505,15 @@ dependencies = [
     "backoff>=2.2.1",
     "base58>=2.1.1",
     "cryptography>=44.0.0",
-    "grpcio-health-checking>=1.68.1",
-    "grpcio-tools>=1.68.1",
-    "grpcio>=1.68.1",
     "jinja2>=3.1.4",
-    "jupiter-python-sdk>=0.0.2.0",
     "loguru>=0.7.2",
     "orjson>=3.10.11",
-    "protobuf>=5.29.0",
     "pydantic-settings-toml>=0.2.0",
     "pydantic-settings>=2.6.1",
-    "pymysql>=1.1.1",
-    "python-dotenv>=1.0.1",
     "sentry-sdk>=2.21.0",
     "solana-tx-parser>=0.0.1",
     "solana>=0.35.1",
     "solders>=0.21.0",
-    "sqlalchemy[asyncio]>=2.0.36",
     "sqlmodel>=0.0.22",
     "tomli>=2.1.0",
 ]
@@ -2533,10 +2525,9 @@ requires_python = "==3.10.*"
 editable = true
 path = "./app/trading"
 summary = "Trading for Solana"
-groups = ["local"]
+groups = ["dev"]
 dependencies = [
     "aiocache[redis]>=0.12.3",
-    "aiogram>=3.15.0",
     "aiohttp<3.11,>=3.9.0",
     "aiomysql>=0.2.0",
     "aioredis[hiredis]>=2.0.1",
@@ -2547,20 +2538,15 @@ dependencies = [
     "grpcio-health-checking>=1.68.1",
     "grpcio-tools>=1.68.1",
     "grpcio>=1.68.1",
-    "jinja2>=3.1.4",
+    "httpx>=0.28.0",
     "jupiter-python-sdk>=0.0.2.0",
-    "loguru>=0.7.2",
     "orjson>=3.10.11",
-    "protobuf>=5.29.0",
     "pydantic-settings-toml>=0.2.0",
     "pydantic-settings>=2.6.1",
-    "pymysql>=1.1.1",
-    "python-dotenv>=1.0.1",
     "sentry-sdk>=2.21.0",
     "solana-tx-parser>=0.0.1",
     "solana>=0.35.1",
     "solders>=0.21.0",
-    "sqlalchemy[asyncio]>=2.0.36",
     "sqlmodel>=0.0.22",
     "tomli>=2.1.0",
 ]
@@ -2572,7 +2558,7 @@ requires_python = "==3.10.*"
 editable = true
 path = "./app/wallet-tracker"
 summary = "Wallet tracking service for Solana Trading Bot"
-groups = ["local"]
+groups = ["dev"]
 
 [[package]]
 name = "solbot-yellowstone-grpc"
@@ -2595,7 +2581,7 @@ name = "solders"
 version = "0.21.0"
 requires_python = ">=3.7"
 summary = "Python bindings for Solana Rust tools"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "jsonalias==0.1.1",
     "typing-extensions>=4.2.0",
@@ -2628,7 +2614,7 @@ name = "sqlalchemy"
 version = "2.0.38"
 requires_python = ">=3.7"
 summary = "Database Abstraction Library"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "greenlet!=0.4.17; (platform_machine == \"win32\" or platform_machine == \"WIN32\" or platform_machine == \"AMD64\" or platform_machine == \"amd64\" or platform_machine == \"x86_64\" or platform_machine == \"ppc64le\" or platform_machine == \"aarch64\") and python_version < \"3.14\"",
     "importlib-metadata; python_version < \"3.8\"",
@@ -2653,7 +2639,7 @@ version = "2.0.38"
 extras = ["asyncio"]
 requires_python = ">=3.7"
 summary = "Database Abstraction Library"
-groups = ["default", "local"]
+groups = ["local"]
 dependencies = [
     "greenlet!=0.4.17",
     "sqlalchemy==2.0.38",
@@ -2676,7 +2662,7 @@ name = "sqlmodel"
 version = "0.0.22"
 requires_python = ">=3.7"
 summary = "SQLModel, SQL databases in Python, designed for simplicity, compatibility, and robustness."
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "SQLAlchemy<2.1.0,>=2.0.14",
     "pydantic<3.0.0,>=1.10.13",
@@ -2705,7 +2691,7 @@ files = [
 name = "sumtypes"
 version = "0.1a6"
 summary = "Algebraic types for Python (notably providing Sum Types, aka Tagged Unions)"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "attrs",
 ]
@@ -2749,7 +2735,7 @@ name = "toml"
 version = "0.10.2"
 requires_python = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 summary = "Python Library for Tom's Obvious, Minimal Language"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
     {file = "toml-0.10.2.tar.gz", hash = "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"},
@@ -2760,7 +2746,7 @@ name = "tomli"
 version = "2.2.1"
 requires_python = ">=3.8"
 summary = "A lil' TOML parser"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "tomli-2.2.1-py3-none-any.whl", hash = "sha256:cb55c73c5f4408779d0cf3eef9f762b9c9f147a77de7b258bef0a5628adc85cc"},
     {file = "tomli-2.2.1.tar.gz", hash = "sha256:cd45e1dc79c835ce60f7404ec8119f2eb06d38b1deba146f07ced3bbc44505ff"},
@@ -2771,7 +2757,7 @@ name = "toolz"
 version = "0.11.2"
 requires_python = ">=3.5"
 summary = "List processing tools and functional utilities"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "toolz-0.11.2-py3-none-any.whl", hash = "sha256:a5700ce83414c64514d82d60bcda8aabfde092d1c1a8663f9200c07fdcc6da8f"},
     {file = "toolz-0.11.2.tar.gz", hash = "sha256:6b312d5e15138552f1bda8a4e66c30e236c831b612b2bf0005f8a1df10a4bc33"},
@@ -2824,7 +2810,7 @@ name = "typing-extensions"
 version = "4.12.2"
 requires_python = ">=3.8"
 summary = "Backported and Experimental Type Hints for Python 3.8+"
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"},
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
@@ -2846,7 +2832,7 @@ name = "urllib3"
 version = "2.3.0"
 requires_python = ">=3.9"
 summary = "HTTP library with thread-safe connection pooling, file post, and more."
-groups = ["default", "dev", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "urllib3-2.3.0-py3-none-any.whl", hash = "sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df"},
     {file = "urllib3-2.3.0.tar.gz", hash = "sha256:f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d"},
@@ -2919,7 +2905,7 @@ name = "websockets"
 version = "10.4"
 requires_python = ">=3.7"
 summary = "An implementation of the WebSocket Protocol (RFC 6455 & 7692)"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 files = [
     {file = "websockets-10.4-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:d58804e996d7d2307173d56c297cf7bc132c52df27a3efaac5e8d43e36c21c48"},
     {file = "websockets-10.4-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:bc0b82d728fe21a0d03e65f81980abbbcb13b5387f733a1a870672c5be26edab"},
@@ -2951,7 +2937,7 @@ name = "win32-setctime"
 version = "1.2.0"
 requires_python = ">=3.5"
 summary = "A small Python utility to set file creation time on Windows"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 marker = "sys_platform == \"win32\""
 files = [
     {file = "win32_setctime-1.2.0-py3-none-any.whl", hash = "sha256:95d644c4e708aba81dc3704a116d8cbc974d70b3bdb8be1d150e36be6e9d1390"},
@@ -2963,7 +2949,7 @@ name = "yarl"
 version = "1.18.3"
 requires_python = ">=3.9"
 summary = "Yet another URL library"
-groups = ["default", "local"]
+groups = ["dev", "local"]
 dependencies = [
     "idna>=2.0",
     "multidict>=4.0",
