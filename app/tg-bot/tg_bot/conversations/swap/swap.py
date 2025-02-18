@@ -254,6 +254,8 @@ async def buy(callback: CallbackQuery, state: FSMContext):
             output_mint=token_info.mint,
             amount=int(from_amount * SOL_DECIMAL),
             swap_mode="ExactIn",
+            min_slippage_bps=setting.min_slippage,
+            max_slippage_bps=setting.max_slippage,
         )
         swap_event = SwapEvent(
             user_pubkey=wallet,
@@ -557,6 +559,8 @@ async def sell(callback: CallbackQuery, state: FSMContext):
             output_mint=WSOL.__str__(),
             amount=int(ui_amount * SOL_DECIMAL),
             swap_mode="ExactOut",
+            min_slippage_bps=setting.min_slippage,
+            max_slippage_bps=setting.max_slippage,
         )
         swap_event = SwapEvent(
             user_pubkey=wallet,

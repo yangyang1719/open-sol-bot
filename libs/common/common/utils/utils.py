@@ -1,16 +1,16 @@
+import asyncio
+from decimal import Decimal
 from functools import cache
 
+import aiohttp
+from common.layouts.mint_account import MintAccount
 from jupiter_python_sdk.jupiter import Jupiter
+from loguru import logger
 from solana.rpc.api import Client
 from solana.rpc.async_api import AsyncClient
 from solders.keypair import Keypair  # type: ignore
 from solders.pubkey import Pubkey  # type: ignore
 from spl.token.instructions import get_associated_token_address
-
-from common.layouts.mint_account import MintAccount
-from decimal import Decimal
-
-from loguru import logger
 
 
 def get_associated_bonding_curve(bonding_curve: Pubkey, mint: Pubkey) -> Pubkey:
@@ -113,29 +113,57 @@ async def get_token_balance(mint_account: Pubkey, client: AsyncClient) -> float 
     return resp.value.ui_amount
 
 
+# FIXME: jupiter 的报价 API 有请求频率的限制
+#  后续需要重构该函数为独立的模块，并使用令牌桶来限制请求频率
+#  每秒最多 1 次，每分钟最多 60 次，每小时最多 3600 次
+#  否则会报错：429 Too Many Requests
 async def calculate_auto_slippage(
     input_mint: str,
     output_mint: str,
     amount: int,
     swap_mode: str = "ExactIn",  # or "ExactOut"
+    min_slippage_bps: int = 250,
+    max_slippage_bps: int = 3000,
+    price_impact_multiplier: float = 1.5,
+    default_slippage_bps: int = 500,
 ) -> int:
     """计算自动滑点，返回 bps
 
     基于 price impact 动态计算滑点：
     1. price impact 是 0~1 的小数
     2. 基础滑点为 price impact * 100 的 1.5 倍（百分比）
-    3. 最小滑点为 0.5%（50 bps）
-    4. 最大滑点为 5%（500 bps）
+    3. 最小滑点为 250bps， 最大滑点为 3000bps
 
     Args:
         input_mint (str): 输入代币的 mint 地址
         output_mint (str): 输出代币的 mint 地址
         amount (int): 金额（以最小单位计）
+        min_slippage_bps (int): 最小滑点， 单位是 bps
+        max_slippage_bps (int): 最大滑点， 单位是 bps
         swap_mode (str, optional): 交易模式. Defaults to "ExactIn".
+        price_impact_multiplier (float, optional): price impact 的倍数. Defaults to 1.5.
+        default_slippage_bps (int, optional): 默认滑点. Defaults to 500.
+        max_retries (int, optional): 最大重试次数. Defaults to 3.
 
     Returns:
         int: 滑点（bps）
+
+    Raises:
+        ValueError: 参数验证失败时抛出
+        Exception: 其他错误时抛出
     """
+    if amount <= 0:
+        raise ValueError("Amount must be positive")
+    if min_slippage_bps >= max_slippage_bps:
+        raise ValueError("min_slippage_bps must be less than max_slippage_bps")
+    if swap_mode not in ["ExactIn", "ExactOut"]:
+        raise ValueError("Invalid swap_mode")
+
+    logger.info(
+        f"Calculating slippage for {amount} {input_mint} -> {output_mint}, "
+        f"mode: {swap_mode}, min: {min_slippage_bps} bps, max: {max_slippage_bps} bps"
+    )
+
     jupiter = get_jupiter_client()
     try:
         quote = await jupiter.quote(
@@ -150,18 +178,16 @@ async def calculate_auto_slippage(
         # 转换为百分比
         price_impact_pct = float(price_impact * 100)
 
-        # 基础滑点为 price impact 的 1.5 倍
-        slippage = price_impact_pct * 1.5
+        # 基础滑点为 price impact 的倍数
+        slippage = price_impact_pct * price_impact_multiplier
+        slippage = max(slippage, min_slippage_bps / 100)
+        slippage = min(slippage, max_slippage_bps / 100)
 
-        # 确保最小滑点为 2.5%
-        slippage = max(slippage, 2.5)
-        # 确保最大滑点为 30%
-        slippage = min(slippage, 30.0)
-
-        logger.info(f"Calculated slippage: {slippage}%")
+        logger.info(
+            f"Slippage calculation: price_impact={price_impact_pct}%, "
+            f"multiplier={price_impact_multiplier}, final_slippage={slippage}%"
+        )
         return int(slippage * 100)  # 转换为 bps
-
     except Exception as e:
-        logger.warning(f"Failed to get slippage: {e}")
-        # 出错时使用默认滑点 5%
-        return 500
+        logger.warning(f"Unexpected error while calculating slippage: {e}")
+        return default_slippage_bps

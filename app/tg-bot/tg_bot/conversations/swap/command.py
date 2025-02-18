@@ -88,8 +88,6 @@ async def swap_command(message: Message):
         )
         return
 
-    # TODO: validate token mint
-
     chat_id = message.from_user.id
     wallet = await user_service.get_pubkey(chat_id)
     setting = await setting_service.get(chat_id, wallet)
@@ -126,6 +124,8 @@ async def swap_command(message: Message):
             output_mint=output_mint,
             amount=from_amount,
             swap_mode=swap_mode,
+            min_slippage_bps=setting.min_slippage,
+            max_slippage_bps=setting.max_slippage,
         )
     else:
         slippage_bps = setting.quick_slippage
