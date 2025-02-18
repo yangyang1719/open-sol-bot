@@ -22,7 +22,11 @@ from tg_bot.conversations import (
 )
 from tg_bot.conversations.router import router
 from tg_bot.conversations.states import CopyTradeStates, MonitorStates, WalletStates
-from tg_bot.middlewares import AuthorizationMiddleware, DebugMiddleware
+from tg_bot.middlewares import (
+    AuthorizationMiddleware,
+    DebugMiddleware,
+    ErrorHandlerMiddleware,
+)
 from tg_bot.notify.notify import Notify
 
 
@@ -42,8 +46,10 @@ async def start_bot():
     # Register middleware
     dp.message.middleware(AuthorizationMiddleware())
     dp.message.middleware(DebugMiddleware())
+    dp.message.middleware(ErrorHandlerMiddleware())
     dp.callback_query.middleware(DebugMiddleware())
     dp.callback_query.middleware(AuthorizationMiddleware())
+    dp.callback_query.middleware(ErrorHandlerMiddleware())
 
     # Register handlers
     dp.message.register(home.start_command, Command("start"))
