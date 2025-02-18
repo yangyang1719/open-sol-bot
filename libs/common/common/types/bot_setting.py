@@ -9,7 +9,7 @@ class BotSetting:
     chat_id: int
     pk: int | None = None
     auto_slippage: bool = True
-    quick_slippage: int = 100  # 1%
+    quick_slippage: int = 1500  # 15%
     min_slippage: int = 250  # 2.5%
     max_slippage: int = 3000  # 30%
     sandwich_mode: bool = False
