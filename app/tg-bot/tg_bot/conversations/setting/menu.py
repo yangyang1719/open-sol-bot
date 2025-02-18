@@ -16,6 +16,7 @@ from tg_bot.utils import (
     get_setting_from_db,
     invalid_input_and_request_reinput,
 )
+from .template import SET_QUICK_SLIPPAGE_PROMPT, SET_SANDWICH_SLIPPAGE_PROMPT
 
 router = Router()
 
@@ -119,7 +120,7 @@ async def edit_quick_slippage(callback: CallbackQuery, state: FSMContext):
 
     # Send prompt message with force reply
     msg = await callback.message.answer(
-        "👋 请输入快速滑点:",
+        SET_QUICK_SLIPPAGE_PROMPT,
         parse_mode="HTML",
         reply_markup=ForceReply(),
     )
@@ -138,7 +139,15 @@ async def handle_quick_slippage(message: Message, state: FSMContext):
     if not message.text:
         return
 
-    slippage = int(message.text.strip())
+    try:
+        slippage = int(message.text.strip())
+    except ValueError:
+        return await invalid_input_and_request_reinput(
+            text="❌ 快速滑点必须是一个数字(0-100)，请重新输入：",
+            last_message=message,
+            state=state,
+        )
+
     if slippage <= 0 or slippage > 100:
         return await invalid_input_and_request_reinput(
             text="❌ 快速滑点必须在 0 到 100 之间，请重新输入：",
@@ -197,7 +206,7 @@ async def edit_sandwich_slippage(callback: CallbackQuery, state: FSMContext):
 
     # Send prompt message with force reply
     msg = await callback.message.answer(
-        "👋 请输入防夹滑点:",
+        SET_SANDWICH_SLIPPAGE_PROMPT,
         parse_mode="HTML",
         reply_markup=ForceReply(),
     )
@@ -216,7 +225,15 @@ async def handle_sandwich_slippage(message: Message, state: FSMContext):
     if not message.text:
         return
 
-    sandwich_slippage = int(message.text.strip())
+    try:
+        sandwich_slippage = int(message.text.strip())
+    except ValueError:
+        return await invalid_input_and_request_reinput(
+            text="❌ 防夹滑点必须是一个数字(0-100)，请重新输入：",
+            last_message=message,
+            state=state,
+        )
+
     if sandwich_slippage <= 0 or sandwich_slippage > 100:
         return await invalid_input_and_request_reinput(
             text="❌ 防夹滑点必须在 0 到 100 之间，请重新输入：",
