@@ -14,6 +14,9 @@ services:
       - ./config.toml:/app/config.toml:ro
       - ./app/wallet-tracker/wallet_tracker:/app/wallet_tracker:ro
       - ./logs/wallet-tracker:/app/logs
+    environment:
+      - PYTHONPATH=/app/libs:/app
+    command: ["wallet_tracker.main"]
     depends_on:
       base:
         condition: service_completed_successfully
@@ -34,7 +37,8 @@ services:
       - ./app/trading/trading:/app/trading:ro
       - ./logs/trading:/app/logs
     environment:
-      - PYTHONPATH=/app/libs
+      - PYTHONPATH=/app/libs:/app
+    command: ["trading.main"]
     depends_on:
       mysql:
         condition: service_healthy
@@ -52,6 +56,9 @@ services:
       - ./config.toml:/app/config.toml:ro
       - ./app/tg-bot/tg_bot:/app/tg_bot:ro
       - ./logs/tg-bot:/app/logs
+    environment:
+      - PYTHONPATH=/app/libs:/app
+    command: ["tg_bot.main"]
     depends_on:
       mysql:
         condition: service_healthy
