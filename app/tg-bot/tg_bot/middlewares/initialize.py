@@ -20,7 +20,8 @@ class InitializeMiddleware(BaseMiddleware):
                 logger.warning("Message from user is None")
                 return
             if event.text == "/start":
-                await handler(event, data)
+                logger.info("User {user_id} initialized")
+                return await handler(event, data)
             user_id = from_user.id
         elif isinstance(event, CallbackQuery):
             user_id = event.from_user.id
