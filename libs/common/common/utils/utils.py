@@ -1,16 +1,17 @@
-import asyncio
 from decimal import Decimal
 from functools import cache
 
-import aiohttp
-from common.layouts.mint_account import MintAccount
 from jupiter_python_sdk.jupiter import Jupiter
 from loguru import logger
 from solana.rpc.api import Client
 from solana.rpc.async_api import AsyncClient
 from solders.keypair import Keypair  # type: ignore
 from solders.pubkey import Pubkey  # type: ignore
+from solders.signature import Signature  # type: ignore
+from solders.transaction_status import TransactionConfirmationStatus  # type: ignore
 from spl.token.instructions import get_associated_token_address
+
+from common.layouts.mint_account import MintAccount
 
 
 def get_associated_bonding_curve(bonding_curve: Pubkey, mint: Pubkey) -> Pubkey:
@@ -45,6 +46,35 @@ def get_jupiter_client() -> Jupiter:
     rpc_client = get_async_client()
     jupiter = Jupiter(async_client=rpc_client, keypair=Keypair())
     return jupiter
+
+
+async def validate_transaction(
+    tx_hash: str | Signature, client: AsyncClient | None = None
+) -> bool | None:
+    """验证交易是否已经上链
+
+    Args:
+        tx_hash (str): 交易 hash
+        client (AsyncClient): Solana RPC 客户端
+
+    Returns:
+        Optional[bool]: None 表示未找到交易或者交易尚未上链，True 表示交易已上链，False 表示交易上链失败
+    """
+    if client is None:
+        client = get_async_client()
+    if isinstance(tx_hash, str):
+        tx_hash = Signature.from_string(tx_hash)
+    response = await client.get_signature_statuses(
+        [tx_hash], search_transaction_history=True
+    )
+    value = response.value[0]
+    if value is None:
+        return None
+    if value.confirmation_status == TransactionConfirmationStatus.Confirmed:
+        if value.err is not None:
+            return False
+        return True
+    return None
 
 
 async def get_mint_account(mint: Pubkey, client: AsyncClient) -> MintAccount | None:
