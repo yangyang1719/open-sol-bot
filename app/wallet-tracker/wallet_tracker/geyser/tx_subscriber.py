@@ -1,26 +1,29 @@
-import time
 import asyncio
 import signal
+import time
 from typing import AsyncGenerator, Sequence
-import base58
-from google.protobuf.json_format import _Printer  # type: ignore
-from google.protobuf.message import Message
-from grpc.aio import AioRpcError
-import orjson as json
 
 import aioredis
-from solders.pubkey import Pubkey  # type: ignore
+import base58
+import orjson as json
 from common.config import settings
 from common.log import logger
 from db.redis import RedisClient
-from yellowstone_grpc.grpc import geyser_pb2
-from google.protobuf.json_format import Parse
+from google.protobuf.json_format import (
+    Parse,
+    _Printer,  # type: ignore
+)
+from google.protobuf.message import Message
+from grpc.aio import AioRpcError
+from solders.pubkey import Pubkey  # type: ignore
 from yellowstone_grpc.client import GeyserClient
+from yellowstone_grpc.grpc import geyser_pb2
 from yellowstone_grpc.types import (
     SubscribeRequest,
     SubscribeRequestFilterTransactions,
     SubscribeRequestPing,
 )
+
 from wallet_tracker.constants import NEW_TX_DETAIL_CHANNEL
 
 
@@ -99,7 +102,6 @@ class TransactionDetailSubscriber:
                 self.geyser_client = await GeyserClient.connect(
                     self.endpoint, x_token=self.api_key
                 )
-                await self.geyser_client.health_check()
                 self.retry_count = 0  # Reset retry count on successful connection
                 logger.info("Successfully connected to Geyser service")
                 return
