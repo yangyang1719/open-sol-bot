@@ -10,6 +10,7 @@ from common.config import settings
 from common.prestart import pre_start
 from db.redis import RedisClient
 from loguru import logger
+
 from tg_bot.conversations import (
     admin,
     asset,
@@ -26,6 +27,7 @@ from tg_bot.middlewares import (
     AuthorizationMiddleware,
     DebugMiddleware,
     ErrorHandlerMiddleware,
+    InitializeMiddleware,
 )
 from tg_bot.notify.notify import Notify
 
@@ -43,13 +45,16 @@ async def start_bot():
     )
     dp = Dispatcher(storage=MemoryStorage())
 
-    # Register middleware
-    dp.message.middleware(AuthorizationMiddleware())
-    dp.message.middleware(DebugMiddleware())
-    dp.message.middleware(ErrorHandlerMiddleware())
-    dp.callback_query.middleware(DebugMiddleware())
-    dp.callback_query.middleware(AuthorizationMiddleware())
-    dp.callback_query.middleware(ErrorHandlerMiddleware())
+    # Register middlewares
+    middlewares = [
+        InitializeMiddleware,
+        AuthorizationMiddleware,
+        DebugMiddleware,
+        ErrorHandlerMiddleware,
+    ]
+    for middleware in middlewares:
+        dp.message.middleware(middleware())
+        dp.callback_query.middleware(middleware())
 
     # Register handlers
     dp.message.register(home.start_command, Command("start"))
