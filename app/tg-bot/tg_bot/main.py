@@ -71,7 +71,7 @@ async def start_bot():
     ]
     dp.message.register(
         swap.info_command,
-        F.text.regexp(r"^[a-zA-Z0-9]{44}$"),
+        F.text.regexp(r"^[a-zA-Z0-9]{43,44}$"),
         ~StateFilter(*excluded_states),
     )
     dp.message.register(

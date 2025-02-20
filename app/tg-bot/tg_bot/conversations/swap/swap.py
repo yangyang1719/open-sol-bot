@@ -30,7 +30,7 @@ user_service = UserService()
 token_info_cache = TokenInfoCache()
 
 
-TOKEN_MINT_PATTERN = re.compile(r"\.*[^(]+\([^)]+\)\n([1-9A-HJ-NP-Za-km-z]{44})")
+TOKEN_MINT_PATTERN = re.compile(r"\.*[^(]+\([^)]+\)\n([1-9A-HJ-NP-Za-km-z]{43,44})")
 
 
 def extract_token_mint_from_swap_menu(text: str) -> str | None:

@@ -71,6 +71,7 @@ async def _start(message: types.Message):
 
 
 async def start_asset(token_mint: str, message: types.Message, state: FSMContext):
+    logger.info(f"Starting asset {token_mint}")
     setting_service = SettingService()
     user_service = UserService()
     token_info_cache = TokenInfoCache()
