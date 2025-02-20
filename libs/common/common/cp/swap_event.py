@@ -8,6 +8,7 @@ from common.log import logger
 from common.types import SwapEvent
 
 SWAP_EVENT_CHANNEL = "swap_event:new"
+DEAD_LETTER_CHANNEL = "swap_event:dlq"
 MAX_PROCESS_TIME = 15  # s
 
 
@@ -107,6 +108,7 @@ class SwapEventConsumer:
                 for _, messages in pending:
                     for message_id, fields in messages:
                         try:
+                            logger.info(f"Processing pending message {message_id}")
                             await self._process_message(message_id, fields)
                         except Exception as e:
                             logger.error(
@@ -129,22 +131,49 @@ class SwapEventConsumer:
                     logger.warning(
                         f"Message {message_id} is too old, discard it. Timestamp: {timestamp}"
                     )
-                    await self.redis.xack(
-                        SWAP_EVENT_CHANNEL, self.consumer_group, message_id
-                    )
-                    return
-                if self.callback is not None:
+                elif self.callback is not None:
                     swap_event = SwapEvent.from_json(fields["data"])
                     await self.callback(swap_event)
+
                 # Acknowledge the message
                 await self.redis.xack(
                     SWAP_EVENT_CHANNEL, self.consumer_group, message_id
                 )
             except Exception as e:
                 logger.exception(f"Error processing message {message_id}: {e}")
+                await self._move_to_dead_letter(message_id, fields, str(e))
+
+    async def _move_to_dead_letter(
+        self, message_id: str, fields: dict, error: str
+    ) -> None:
+        """Move a message to the dead letter queue.
+
+        Args:
+            message_id: Original message ID
+            fields: Message fields
+            error: Error message
+        """
+        fields["original_id"] = message_id
+        fields["error"] = error
+        fields["moved_to_dlq_at"] = str(time.time())
+
+        try:
+            # Add to dead letter queue
+            await self.redis.xadd(DEAD_LETTER_CHANNEL, fields)
+            # Acknowledge the original message
+            await self.redis.xack(SWAP_EVENT_CHANNEL, self.consumer_group, message_id)
+            # Delete the message from original stream
+            await self.redis.xdel(SWAP_EVENT_CHANNEL, message_id)
+            logger.info(
+                f"Message {message_id} moved to dead letter queue and deleted from original stream"
+            )
+        except Exception as e:
+            logger.error(f"Error moving message {message_id} to dead letter queue: {e}")
+            raise
 
     def _create_task(self, message_id: str, fields: dict) -> None:
         """创建新的异步任务来处理消息"""
+        logger.info(f"Creating task for message {message_id}")
         task = asyncio.create_task(self._process_message(message_id, fields))
         self.task_pool.add(task)
         task.add_done_callback(self.task_pool.discard)
@@ -172,10 +201,12 @@ class SwapEventConsumer:
                     block=self.poll_timeout_ms,
                 )
 
-                if messages:
-                    for stream, stream_messages in messages:
-                        for message_id, fields in stream_messages:
-                            self._create_task(message_id, fields)
+                if messages is None:
+                    continue
+
+                for stream, stream_messages in messages:
+                    for message_id, fields in stream_messages:
+                        self._create_task(message_id, fields)
             except asyncio.CancelledError:
                 break
             except Exception as e:
