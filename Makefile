@@ -1,35 +1,50 @@
-.PHONY: install run test clean
+.PHONY: install build test clean dev-deps infra-up infra-down up down
 
-PYTHON := .venv/bin/python
-PIP := .venv/bin/pip
 DOCKER_EXEC := podman  # podman or docker
 
-up:
-	$(DOCKER_EXEC) compose up -d
+# 安装开发依赖
+dev-deps:
+	pdm install -G dev -G local
 
-down:
+# 基础设施服务
+infra-up:
+	$(DOCKER_EXEC) compose up -d mysql redis
+
+infra-down:
 	$(DOCKER_EXEC) compose down
 
-install:
-	$(PIP) install -e .
+# 主要安装命令
+install: dev-deps infra-up
+	@echo "🚀 项目初始化完成！"
+	@echo "💡 提示："
+	@echo "1. 使用 'make up' 启动所有服务"
+	@echo "2. 使用 'make down' 停止所有服务"
 
-mysql:
-	$(DOCKER_EXEC) run --restart=always --name mysql-db -e MYSQL_ROOT_PASSWORD=root -p 127.0.0.1:3306:3306 -v mysql-data:/var/lib/mysql -d docker.io/library/mysql
+# Docker 相关命令
+build:
+	$(DOCKER_EXEC) compose build
 
-redis:
-	$(DOCKER_EXEC) run --restart=always --name redis-db -p 127.0.0.1:6379:6379 -v redis-data:/data -d docker.io/library/redis redis-server --appendonly yes
+up:
+	$(DOCKER_EXEC) compose up -d --build
 
-bot:
-	pdm run python src/tg_bot/main.py
+down:
+	$(DOCKER_EXEC) compose down -v
 
-trading:
-	pdm run python src/trading/main.py
+# 清理
+clean:
+	find . -type d -name "__pycache__" -exec rm -r {} +
+	find . -type d -name "*.egg-info" -exec rm -r {} +
+	find . -type d -name ".pytest_cache" -exec rm -r {} +
+	find . -type d -name "__pycache__" -exec rm -r {} +
+	find . -type f -name "*.pyc" -delete
+	find . -type f -name "*.pyo" -delete
+	find . -type f -name "*.pyd" -delete
+	find . -type f -name ".coverage" -delete
+	find . -type d -name ".coverage*" -exec rm -r {} +
+	find . -type d -name "htmlcov" -exec rm -r {} +
+	find . -type d -name "dist" -exec rm -r {} +
+	find . -type d -name "build" -exec rm -r {} +
+	find . -type d -name ".eggs" -exec rm -r {} +
 
-wallet-tracker:
-	pdm run python src/wallet_tracker/main.py
-
-pump-monitor:
-	PYTHONPATH=$(PWD)/src $(PYTHON) src/pump_monitor/main.py
-
-cache:
-	pdm run python src/cache
+update-version:
+	python scripts/update-version.py
