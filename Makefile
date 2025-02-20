@@ -45,3 +45,6 @@ clean:
 	find . -type d -name "dist" -exec rm -r {} +
 	find . -type d -name "build" -exec rm -r {} +
 	find . -type d -name ".eggs" -exec rm -r {} +
+
+update-version:
+	python scripts/update-version.py
