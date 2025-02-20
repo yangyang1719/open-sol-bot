@@ -98,7 +98,9 @@ cp example.config.toml config.toml
 
 ## 🚀 使用说明
 
-使用 Docker 运行：
+Podman 请使用以下命令:
+
+启动：
 
 ```
 make up
@@ -109,6 +111,32 @@ make up
 ```
 make down
 ```
+
+<details><summary>Docker 请使用以下命令:</summary>
+<p>
+启动：
+
+```bash
+docker compose up -d
+```
+
+停止服务:
+
+```bash
+docker compose down
+```
+
+</p>
+</details>
+
+更新：
+
+```
+git pull
+podman/docker compose up -d --build
+```
+
+> 升级版本建议带上 `--build` 参数，这将重新构建容器
 
 详细部署文档：[https://github.com/mkdir700/open-sol-bot/wiki/Deployment](https://github.com/mkdir700/open-sol-bot/wiki/Deployment)
 
