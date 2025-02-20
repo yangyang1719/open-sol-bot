@@ -3,14 +3,14 @@ from datetime import datetime
 from aiogram import types
 from aiogram.enums import ParseMode
 from aiogram.fsm.context import FSMContext
-
 from cache.token_info import TokenInfoCache
 from common.config import settings
 from common.log import logger
+from services.bot_setting import BotSettingService as SettingService
+
 from tg_bot.conversations.swap.render import render as render_swap
 from tg_bot.keyboards.main_menu import main_menu_keyboard
 from tg_bot.services.activation import ActivationCodeService
-from services.bot_setting import BotSettingService as SettingService
 from tg_bot.services.user import UserService
 from tg_bot.templates import render_first_use_message
 from tg_bot.utils import generate_keypair
@@ -93,6 +93,7 @@ async def start_asset(token_mint: str, message: types.Message, state: FSMContext
         logger.info(f"No token info found for {token_mint}")
         await message.answer("❌ 无法查询到该代币信息")
         return
+    logger.info("New Found Token Info: {}".format(token_info))
 
     await state.update_data(setting=setting, token_info=token_info, wallet=wallet)
 
