@@ -98,7 +98,7 @@ cp example.config.toml config.toml
 
 ## 🚀 使用说明
 
-Podman 请使用以下命令:
+Podman 请使用以下命令：
 
 启动：
 
@@ -106,7 +106,7 @@ Podman 请使用以下命令:
 make up
 ```
 
-停止服务:
+停止服务：
 
 ```
 make down
@@ -120,7 +120,7 @@ make down
 docker compose up -d
 ```
 
-停止服务:
+停止服务：
 
 ```bash
 docker compose down
@@ -145,6 +145,10 @@ podman/docker compose up -d --build
 - 🔒 请确保配置文件中的私钥安全
 - 💡 建议先使用小额资金测试
 - 🌟 确保 RPC 节点的稳定性和可用性
+
+## 🤝 如何贡献
+
+我们非常欢迎您对本项目做出贡献！如果您想参与项目开发，请先阅读我们的[贡献指南](CONTRIBUTING.md)。
 
 ## 🙏 特别致谢
 
