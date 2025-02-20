@@ -8,13 +8,13 @@ from aiogram.types import CallbackQuery, ForceReply, Message
 from cache import TokenInfoCache
 from common.constants import SOL_DECIMAL, WSOL
 from common.cp.swap_event import SwapEventProducer
-from common.models import TokenInfo
 from common.types.bot_setting import BotSetting as Setting
 from common.types.swap import SwapEvent
 from common.utils import calculate_auto_slippage
 from db.redis import RedisClient
 from loguru import logger
 from services.bot_setting import BotSettingService as SettingService
+
 from tg_bot.conversations.setting.menu import setting_menu
 from tg_bot.conversations.states import SwapStates
 from tg_bot.services.user import UserService
@@ -28,6 +28,25 @@ router = Router()
 setting_service = SettingService()
 user_service = UserService()
 token_info_cache = TokenInfoCache()
+
+
+TOKEN_MINT_PATTERN = re.compile(r"\.*[^(]+\([^)]+\)\n([1-9A-HJ-NP-Za-km-z]{44})")
+
+
+def extract_token_mint_from_swap_menu(text: str) -> str | None:
+    """Extract token mint from swap menu text
+
+    Args:
+        text (str): Swap menu text
+
+    Returns:
+        str | None: Token mint
+
+    """
+    match = TOKEN_MINT_PATTERN.search(text)
+    if match:
+        return match.group(1)
+    return None
 
 
 @router.callback_query(F.data == "swap")
@@ -142,7 +161,12 @@ async def toggle_quick_mode(callback: CallbackQuery, state: FSMContext):
         setting.sandwich_mode = False
 
     data = await state.get_data()
-    token_info = cast(TokenInfo, data.get("token_info"))
+    text = callback.message.text
+    token_mint = extract_token_mint_from_swap_menu(text)
+    if token_mint is None:
+        raise ValueError("Token mint not found in message text")
+
+    token_info = await token_info_cache.get(token_mint)
     if token_info is None:
         raise ValueError("Token info not found in state")
 
@@ -173,7 +197,12 @@ async def toggle_sandwich_mode(callback: CallbackQuery, state: FSMContext):
         setting.auto_slippage = False
 
     data = await state.get_data()
-    token_info = cast(TokenInfo, data.get("token_info"))
+    text = callback.message.text
+    token_mint = extract_token_mint_from_swap_menu(text)
+    if token_mint is None:
+        raise ValueError("Token mint not found in message text")
+
+    token_info = await token_info_cache.get(token_mint)
     if token_info is None:
         raise ValueError("Token info not found in state")
 
@@ -213,9 +242,7 @@ async def buy(callback: CallbackQuery, state: FSMContext):
     token_mint = match.group(2)
     data = await state.get_data()
 
-    token_info = cast(TokenInfo, data.get("token_info"))
-    if token_info is None:
-        token_info = await token_info_cache.get(token_mint)
+    token_info = await token_info_cache.get(token_mint)
     if token_info is None:
         logger.info(f"No token info found for {token_mint}")
         await callback.answer("❌ 无法查询到该代币信息")
@@ -319,9 +346,7 @@ async def start_buyx(callback: CallbackQuery, state: FSMContext):
     token_mint = match.group(1)
     data = await state.get_data()
 
-    token_info = cast(TokenInfo, data.get("token_info"))
-    if token_info is None:
-        token_info = await token_info_cache.get(token_mint)
+    token_info = await token_info_cache.get(token_mint)
     if token_info is None:
         logger.info(f"No token info found for {token_mint}")
         await callback.answer("❌ 无法查询到该代币信息")
@@ -344,7 +369,7 @@ async def start_buyx(callback: CallbackQuery, state: FSMContext):
         original_message_id=callback.message.message_id,
         original_chat_id=callback.message.chat.id,
         setting=setting,
-        token_info=token_info,
+        token_mint=token_mint,
         wallet=wallet,
     )
 
@@ -396,7 +421,11 @@ async def handle_buyx(message: Message, state: FSMContext):
     if setting is None:
         raise ValueError("Setting not found")
 
-    token_info = cast(TokenInfo, data.get("token_info"))
+    token_mint = cast(str, data.get("token_mint"))
+    if token_mint is None:
+        raise ValueError("Token mint not found in state")
+
+    token_info = await token_info_cache.get(token_mint)
     if token_info is None:
         message.answer("❌ 等待自定义购买金额超时，请重新点击买入按钮")
         return
@@ -501,9 +530,7 @@ async def sell(callback: CallbackQuery, state: FSMContext):
     # 将百分比转换为小数
     sell_pct = sell_pct / 100
 
-    token_info = cast(TokenInfo, data.get("token_info"))
-    if token_info is None:
-        token_info = await token_info_cache.get(token_mint)
+    token_info = await token_info_cache.get(token_mint)
     if token_info is None:
         logger.info(f"No token info found for {token_mint}")
         await callback.answer("❌ 无法查询到该代币信息")
@@ -623,9 +650,7 @@ async def start_sellx(callback: CallbackQuery, state: FSMContext):
     token_mint = match.group(1)
     data = await state.get_data()
 
-    token_info = cast(TokenInfo, data.get("token_info"))
-    if token_info is None:
-        token_info = await token_info_cache.get(token_mint)
+    token_info = await token_info_cache.get(token_mint)
     if token_info is None:
         logger.info(f"No token info found for {token_mint}")
         await callback.answer("❌ 无法查询到该代币信息")
@@ -648,7 +673,7 @@ async def start_sellx(callback: CallbackQuery, state: FSMContext):
         original_message_id=callback.message.message_id,
         original_chat_id=callback.message.chat.id,
         setting=setting,
-        token_info=token_info,
+        token_mint=token_mint,
         wallet=wallet,
     )
 
@@ -694,9 +719,7 @@ async def handle_sellx(message: Message, state: FSMContext):
     sell_pct = sell_pct / 100
     data = await state.get_data()
     token_mint = cast(str, data.get("token_mint"))
-    token_info = cast(TokenInfo, data.get("token_info"))
-    if token_info is None:
-        token_info = await token_info_cache.get(token_mint)
+    token_info = await token_info_cache.get(token_mint)
     if token_info is None:
         logger.info(f"No token info found for {token_mint}")
         await message.answer("❌ 无法查询到该代币信息")
