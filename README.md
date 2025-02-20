@@ -116,7 +116,7 @@ make down
 启动：
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
 停止服务：
