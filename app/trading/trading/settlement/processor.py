@@ -5,16 +5,13 @@
 
 import asyncio
 
-from solders.signature import Signature  # type: ignore
-
-from cache import BlockhashCache
 from common.constants import SOL_DECIMAL
 from common.log import logger
 from common.models.swap_record import SwapRecord, TransactionStatus
 from common.types.swap import SwapEvent
-from common.utils.gmgn import GmgnAPI
+from common.utils.utils import validate_transaction
 from db.session import NEW_ASYNC_SESSION, provide_session
-from db.redis import RedisClient
+from solders.signature import Signature  # type: ignore
 
 from .analyzer import TransactionAnalyzer
 
@@ -26,7 +23,6 @@ class SwapSettlementProcessor:
     """
 
     def __init__(self):
-        self.gmgn_api = GmgnAPI()
         self.analyzer = TransactionAnalyzer()
 
     @provide_session
@@ -66,26 +62,21 @@ class SwapSettlementProcessor:
         Returns:
             Coroutine[None, None, TransactionStatus | None]: 协程
         """
+        tx_status = None
         for _ in range(60):
-            _, last_valid_block_height = await BlockhashCache.get(
-                RedisClient.get_instance()
-            )
             try:
-                tx_status = await self.gmgn_api.get_transaction_status(
-                    str(tx_hash), last_valid_block_height
-                )
+                tx_status = await validate_transaction(tx_hash)
             except Exception as e:
                 logger.error(f"Failed to get transaction status: {e}")
+                await asyncio.sleep(1)
                 continue
 
-            if tx_status["success"] is True:
+            if tx_status is True:
                 return TransactionStatus.SUCCESS
-            elif tx_status["failed"] is True:
+            elif tx_status is False:
                 return TransactionStatus.FAILED
-            if tx_status["expired"] is True:
-                return TransactionStatus.EXPIRED
             await asyncio.sleep(1)
-        return None
+        return TransactionStatus.EXPIRED
 
     async def process(
         self, signature: Signature | None, swap_event: SwapEvent
