@@ -1,5 +1,6 @@
-from solders.pubkey import Pubkey  # type: ignore
 from common.utils.utils import get_async_client
+from solders.pubkey import Pubkey  # type: ignore
+
 from .cached import cached
 
 
@@ -33,9 +34,8 @@ class LaunchCache:
         Raises:
             BondingCurveNotFound: 如果找不到对应的 bonding curve 账户
         """
-        from trading.utils import get_bonding_curve_account
-        from trading.exceptions import BondingCurveNotFound
         from common.constants import PUMP_FUN_PROGRAM
+        from trading.utils import get_bonding_curve_account
 
         result = await get_bonding_curve_account(
             self.client,
@@ -43,6 +43,6 @@ class LaunchCache:
             PUMP_FUN_PROGRAM,
         )
         if result is None:
-            raise BondingCurveNotFound("bonding curve account not found")
+            return False
         _, _, bonding_curve_account = result
         return bonding_curve_account.virtual_sol_reserves == 0
