@@ -25,7 +25,7 @@ build:
 	$(DOCKER_EXEC) compose build
 
 up:
-	$(DOCKER_EXEC) compose up -d --build
+	$(DOCKER_EXEC) compose up -d
 
 down:
 	$(DOCKER_EXEC) compose down -v

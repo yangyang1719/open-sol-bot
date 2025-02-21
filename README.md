@@ -42,7 +42,7 @@
 </details>
 
 > 💬 交流群组: [https://t.me/chainbuff](https://t.me/chainbuff)
-> 
+>
 > ⚠️ **警告**：此机器人仅供测试体验使用
 >
 > - ❌ 请勿导入个人钱包
@@ -116,7 +116,7 @@ make down
 启动：
 
 ```bash
-docker compose up -d --build
+docker compose up -d
 ```
 
 停止服务：
