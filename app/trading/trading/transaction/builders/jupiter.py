@@ -68,11 +68,11 @@ class JupiterTransactionBuilder(TransactionBuilder):
         swap_tx_response = await self.jupiter_client.get_swap_transaction(
             input_mint=token_in,
             output_mint=token_out,
-            user_pubkey=str(keypair.pubkey()),
+            user_publickey=str(keypair.pubkey()),
             amount=amount,
             slippage_bps=slippage_bps,
             use_jito=use_jito,
-            jito_tip_lamports=priority_fee * SOL_DECIMAL if priority_fee else None,
+            jito_tip_lamports=int(priority_fee * SOL_DECIMAL) if priority_fee else None,
         )
         swap_tx = swap_tx_response["swapTransaction"]
         signed_tx = await sign_transaction_from_raw(swap_tx, keypair)
