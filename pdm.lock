@@ -5,7 +5,7 @@
 groups = ["default", "dev", "local"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:877014579a461df2f2311c24f3007b5e5b094077853ea2c37aa27d6e8b1e4062"
+content_hash = "sha256:401e85910eb66ac3731bb9ff9f702b7d33250db86572cb8f0b27f18d7e75a8b4"
 
 [[metadata.targets]]
 requires_python = "==3.10.14"
@@ -2520,6 +2520,16 @@ dependencies = [
     "sqlmodel>=0.0.22",
     "tomli>=2.1.0",
 ]
+
+[[package]]
+name = "solbot-cache-preloader"
+version = "0.1.0"
+requires_python = "==3.10.*"
+editable = true
+path = "./app/cache-preloader"
+summary = "Cache preloading service for Solana Trading Bot"
+groups = ["dev"]
+marker = "python_full_version == \"3.10.14\""
 
 [[package]]
 name = "solbot-common"

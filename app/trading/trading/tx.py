@@ -1,19 +1,22 @@
 import base64
 import time
 
+from cache import get_latest_blockhash
+from common.config import settings
+from common.constants import SOL_DECIMAL
+from common.log import logger
 from solana.rpc.async_api import AsyncClient
-from solders.compute_budget import set_compute_unit_limit, set_compute_unit_price  # type: ignore
+from solders.compute_budget import (  # type: ignore
+    set_compute_unit_limit,
+    set_compute_unit_price,
+)
 from solders.keypair import Keypair  # type: ignore
 from solders.message import MessageV0  # type: ignore
-from solders.signature import Signature  # type: ignore
-from solders.transaction import VersionedTransaction  # type: ignore
-from solders.system_program import transfer, TransferParams
 from solders.pubkey import Pubkey  # type: ignore
-from common.constants import SOL_DECIMAL
+from solders.signature import Signature  # type: ignore
+from solders.system_program import TransferParams, transfer
+from solders.transaction import VersionedTransaction  # type: ignore
 
-from cache import BlockhashCache
-from common.config import settings
-from common.log import logger
 from trading.utils import calc_tx_units, calc_tx_units_and_split_fees
 
 
@@ -87,7 +90,7 @@ async def build_transaction(
     instructions.insert(1, set_compute_unit_price(unit_price))
 
     # init tx
-    recent_blockhash, _ = await BlockhashCache.get()
+    recent_blockhash, _ = await get_latest_blockhash()
 
     message = MessageV0.try_compile(
         payer=keypair.pubkey(),
@@ -111,7 +114,7 @@ async def new_signed_and_send_transaction(
         instructions.insert(1, set_compute_unit_price(settings.trading.unit_price))
 
     # init tx
-    recent_blockhash, _ = await BlockhashCache.get()
+    recent_blockhash, _ = await get_latest_blockhash()
 
     message = MessageV0.try_compile(
         payer=keypair.pubkey(),

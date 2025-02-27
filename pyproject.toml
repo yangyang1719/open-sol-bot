@@ -30,7 +30,8 @@ dev = [
     "py==1.10.0",
     "-e solbot-trading @ file:///${PROJECT_ROOT}/app/trading",
     "-e solbot-wallet-tracker @ file:///${PROJECT_ROOT}/app/wallet-tracker",
-    "-e solbot-tgbot @ file:///${PROJECT_ROOT}/app/tg-bot"
+    "-e solbot-tgbot @ file:///${PROJECT_ROOT}/app/tg-bot",
+    "-e solbot-cache-preloader @ file:///${PROJECT_ROOT}/app/cache-preloader",
 ]
 
 [tool.pytest.ini_options]

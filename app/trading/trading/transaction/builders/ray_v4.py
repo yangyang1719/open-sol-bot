@@ -1,39 +1,7 @@
-import base64
-import os
-
-from loguru import logger
-from solana.rpc.async_api import AsyncClient
-from solana.rpc.commitment import Processed
-from solana.rpc.types import TokenAccountOpts, TxOpts
 from solders.instruction import Instruction  # type: ignore[reportMissingModuleSource]
 from solders.keypair import Keypair  # type: ignore[reportMissingModuleSource]
-from solders.pubkey import Pubkey  # type: ignore[reportMissingModuleSource]
-from solders.rpc.responses import RpcSimulateTransactionResult  # type: ignore
-from solders.signature import Signature  # type: ignore[reportMissingModuleSource]
-from solders.system_program import (  # type: ignore[reportMissingModuleSource]
-    CreateAccountWithSeedParams,
-    create_account_with_seed,
-)
 from solders.transaction import VersionedTransaction  # type: ignore
-from spl.token.instructions import (
-    CloseAccountParams,
-    InitializeAccountParams,
-    close_account,
-    create_associated_token_account,
-    get_associated_token_address,
-    initialize_account,
-)
 
-from cache import MinBalanceRentCache
-from cache.auto.raydium_pool import get_preferred_pool
-from common.config import settings
-from common.constants import ACCOUNT_LAYOUT_LEN, SOL_DECIMAL, TOKEN_PROGRAM_ID, WSOL
-from common.utils.pool import (
-    AmmV4PoolKeys,
-    get_amm_v4_reserves,
-    make_amm_v4_swap_instruction,
-)
-from common.utils.utils import get_token_balance
 from trading.swap import SwapDirection, SwapInType
 from trading.tx import build_transaction
 

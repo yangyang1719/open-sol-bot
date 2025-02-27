@@ -1,28 +1,57 @@
-import asyncio
 import base64
 from typing import TypedDict, cast
 
 import aioredis
 import orjson as json
-from solana.rpc import commitment
-from solana.rpc.async_api import AsyncClient
-from solana.rpc.websocket_api import connect
-from solders.pubkey import Pubkey
-from solders.rpc.responses import ProgramNotification
-from sqlmodel import select
-from websockets.exceptions import ConnectionClosedError, ConnectionClosedOK
-
-from cache.auto.base import AutoUpdateCacheProtocol
-from common.config import settings
-from common.constants import RAY_V4, WSOL
-from common.layouts.amm_v4 import LIQUIDITY_STATE_LAYOUT_V4
+from common.constants import WSOL
 from common.log import logger
-from common.models.raydium_pool import RaydiumPoolModel
-from common.utils.pool import AmmV4PoolKeys
+from common.models import RaydiumPoolModel
+from common.utils.pool import AmmV4PoolKeys, fetch_pool_data_from_rpc
 from common.utils.raydium import RaydiumAPI
 from common.utils.utils import get_async_client
 from db.redis import RedisClient
 from db.session import NEW_ASYNC_SESSION, provide_session, start_async_session
+from solders.pubkey import Pubkey  # type: ignore
+from sqlmodel import select
+
+
+class AMMData(TypedDict):
+    pool_id: Pubkey
+    amm_data: bytes
+    market_data: bytes
+
+
+class MintPoolDataCache:
+    def __init__(self, redis: aioredis.Redis, max_expiration: int = 60 * 60 * 24 * 7):
+        self.redis = redis
+        self._prefix = "raydium_pool:pool_data"
+        # 最多缓存 5000 个池子的信息
+        self.max_expiration = max_expiration
+
+    async def set(self, pool_id: str, pool_data: AMMData):
+        encoded = {
+            "pool_id": str(pool_data["pool_id"]),
+            "amm_data": base64.b64encode(pool_data["amm_data"]).decode("utf-8"),
+            "market_data": base64.b64encode(pool_data["market_data"]).decode("utf-8"),
+        }
+        await self.redis.set(
+            f"{self._prefix}:{pool_id}",
+            json.dumps(encoded),
+            ex=self.max_expiration,
+        )
+
+    async def get(self, pool_id: str) -> AMMData | None:
+        text = await self.redis.get(f"{self._prefix}:{pool_id}")
+        if text is None:
+            return None
+        data = json.loads(text)
+        data["pool_id"] = Pubkey.from_string(data["pool_id"])
+        data["amm_data"] = base64.b64decode(data["amm_data"])
+        data["market_data"] = base64.b64decode(data["market_data"])
+        return data
+
+    async def delete(self, pool_id: str):
+        await self.redis.delete(f"{self._prefix}:{pool_id}")
 
 
 class MintPoolPriorityQueue:
@@ -111,7 +140,7 @@ class MintPoolPriorityQueue:
             withscores=True,
         )
         if result:
-            pool_id, score = result[0]  # 返回 (pool_id, score) 元组
+            pool_id, _ = result[0]  # 返回 (pool_id, score) 元组
             # 增加使用次数
             await self.redis.zincrby(f"{self._prefix}:{mint}", 1, pool_id)
             return pool_id
@@ -131,164 +160,6 @@ class MintPoolPriorityQueue:
                 0,  # 从低优先级开始删除
                 current_length - self.max_length - 1,
             )
-
-
-class AMMData(TypedDict):
-    pool_id: Pubkey
-    amm_data: bytes
-    market_data: bytes
-
-
-class MintPoolDataCache:
-    def __init__(self, redis: aioredis.Redis, max_expiration: int = 60 * 60 * 24 * 7):
-        self.redis = redis
-        self._prefix = "raydium_pool:pool_data"
-        # 最多缓存 5000 个池子的信息
-        self.max_expiration = max_expiration
-
-    async def set(self, pool_id: str, pool_data: AMMData):
-        encoded = {
-            "pool_id": str(pool_data["pool_id"]),
-            "amm_data": base64.b64encode(pool_data["amm_data"]).decode("utf-8"),
-            "market_data": base64.b64encode(pool_data["market_data"]).decode("utf-8"),
-        }
-        await self.redis.set(
-            f"{self._prefix}:{pool_id}",
-            json.dumps(encoded),
-            ex=self.max_expiration,
-        )
-
-    async def get(self, pool_id: str) -> AMMData | None:
-        text = await self.redis.get(f"{self._prefix}:{pool_id}")
-        if text is None:
-            return None
-        data = json.loads(text)
-        data["pool_id"] = Pubkey.from_string(data["pool_id"])
-        data["amm_data"] = base64.b64decode(data["amm_data"])
-        data["market_data"] = base64.b64decode(data["market_data"])
-        return data
-
-    async def delete(self, pool_id: str):
-        await self.redis.delete(f"{self._prefix}:{pool_id}")
-
-
-class RaydiumPoolCache(AutoUpdateCacheProtocol):
-    def __init__(
-        self,
-        rpc_endpoint: str,
-        redis: aioredis.Redis,
-        max_concurrent_tasks: int = 10,
-    ):
-        self.rpc_client = get_async_client()
-        self.websocket_url = rpc_endpoint.replace("https://", "wss://")
-        self.storeage = RaydiumPoolStoreage(redis)
-        # 添加信号量来限制并发任务数
-        self._semaphore = asyncio.Semaphore(max_concurrent_tasks)
-        # 用于追踪正在运行的任务
-        self._running_tasks: set[asyncio.Task] = set()
-        # 是否处于等待其他任务完成的标志
-        self._waiting_for_tasks = False
-
-    async def _process_message(self, message: ProgramNotification):
-        """使用信号量包装消息处理函数"""
-        try:
-            async with self._semaphore:
-                await self._handle_message(message)
-        except Exception as e:
-            logger.error(f"Error processing message: {e}")
-            logger.exception(e)
-        finally:
-            # 从正在运行的任务集合中移除当前任务
-            current_task = asyncio.current_task()
-            if current_task:
-                self._running_tasks.discard(current_task)
-
-    async def _handle_message(self, message: ProgramNotification):
-        pool_id = message.result.value.pubkey
-        is_exists = await self.storeage.is_exist(pool_id)
-        if is_exists:
-            logger.debug(f"Pool data already exists: {pool_id}")
-            return
-
-        try:
-            pool_data = await fetch_pool_data_from_rpc(pool_id, self.rpc_client)
-        except Exception as e:
-            logger.exception(f"Error fetching market data: {e}")
-            return
-
-        if pool_data is None:
-            logger.error(f"Failed to fetch pool data for pool_id: {pool_id}")
-            return
-
-        await self.storeage.update(pool_id, pool_data)
-
-    async def start(self):
-        try:
-            async with connect(
-                self.websocket_url,
-                ping_timeout=30,
-                ping_interval=20,
-                close_timeout=20,
-            ) as websocket:
-                self.websocket = websocket
-                await self.websocket.program_subscribe(
-                    program_id=RAY_V4,
-                    commitment=commitment.Confirmed,
-                    encoding="jsonParsed",
-                    filters=[LIQUIDITY_STATE_LAYOUT_V4.sizeof()],
-                )
-
-                while True:
-                    try:
-                        messages = await websocket.recv()
-                        for message in messages:
-                            if not isinstance(message, ProgramNotification):
-                                continue
-                            # 创建新任务并追踪它
-                            task = asyncio.create_task(self._process_message(message))
-                            self._running_tasks.add(task)
-                            logger.debug(f"Current tasks: {len(self._running_tasks)}")
-                    except (ConnectionClosedError, ConnectionClosedOK) as ws_error:
-                        logger.warning(f"WebSocket connection closed: {ws_error}")
-                        break
-                    except Exception as e:
-                        logger.error(f"Error processing message: {e}")
-                        logger.exception(e)
-                        break
-        except Exception as e:
-            logger.error(f"Error in start: {e}")
-        finally:
-            await self.stop()
-
-    async def stop(self):
-        """停止所有正在运行的任务"""
-        logger.info("Stopping RaydiumPoolCache...")
-
-        if hasattr(self, "websocket"):
-            await self.websocket.close()
-
-        logger.info("RaydiumPoolCache Websocket closed")
-
-        if hasattr(self, "_running_tasks"):
-            if self._waiting_for_tasks is True and len(self._running_tasks) != 0:
-                # Force all tasks to complete
-                for task in self._running_tasks:
-                    task.cancel()
-            else:
-                self._waiting_for_tasks = True
-                logger.info(
-                    "Waiting for {} tasks to complete...".format(
-                        len(self._running_tasks)
-                    ),
-                )
-                # 等待所有正在运行的任务完成
-                if self._running_tasks:
-                    await asyncio.gather(*self._running_tasks, return_exceptions=True)
-
-            self._running_tasks.clear()
-
-    def is_running(self):
-        return len(self._running_tasks) > 0
 
 
 class RaydiumPoolStoreage:
@@ -373,35 +244,6 @@ class RaydiumPoolStoreage:
         logger.info(f"Pool data updated: {pool_id}")
 
 
-async def fetch_pool_data_from_rpc(
-    pool_id: Pubkey, rpc_client: AsyncClient
-) -> AMMData | None:
-    """从 rpc 获取池子信息"""
-    resp = await rpc_client.get_account_info_json_parsed(
-        pool_id, commitment=commitment.Processed
-    )
-    if resp.value is None:
-        return None
-    amm_data = bytes(resp.value.data)
-    amm_data_decoded = LIQUIDITY_STATE_LAYOUT_V4.parse(amm_data)
-    market_id = Pubkey.from_bytes(amm_data_decoded.serumMarket)
-
-    resp = await rpc_client.get_account_info_json_parsed(
-        market_id, commitment=commitment.Processed
-    )
-    if resp.value is None:
-        logger.error(f"Failed to fetch market data: {market_id}， pool_id: {pool_id}")
-        return None
-
-    market_data = bytes(resp.value.data)
-
-    return {
-        "pool_id": pool_id,
-        "amm_data": amm_data,
-        "market_data": market_data,
-    }
-
-
 async def get_preferred_pool(mint: Pubkey | str) -> AMMData | None:
     """获取 mint 优先级最高的池子"""
     redis = RedisClient.get_instance()
@@ -435,20 +277,3 @@ async def get_preferred_pool(mint: Pubkey | str) -> AMMData | None:
         logger.info(f"No pool found for mint: {mint}, fetching from rpc")
         pool_data = await _get_pool_data_from_rpc(mint_str)
     return pool_data
-
-
-if __name__ == "__main__":
-    from db.redis import RedisClient
-
-    async def main():
-        redis = RedisClient.get_instance()
-        pool = RaydiumPoolCache(settings.rpc.rpc_url, redis)
-
-        try:
-            await pool.start()
-        except KeyboardInterrupt:
-            logger.info("Received keyboard interrupt, shutting down...")
-        finally:
-            await pool.stop()
-
-    asyncio.run(main())

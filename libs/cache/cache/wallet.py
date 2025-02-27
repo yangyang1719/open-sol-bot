@@ -1,7 +1,6 @@
-from solders.pubkey import Pubkey  # type: ignore
-
 from common.config import settings
 from common.utils.shyft import ShyftAPI
+from solders.pubkey import Pubkey  # type: ignore
 
 from .cached import cached
 

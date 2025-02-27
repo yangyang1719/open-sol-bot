@@ -1,4 +1,24 @@
 services:
+  cache-preloader:
+    build:
+      context: .
+      dockerfile: app/cache-preloader/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./config.toml:/app/config.toml:ro
+      - ./app/cache-preloader/cache_preloader:/app/cache_preloader:ro
+      - ./logs/cache-preloader:/app/logs
+    environment:
+      - PYTHONPATH=/app/libs:/app
+    command: ["cache_preloader.main"]
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - backend
+
   wallet-tracker:
     build:
       context: .

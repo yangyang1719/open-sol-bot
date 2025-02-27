@@ -1,16 +1,14 @@
-import asyncio
 from asyncio import Queue
-
-from solders.pubkey import Pubkey  # type: ignore
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import select
-from typing_extensions import Self
 
 from common.layouts.mint_account import MintAccount
 from common.log import logger
 from common.models import MintAccount as ModelMintAccount
 from common.utils import get_async_client
 from db.session import NEW_ASYNC_SESSION, provide_session, start_async_session
+from solders.pubkey import Pubkey  # type: ignore
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
+from typing_extensions import Self
 
 
 class MintAccountBackgoundWriter:
