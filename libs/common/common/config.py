@@ -78,6 +78,7 @@ class TomlConfigSettingsSource(PydanticBaseSettingsSource):
 class TomlSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file_encoding="utf-8",
+        env_nested_delimiter="__",
     )
 
     @classmethod
@@ -91,6 +92,7 @@ class TomlSettings(BaseSettings):
     ) -> tuple[PydanticBaseSettingsSource, ...]:
         return (
             init_settings,
+            env_settings,
             TomlConfigSettingsSource(settings_cls, dotenv_settings),
         )
 
@@ -239,6 +241,7 @@ class Settings(TomlSettings):
     model_config = SettingsConfigDict(
         env_file_encoding="utf-8",
         env_file=os.environ.get("ENV_FILE", "config.toml"),
+        env_nested_delimiter="__",
     )
 
     wallet: WalletConfig

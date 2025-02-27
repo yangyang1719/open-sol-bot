@@ -1,20 +1,16 @@
-from collections.abc import Generator
-from typing import AsyncGenerator, cast, ParamSpec, TypeVar, TypedDict
-from sqlalchemy import Engine, text, exc
-from sqlmodel import SQLModel, Session, create_engine
 import contextlib
-from urllib.parse import urlparse
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-    async_sessionmaker,
-    create_async_engine,
-)
 import functools
+from collections.abc import Generator
 from inspect import iscoroutinefunction
+from typing import AsyncGenerator, ParamSpec, TypedDict, TypeVar, cast
+from urllib.parse import urlparse
 
 from common.config import settings
 from common.log import logger
 from common.models import *  # noqa: F403
+from sqlalchemy import Engine, exc, text
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlmodel import Session, SQLModel, create_engine
 
 # 创建全局引擎实例
 engine = create_engine(
