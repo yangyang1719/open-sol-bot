@@ -1,26 +1,44 @@
 [project]
 name = "open-sol-bot"
 version = "0.1.9"
-description = "Default template for PDM package"
+description = "Open Solana Trading Bot"
 authors = [
     { name = "mkdir700", email = "mkdir700@gmail.com" },
 ]
-dependencies = []
 requires-python = "==3.10.*"
 readme = "README.md"
-license = { text = "MIT" }
-
-[tool.pdm]
-distribution = false
-
-[tool.pdm.dev-dependencies]
-local = [
-    "-e solbot-cache @ file:///${PROJECT_ROOT}/libs/cache",
-    "-e solbot-db @ file:///${PROJECT_ROOT}/libs/db",
-    "-e solbot-services @ file:///${PROJECT_ROOT}/libs/services",
-    "-e solbot-common @ file:///${PROJECT_ROOT}/libs/common",
-    "-e solbot-yellowstone-grpc @ file:///${PROJECT_ROOT}/libs/yellowstone_grpc",
+license = { text = "Apache-2.0" }
+dependencies = [
+    "solbot-cache",
+    "solbot-cache-preloader",
+    "solbot-common",
+    "solbot-db",
+    "solbot-services",
+    "solbot-tgbot",
+    "solbot-trading",
+    "solbot-wallet-tracker",
+    "solbot-yellowstone-grpc",
 ]
+
+[tool.setuptools]
+packages = []
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+
+[tool.uv.sources]
+solbot-trading = { path = "app/trading", editable = true }
+solbot-wallet-tracker = { path = "app/wallet-tracker", editable = true }
+solbot-cache-preloader = { path = "app/cache-preloader", editable = true }
+solbot-tgbot = { path = "app/tg-bot", editable = true }
+solbot-cache = { path = "libs/cache", editable = true }
+solbot-db = { path = "libs/db", editable = true }
+solbot-services = { path = "libs/services", editable = true }
+solbot-yellowstone-grpc = { path = "libs/yellowstone_grpc", editable = true }
+solbot-common = { path = "libs/common", editable = true }
+
+[dependency-groups]
 dev = [
     "pytest>=8.3.4",
     "pre-commit>=4.0.1",
@@ -28,12 +46,4 @@ dev = [
     "pytest-asyncio>=0.24.0",
     "pytest-xprocess==0.18.1",
     "py==1.10.0",
-    "-e solbot-trading @ file:///${PROJECT_ROOT}/app/trading",
-    "-e solbot-wallet-tracker @ file:///${PROJECT_ROOT}/app/wallet-tracker",
-    "-e solbot-tgbot @ file:///${PROJECT_ROOT}/app/tg-bot",
-    "-e solbot-cache-preloader @ file:///${PROJECT_ROOT}/app/cache-preloader",
 ]
-
-[tool.pytest.ini_options]
-log_cli = true
-log_cli_level = "INFO"
