@@ -4,7 +4,7 @@ DOCKER_EXEC := podman  # podman or docker
 
 # 安装开发依赖
 dev-deps:
-	pdm install -G dev -G local
+	uv sync
 
 # 基础设施服务
 infra-up:
@@ -47,4 +47,4 @@ clean:
 	find . -type d -name ".eggs" -exec rm -r {} +
 
 update-version:
-	python scripts/update-version.py
+	uv run python scripts/update-version.py
