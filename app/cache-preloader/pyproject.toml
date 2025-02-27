@@ -6,7 +6,7 @@ authors = [{ name = "mkdir700", email = "mkdir700@gmail.com" }]
 dependencies = [
 ]
 requires-python = "==3.10.*"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 
 [build-system]
 requires = ["pdm-backend"]
