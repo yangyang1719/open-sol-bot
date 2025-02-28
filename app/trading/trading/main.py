@@ -1,19 +1,20 @@
 import asyncio
 import time
-from typing import Optional
 
 import backoff
 import httpx
-from common.cp.swap_event import SwapEventConsumer
-from common.cp.swap_result import SwapResultProducer
-from common.log import logger
-from common.prestart import pre_start
-from common.types.swap import SwapEvent, SwapResult
-from db.redis import RedisClient
+from solbot_common.cp.swap_event import SwapEventConsumer
+from solbot_common.cp.swap_result import SwapResultProducer
+from solbot_common.log import logger
+from solbot_common.prestart import pre_start
+from solbot_common.types.swap import SwapEvent, SwapResult
+from solbot_common.utils.utils import get_async_client
+from solbot_db.redis import RedisClient
+from solders.signature import Signature  # type: ignore
+
 from trading.copytrade import CopyTradeProcessor
 from trading.executor import TradingExecutor
 from trading.settlement import SwapSettlementProcessor
-from trading.utils import get_async_client
 
 
 class Trading:
@@ -70,7 +71,7 @@ class Trading:
         factor=0.1,
         max_time=2,
     )
-    async def _execute_swap(self, swap_event: SwapEvent) -> Optional[str]:
+    async def _execute_swap(self, swap_event: SwapEvent) -> Signature | None:
         """执行交易并返回签名"""
         sig = await self.trading_executor.exec(swap_event)
         logger.info(f"Transaction submitted: {sig}")
@@ -84,9 +85,7 @@ class Trading:
         factor=0.1,
         max_time=2,
     )
-    async def _record_swap_result(
-        self, sig: Optional[str], swap_event: SwapEvent
-    ) -> SwapResult:
+    async def _record_swap_result(self, sig: Signature | None, swap_event: SwapEvent) -> SwapResult:
         """记录交易结果"""
         if not sig:
             return await self._record_failed_swap(swap_event)
@@ -123,7 +122,9 @@ class Trading:
         task.add_done_callback(self.task_pool.discard)
 
     async def start(self):
-        asyncio.create_task(self.copytrade_processor.start())
+        processor_task = asyncio.create_task(self.copytrade_processor.start())
+        # 添加任务完成回调以处理可能的异常
+        processor_task.add_done_callback(lambda t: t.exception() if t.exception() else None)
         # 启动所有消费者
         for consumer in self.swap_event_consumers:
             await consumer.start()

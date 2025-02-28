@@ -1,12 +1,12 @@
-from typing import List
+import builtins
 
+from solbot_common.cp.monitor_events import MonitorEventProducer
+from solbot_common.models.tg_bot.monitor import Monitor as MonitorModel
+from solbot_db.redis import RedisClient
+from solbot_db.session import NEW_ASYNC_SESSION, provide_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
-from common.cp.monitor_events import MonitorEventProducer
-from common.models.tg_bot.monitor import Monitor as MonitorModel
-from db.redis import RedisClient
-from db.session import NEW_ASYNC_SESSION, provide_session
 from tg_bot.models.monitor import Monitor
 
 
@@ -39,9 +39,7 @@ class MonitorService:
         return from_db_model(obj)
 
     @provide_session
-    async def add(
-        self, monitor: Monitor, *, session: AsyncSession = NEW_ASYNC_SESSION
-    ) -> None:
+    async def add(self, monitor: Monitor, *, session: AsyncSession = NEW_ASYNC_SESSION) -> None:
         """Add a new monitor to the database"""
         if monitor.target_wallet is None:
             raise ValueError("target_wallet is required")
@@ -77,9 +75,7 @@ class MonitorService:
             raise ValueError(f"Failed to create monitor: {e}")
 
     @provide_session
-    async def update(
-        self, monitor: Monitor, *, session: AsyncSession = NEW_ASYNC_SESSION
-    ) -> None:
+    async def update(self, monitor: Monitor, *, session: AsyncSession = NEW_ASYNC_SESSION) -> None:
         """Update an existing monitor in the database"""
         if monitor.target_wallet is None:
             raise ValueError("target_wallet is required")
@@ -113,9 +109,7 @@ class MonitorService:
         await session.commit()
 
     @provide_session
-    async def delete(
-        self, monitor: Monitor, *, session: AsyncSession = NEW_ASYNC_SESSION
-    ) -> None:
+    async def delete(self, monitor: Monitor, *, session: AsyncSession = NEW_ASYNC_SESSION) -> None:
         """Delete a monitor from the database"""
         if monitor.pk is None:
             raise ValueError("pk is required")
@@ -154,9 +148,7 @@ class MonitorService:
         ]
 
     @provide_session
-    async def get_by_id(
-        self, pk: int, *, session: AsyncSession = NEW_ASYNC_SESSION
-    ) -> Monitor:
+    async def get_by_id(self, pk: int, *, session: AsyncSession = NEW_ASYNC_SESSION) -> Monitor:
         """Get a monitor by pk from the database"""
         stmt = select(MonitorModel).where(MonitorModel.id == pk).limit(1)
         result = await session.execute(stmt)
@@ -169,7 +161,7 @@ class MonitorService:
     @provide_session
     async def list_by_owner(
         self, chat_id: int, *, session: AsyncSession = NEW_ASYNC_SESSION
-    ) -> List[Monitor]:
+    ) -> builtins.list[Monitor]:
         stmt = select(MonitorModel).where(MonitorModel.chat_id == chat_id)
 
         results = await session.execute(stmt)
@@ -187,7 +179,7 @@ class MonitorService:
     @provide_session
     async def get_chat_ids_by_target_wallet(
         self, target_wallet: str, *, session: AsyncSession = NEW_ASYNC_SESSION
-    ) -> List[int]:
+    ) -> builtins.list[int]:
         stmt = select(MonitorModel).where(MonitorModel.target_wallet == target_wallet)
         results = await session.execute(stmt)
         return [row.chat_id for row in results.scalars()]
@@ -195,7 +187,7 @@ class MonitorService:
     @provide_session
     async def get_active_by_target_wallet(
         self, target_wallet: str, *, session: AsyncSession = NEW_ASYNC_SESSION
-    ) -> List[Monitor]:
+    ) -> builtins.list[Monitor]:
         stmt = select(MonitorModel).where(
             MonitorModel.target_wallet == target_wallet, MonitorModel.active == True
         )
@@ -229,9 +221,7 @@ class MonitorService:
         await session.commit()
 
     @provide_session
-    async def active_all(
-        self, chat_id: int, *, session: AsyncSession = NEW_ASYNC_SESSION
-    ) -> None:
+    async def active_all(self, chat_id: int, *, session: AsyncSession = NEW_ASYNC_SESSION) -> None:
         _handled = []
         stmt = select(MonitorModel).where(MonitorModel.chat_id == chat_id)
         results = await session.execute(stmt)
@@ -258,9 +248,7 @@ class MonitorService:
     async def active(
         self, chat_id: int, pk: int, *, session: AsyncSession = NEW_ASYNC_SESSION
     ) -> None:
-        stmt = select(MonitorModel).where(
-            MonitorModel.id == pk, MonitorModel.chat_id == chat_id
-        )
+        stmt = select(MonitorModel).where(MonitorModel.id == pk, MonitorModel.chat_id == chat_id)
         results = await session.execute(stmt)
         obj = results.scalar_one_or_none()
         if obj is None:
@@ -283,9 +271,7 @@ class MonitorService:
     async def inactive(
         self, chat_id: int, pk: int, *, session: AsyncSession = NEW_ASYNC_SESSION
     ) -> None:
-        stmt = select(MonitorModel).where(
-            MonitorModel.id == pk, MonitorModel.chat_id == chat_id
-        )
+        stmt = select(MonitorModel).where(MonitorModel.id == pk, MonitorModel.chat_id == chat_id)
         results = await session.execute(stmt)
         obj = results.scalar_one_or_none()
         if obj is None:
