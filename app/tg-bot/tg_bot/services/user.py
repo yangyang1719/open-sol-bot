@@ -1,5 +1,5 @@
-from common.models.tg_bot.user import User as UserModel
-from db.session import NEW_ASYNC_SESSION, provide_session
+from solbot_common.models.tg_bot.user import User as UserModel
+from solbot_db.session import NEW_ASYNC_SESSION, provide_session
 from solders.keypair import Keypair  # type: ignore
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import and_, delete, select

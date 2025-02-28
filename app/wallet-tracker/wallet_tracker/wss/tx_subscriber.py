@@ -4,9 +4,9 @@ from collections.abc import Sequence
 import orjson as json
 from aioredis import Redis
 from aioredis.exceptions import RedisError
-from common.config import settings
-from common.log import logger
 from solana.rpc.async_api import AsyncClient as Client
+from solbot_common.config import settings
+from solbot_common.log import logger
 from solders.pubkey import Pubkey  # type: ignore
 from solders.signature import Signature  # type: ignore
 

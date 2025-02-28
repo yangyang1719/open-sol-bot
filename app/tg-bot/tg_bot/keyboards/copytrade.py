@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from common.types.copytrade import CopyTrade, CopyTradeSummary
+from solbot_common.types.copytrade import CopyTrade, CopyTradeSummary
 
 from tg_bot.utils import short_text
 

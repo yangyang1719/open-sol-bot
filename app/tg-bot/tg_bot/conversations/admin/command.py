@@ -1,6 +1,6 @@
 from aiogram.types import Message
-from common.config import settings
-from common.log import logger
+from solbot_common.config import settings
+from solbot_common.log import logger
 
 from tg_bot.services.activation import ActivationCodeService
 

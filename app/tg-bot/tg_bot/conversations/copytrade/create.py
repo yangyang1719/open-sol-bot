@@ -4,9 +4,9 @@ from typing import cast
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, ForceReply, Message
-from common.types.copytrade import CopyTrade
 from loguru import logger
-from services.bot_setting import BotSettingService as SettingService
+from solbot_common.types.copytrade import CopyTrade
+from solbot_services.bot_setting import BotSettingService as SettingService
 
 from tg_bot.conversations.copytrade.render import render
 from tg_bot.conversations.states import CopyTradeStates

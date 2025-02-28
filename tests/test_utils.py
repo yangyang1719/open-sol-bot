@@ -1,10 +1,10 @@
 import pytest
-from common.constants import WSOL
-from common.utils.utils import calculate_auto_slippage
+from solbot_common.constants import WSOL
+from solbot_common.utils.utils import calculate_auto_slippage
 
 
 def test_get_associated_bonding_curve():
-    from common.utils import get_associated_bonding_curve
+    from solbot_common.utils import get_associated_bonding_curve
     from solders.pubkey import Pubkey
 
     bonding_curve = Pubkey.from_string("4t4o5UATYv1tvBbFU7yte75cGCVLaAA5mWkGdh4cMtzp")

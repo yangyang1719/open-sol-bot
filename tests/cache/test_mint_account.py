@@ -1,9 +1,9 @@
 import asyncio
 
 import pytest
-from cache.mint_account import MintAccountCache
-from common.models import MintAccount
-from db.session import init_db, start_session
+from solbot_cache.mint_account import MintAccountCache
+from solbot_common.models import MintAccount
+from solbot_db.session import init_db, start_session
 from solders.pubkey import Pubkey
 from sqlmodel import delete, select
 

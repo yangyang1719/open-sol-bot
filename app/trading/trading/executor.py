@@ -1,11 +1,11 @@
-from cache.launch import LaunchCache
-from common.config import settings
-from common.constants import PUMP_FUN_PROGRAM, RAY_V4
-from common.log import logger
-from common.models.tg_bot.user import User
-from common.types.swap import SwapEvent
-from db.session import NEW_ASYNC_SESSION, provide_session
 from solana.rpc.async_api import AsyncClient
+from solbot_cache.launch import LaunchCache
+from solbot_common.config import settings
+from solbot_common.constants import PUMP_FUN_PROGRAM, RAY_V4
+from solbot_common.log import logger
+from solbot_common.models.tg_bot.user import User
+from solbot_common.types.swap import SwapEvent
+from solbot_db.session import NEW_ASYNC_SESSION, provide_session
 from solders.keypair import Keypair  # type: ignore
 from sqlmodel import select
 
@@ -75,6 +75,8 @@ class TradingExecutor:
                 logger.info(
                     f"Token {token_address} is launched on Raydium, using Raydium protocol to trade"
                 )
+                # 如果 token 在 Raydium 上启动，则使用 Raydium 协议进行交易
+                swap_event.program_id = RAY_V4_PROGRAM_ID
         except Exception as e:
             logger.exception(f"Failed to check launch status, cause: {e}")
 
@@ -84,8 +86,8 @@ class TradingExecutor:
         # NOTE: 测试下来不是很理想，暂时使用备选方案
         elif swap_event.program_id == RAY_V4_PROGRAM_ID:
             logger.info("Program ID is RayV4")
-            trade_route = TradingRoute.DEX
-        elif program_id is None or program_id == RAY_V4_PROGRAM_ID:
+            trade_route = TradingRoute.RAYDIUM_V4
+        elif program_id is None:
             logger.warning("Program ID is Unknown, So We use thrid party to trade")
             trade_route = TradingRoute.DEX
         else:

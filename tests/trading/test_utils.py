@@ -1,5 +1,5 @@
 import pytest
-from common.constants import PUMP_FUN_PROGRAM
+from solbot_common.constants import PUMP_FUN_PROGRAM
 from solders.pubkey import Pubkey
 from trading.utils import (
     get_associated_bonding_curve,

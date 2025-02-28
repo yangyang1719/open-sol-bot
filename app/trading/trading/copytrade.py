@@ -6,19 +6,19 @@
 import asyncio
 from typing import Literal
 
-from common.constants import SOL_DECIMAL, WSOL
-from common.cp.copytrade_event import NotifyCopyTradeProducer
-from common.cp.swap_event import SwapEventProducer
-from common.cp.tx_event import TxEventConsumer
-from common.log import logger
-from common.models.tg_bot.copytrade import CopyTrade
-from common.types.swap import SwapEvent
-from common.types.tx import TxEvent, TxType
-from common.utils import calculate_auto_slippage
-from db.redis import RedisClient
-from services.bot_setting import BotSettingService as SettingService
-from services.copytrade import CopyTradeService
-from services.holding import HoldingService
+from solbot_common.constants import SOL_DECIMAL, WSOL
+from solbot_common.cp.copytrade_event import NotifyCopyTradeProducer
+from solbot_common.cp.swap_event import SwapEventProducer
+from solbot_common.cp.tx_event import TxEventConsumer
+from solbot_common.log import logger
+from solbot_common.models.tg_bot.copytrade import CopyTrade
+from solbot_common.types.swap import SwapEvent
+from solbot_common.types.tx import TxEvent, TxType
+from solbot_common.utils import calculate_auto_slippage
+from solbot_db.redis import RedisClient
+from solbot_services.bot_setting import BotSettingService as SettingService
+from solbot_services.copytrade import CopyTradeService
+from solbot_services.holding import HoldingService
 
 IGNORED_MINTS = {
     "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",  # USDC

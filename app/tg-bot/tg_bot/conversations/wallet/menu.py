@@ -4,10 +4,10 @@ from aiogram import F, Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, ForceReply, Message
-from common.log import logger
-from common.utils import keypair_to_private_key
-from db.session import start_async_session
-from services.bot_setting import BotSettingService as SettingService
+from solbot_common.log import logger
+from solbot_common.utils import keypair_to_private_key
+from solbot_db.session import start_async_session
+from solbot_services.bot_setting import BotSettingService as SettingService
 from solders.keypair import Keypair  # type: ignore
 
 from tg_bot.conversations.states import WalletStates

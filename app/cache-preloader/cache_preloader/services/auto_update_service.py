@@ -1,7 +1,7 @@
 import asyncio
 
-from common.log import logger
-from db.redis import RedisClient
+from solbot_common.log import logger
+from solbot_db.redis import RedisClient
 
 from cache_preloader.caches.blockhash import BlockhashCache
 from cache_preloader.caches.min_balance_rent import MinBalanceRentCache

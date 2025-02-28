@@ -4,11 +4,11 @@ Message templates for Telegram bot responses using Jinja2
 
 from typing import TYPE_CHECKING
 
-from common.models.token_info import TokenInfo
-from common.types.bot_setting import BotSetting as Setting
-from common.types.holding import HoldingToken
-from common.utils.utils import keypair_to_private_key
 from jinja2 import BaseLoader, Environment
+from solbot_common.models.token_info import TokenInfo
+from solbot_common.types.bot_setting import BotSetting as Setting
+from solbot_common.types.holding import HoldingToken
+from solbot_common.utils.utils import keypair_to_private_key
 from solders.keypair import Keypair  # type: ignore
 
 from tg_bot.models.monitor import Monitor

@@ -1,8 +1,8 @@
 import asyncio
 import signal
 
-from common.log import logger
-from common.prestart import pre_start
+from solbot_common.log import logger
+from solbot_common.prestart import pre_start
 
 from cache_preloader.services.auto_update_service import AutoUpdateCacheService
 

@@ -3,14 +3,11 @@ import asyncio
 import aioredis
 import orjson as json
 from aioredis.exceptions import RedisError
-from common.cp.tx_event import TxEventProducer
-from common.log import logger
+from solbot_common.cp.tx_event import TxEventProducer
+from solbot_common.log import logger
 
 from wallet_tracker import benchmark
-from wallet_tracker.constants import (
-    FAILED_TX_DETAIL_CHANNEL,
-    NEW_TX_DETAIL_CHANNEL,
-)
+from wallet_tracker.constants import FAILED_TX_DETAIL_CHANNEL, NEW_TX_DETAIL_CHANNEL
 from wallet_tracker.exceptions import (
     NotSwapTransaction,
     TransactionError,

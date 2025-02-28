@@ -2,13 +2,8 @@ from datetime import datetime
 
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import (
-    CallbackQuery,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
-from common.log import logger
+from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from solbot_common.log import logger
 
 from tg_bot.conversations.states import StartStates
 from tg_bot.services.activation import ActivationCodeService

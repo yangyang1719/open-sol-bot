@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from common.types.bot_setting import BotSetting as Setting
+from solbot_common.types.bot_setting import BotSetting as Setting
 
 
 def get_token_keyboard(setting: Setting, mint: str) -> InlineKeyboardMarkup:

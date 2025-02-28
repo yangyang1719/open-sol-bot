@@ -3,12 +3,12 @@ import time
 
 import backoff
 import httpx
-from common.cp.swap_event import SwapEventConsumer
-from common.cp.swap_result import SwapResultProducer
-from common.log import logger
-from common.prestart import pre_start
-from common.types.swap import SwapEvent, SwapResult
-from db.redis import RedisClient
+from solbot_common.cp.swap_event import SwapEventConsumer
+from solbot_common.cp.swap_result import SwapResultProducer
+from solbot_common.log import logger
+from solbot_common.prestart import pre_start
+from solbot_common.types.swap import SwapEvent, SwapResult
+from solbot_db.redis import RedisClient
 
 from trading.copytrade import CopyTradeProcessor
 from trading.executor import TradingExecutor

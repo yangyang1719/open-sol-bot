@@ -1,8 +1,8 @@
 import httpx
 import orjson as json
-from common.config import settings
-from common.log import logger
 from solana.rpc.async_api import AsyncClient
+from solbot_common.config import settings
+from solbot_common.log import logger
 from solders.signature import Signature  # type: ignore
 
 

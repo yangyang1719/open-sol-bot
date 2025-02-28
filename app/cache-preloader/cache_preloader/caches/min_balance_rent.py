@@ -1,10 +1,10 @@
 from datetime import timedelta
 
 import aioredis
-from cache.constants import MIN_BALANCE_RENT_CACHE_KEY
-from common.log import logger
-from common.utils import get_async_client
-from db.redis import RedisClient
+from solbot_cache.constants import MIN_BALANCE_RENT_CACHE_KEY
+from solbot_common.log import logger
+from solbot_common.utils import get_async_client
+from solbot_db.redis import RedisClient
 from spl.token.async_client import AsyncToken
 
 from cache_preloader.core.base import BaseAutoUpdateCache

@@ -1,5 +1,5 @@
 from aiogram import F, Router, types
-from common.log import logger
+from solbot_common.log import logger
 
 from tg_bot.utils.setting import get_wallet
 

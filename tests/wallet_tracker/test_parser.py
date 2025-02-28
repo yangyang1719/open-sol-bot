@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 import pytest
-from common.types import TxType
+from solbot_common.types import TxType
 from wallet_tracker.parser.raw_tx import RawTXParser
 
 

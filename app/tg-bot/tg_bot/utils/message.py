@@ -4,7 +4,7 @@ import asyncio
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ForceReply, Message
-from common.log import logger
+from solbot_common.log import logger
 
 
 async def cleanup_conversation_messages(message: Message, state: FSMContext):

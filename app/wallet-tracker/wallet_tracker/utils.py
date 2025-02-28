@@ -1,9 +1,9 @@
-from common.constants import TOKEN_PROGRAM_ID
-from common.layouts.mint_account import MintAccount
-from common.layouts.token_account import TokenAccount
 from solana.rpc.async_api import AsyncClient
 from solana.rpc.commitment import Confirmed
 from solana.rpc.types import TokenAccountOpts
+from solbot_common.constants import TOKEN_PROGRAM_ID
+from solbot_common.layouts.mint_account import MintAccount
+from solbot_common.layouts.token_account import TokenAccount
 from solders.pubkey import Pubkey  # type: ignore
 
 

@@ -1,7 +1,7 @@
 from asyncio.queues import Queue
 
-from common.log import logger
-from db.redis import RedisClient
+from solbot_common.log import logger
+from solbot_db.redis import RedisClient
 
 
 class BenchmarkService:
