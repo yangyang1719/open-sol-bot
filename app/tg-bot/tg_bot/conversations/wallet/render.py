@@ -1,8 +1,8 @@
 from aiogram import types
 from aiogram.enums import ParseMode
-from cache.wallet import WalletCache
-from common.config import settings
-from common.utils.shyft import ShyftAPI
+from solbot_cache.wallet import WalletCache
+from solbot_common.config import settings
+from solbot_common.utils.shyft import ShyftAPI
 
 from tg_bot.keyboards.wallet import get_wallet_keyboard
 from tg_bot.services.user import UserService

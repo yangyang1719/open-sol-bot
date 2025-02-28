@@ -1,6 +1,6 @@
 from typing import TypedDict
 
-from common.utils import get_associated_token_address, get_async_client
+from solbot_common.utils import get_associated_token_address, get_async_client
 from solders.pubkey import Pubkey  # type: ignore
 from spl.token.constants import TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID  # type: ignore
 

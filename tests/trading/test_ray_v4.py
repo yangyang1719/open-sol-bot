@@ -1,6 +1,6 @@
 import pytest
-from common.config import settings
 from solana.rpc.async_api import AsyncClient
+from solbot_common.config import settings
 from trading.swap_protocols import RayV4
 
 

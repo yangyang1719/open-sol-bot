@@ -1,6 +1,6 @@
 from aiogram.enums import ParseMode
-from cache.wallet import WalletCache
-from services.holding import HoldingService
+from solbot_cache.wallet import WalletCache
+from solbot_services.holding import HoldingService
 
 from tg_bot.keyboards.asset import get_asset_keyboard
 from tg_bot.templates import render_asset_message

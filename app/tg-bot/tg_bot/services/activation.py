@@ -3,9 +3,9 @@ import string
 import time
 from datetime import datetime
 
-from common.models.tg_bot.activation_code import ActivationCode
-from common.models.tg_bot.user_license import UserLicense
-from db.session import NEW_ASYNC_SESSION, provide_session
+from solbot_common.models.tg_bot.activation_code import ActivationCode
+from solbot_common.models.tg_bot.user_license import UserLicense
+from solbot_db.session import NEW_ASYNC_SESSION, provide_session
 from sqlmodel import select
 
 

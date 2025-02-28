@@ -1,8 +1,8 @@
 import httpx
 import pytest
-from common.config import settings
-from common.constants import WSOL
-from common.utils import get_async_client
+from solbot_common.config import settings
+from solbot_common.constants import WSOL
+from solbot_common.utils import get_async_client
 from trading.tx import sign_transaction_from_raw
 
 

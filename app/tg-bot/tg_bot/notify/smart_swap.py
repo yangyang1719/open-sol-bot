@@ -11,10 +11,10 @@ from datetime import datetime
 import aioredis
 from aiogram import Bot
 from aiogram.enums import ParseMode
-from cache.token_info import TokenInfoCache
-from common.cp.tx_event import TxEventConsumer
-from common.log import logger
-from common.types import TxEvent, TxType
+from solbot_cache.token_info import TokenInfoCache
+from solbot_common.cp.tx_event import TxEventConsumer
+from solbot_common.log import logger
+from solbot_common.types import TxEvent, TxType
 
 from tg_bot.keyboards.notify_swap import notify_swap_keyboard
 from tg_bot.services.monitor import MonitorService
@@ -198,7 +198,7 @@ class SmartWalletSwapAlertNotify:
 #     from aiogram.filters import Command
 #     from aiogram.types import Message
 #
-#     from common.config import settings
+#     from solbot_common.config import settings
 #
 #     # 用于控制服务运行状态
 #     is_running = True

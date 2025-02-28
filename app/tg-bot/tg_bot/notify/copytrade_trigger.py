@@ -3,11 +3,11 @@ import asyncio
 import aioredis
 from aiogram import Bot
 from aiogram.types import LinkPreviewOptions
-from cache.token_info import TokenInfoCache
-from common.cp.copytrade_event import NotifyCopyTradeConsumer
-from common.log import logger
-from common.types.swap import SwapEvent
 from jinja2 import BaseLoader, Environment
+from solbot_cache.token_info import TokenInfoCache
+from solbot_common.cp.copytrade_event import NotifyCopyTradeConsumer
+from solbot_common.log import logger
+from solbot_common.types.swap import SwapEvent
 
 from tg_bot.services.copytrade import CopyTradeService
 from tg_bot.services.user import UserService

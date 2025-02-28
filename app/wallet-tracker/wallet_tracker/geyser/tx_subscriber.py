@@ -6,15 +6,15 @@ from collections.abc import AsyncGenerator, Sequence
 import aioredis
 import base58
 import orjson as json
-from common.config import settings
-from common.log import logger
-from db.redis import RedisClient
 from google.protobuf.json_format import (
     Parse,
     _Printer,  # type: ignore
 )
 from google.protobuf.message import Message
 from grpc.aio import AioRpcError
+from solbot_common.config import settings
+from solbot_common.log import logger
+from solbot_db.redis import RedisClient
 from solders.pubkey import Pubkey  # type: ignore
 from yellowstone_grpc.client import GeyserClient
 from yellowstone_grpc.grpc import geyser_pb2
@@ -358,7 +358,7 @@ class TransactionDetailSubscriber:
 
 
 if __name__ == "__main__":
-    from db.redis import RedisClient
+    from solbot_db.redis import RedisClient
 
     async def main():
         wallets = [

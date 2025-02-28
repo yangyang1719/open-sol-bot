@@ -1,7 +1,7 @@
 import time
 from contextlib import asynccontextmanager
 
-from common.log import logger
+from solbot_common.log import logger
 
 from wallet_tracker.benchmark.service import benchmark_service
 

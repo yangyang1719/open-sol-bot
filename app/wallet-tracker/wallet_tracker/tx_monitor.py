@@ -1,16 +1,12 @@
 from collections.abc import Sequence
 from typing import Literal
 
-from common.config import settings
-from common.cp.monitor_events import (
-    MonitorEvent,
-    MonitorEventConsumer,
-    MonitorEventType,
-)
-from common.log import logger
-from common.models.tg_bot.monitor import Monitor
-from db.redis import RedisClient
-from services.copytrade import CopyTradeService
+from solbot_common.config import settings
+from solbot_common.cp.monitor_events import MonitorEvent, MonitorEventConsumer, MonitorEventType
+from solbot_common.log import logger
+from solbot_common.models.tg_bot.monitor import Monitor
+from solbot_db.redis import RedisClient
+from solbot_services.copytrade import CopyTradeService
 from solders.pubkey import Pubkey  # type: ignore
 
 from .geyser.tx_subscriber import TransactionDetailSubscriber as GeyserMonitor

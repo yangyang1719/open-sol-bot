@@ -1,6 +1,6 @@
 from aiogram import enums
-from common.models import TokenInfo
-from common.types.bot_setting import BotSetting as Setting
+from solbot_common.models import TokenInfo
+from solbot_common.types.bot_setting import BotSetting as Setting
 
 from tg_bot.keyboards.swap import get_token_keyboard
 from tg_bot.templates import render_swap_token_message

@@ -4,7 +4,7 @@ from typing import cast
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, ForceReply, Message
-from common.log import logger
+from solbot_common.log import logger
 
 from tg_bot.conversations.monitor.render import render
 from tg_bot.conversations.states import MonitorStates

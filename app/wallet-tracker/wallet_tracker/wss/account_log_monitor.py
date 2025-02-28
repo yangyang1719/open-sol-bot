@@ -8,9 +8,9 @@ from collections.abc import Sequence
 
 import aioredis
 from _pickle import PicklingError
-from common.config import settings
-from common.log import logger
 from solana.rpc.websocket_api import connect
+from solbot_common.config import settings
+from solbot_common.log import logger
 from solders.errors import SerdeJSONError  # type: ignore
 from solders.pubkey import Pubkey  # type: ignore
 from solders.rpc.config import RpcTransactionLogsFilterMentions  # type: ignore

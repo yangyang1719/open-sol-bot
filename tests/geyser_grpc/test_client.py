@@ -2,7 +2,7 @@ import json
 
 import base58
 import pytest
-from common.config import settings
+from solbot_common.config import settings
 from yellowstone_grpc.client import GeyserClient
 
 

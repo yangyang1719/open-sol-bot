@@ -1,5 +1,5 @@
 import pytest
-from cache import AccountAmountCache
+from solbot_cache import AccountAmountCache
 from solders.pubkey import Pubkey
 
 

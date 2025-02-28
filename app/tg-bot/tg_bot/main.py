@@ -6,21 +6,12 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import Command, StateFilter
 from aiogram.fsm.storage.memory import MemoryStorage
-from common.config import settings
-from common.prestart import pre_start
-from db.redis import RedisClient
 from loguru import logger
+from solbot_common.config import settings
+from solbot_common.prestart import pre_start
+from solbot_db.redis import RedisClient
 
-from tg_bot.conversations import (
-    admin,
-    asset,
-    copytrade,
-    home,
-    monitor,
-    setting,
-    swap,
-    wallet,
-)
+from tg_bot.conversations import admin, asset, copytrade, home, monitor, setting, swap, wallet
 from tg_bot.conversations.router import router
 from tg_bot.conversations.states import CopyTradeStates, MonitorStates, WalletStates
 from tg_bot.middlewares import (

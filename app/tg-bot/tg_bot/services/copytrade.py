@@ -1,10 +1,10 @@
 import builtins
 
-from common.cp.monitor_events import MonitorEventProducer
-from common.models.tg_bot.copytrade import CopyTrade as CopyTradeModel
-from common.types.copytrade import CopyTrade, CopyTradeSummary
-from db.redis import RedisClient
-from db.session import NEW_ASYNC_SESSION, provide_session
+from solbot_common.cp.monitor_events import MonitorEventProducer
+from solbot_common.models.tg_bot.copytrade import CopyTrade as CopyTradeModel
+from solbot_common.types.copytrade import CopyTrade, CopyTradeSummary
+from solbot_db.redis import RedisClient
+from solbot_db.session import NEW_ASYNC_SESSION, provide_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 

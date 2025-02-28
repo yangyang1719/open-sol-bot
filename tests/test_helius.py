@@ -1,5 +1,5 @@
 import pytest
-from common.utils.helius import HeliusAPI
+from solbot_common.utils.helius import HeliusAPI
 
 
 @pytest.mark.asyncio

@@ -1,12 +1,12 @@
 import asyncio
 from collections.abc import Sequence
 
-from common.config import settings
-from common.log import logger
-from common.prestart import pre_start
-from common.types import copytrade
-from common.utils import get_async_client
-from db.redis import RedisClient
+from solbot_common.config import settings
+from solbot_common.log import logger
+from solbot_common.prestart import pre_start
+from solbot_common.types import copytrade
+from solbot_common.utils import get_async_client
+from solbot_db.redis import RedisClient
 from solders.pubkey import Pubkey  # type: ignore
 
 from wallet_tracker.benchmark import BenchmarkService

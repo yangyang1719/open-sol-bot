@@ -1,14 +1,14 @@
 import time
 
 from aiogram.types import Message
-from cache import TokenInfoCache
-from common.constants import SOL_DECIMAL, WSOL
-from common.cp.swap_event import SwapEventProducer
-from common.log import logger
-from common.types.swap import SwapEvent
-from common.utils import calculate_auto_slippage
-from db.redis import RedisClient
-from services.bot_setting import BotSettingService as SettingService
+from solbot_cache import TokenInfoCache
+from solbot_common.constants import SOL_DECIMAL, WSOL
+from solbot_common.cp.swap_event import SwapEventProducer
+from solbot_common.log import logger
+from solbot_common.types.swap import SwapEvent
+from solbot_common.utils import calculate_auto_slippage
+from solbot_db.redis import RedisClient
+from solbot_services.bot_setting import BotSettingService as SettingService
 
 from tg_bot.services.user import UserService
 from tg_bot.templates import BUY_SELL_TEMPLATE
@@ -48,6 +48,9 @@ async def info_command(message: Message):
     chat_id = message.from_user.id
     wallet = await user_service.get_pubkey(chat_id)
     setting = await setting_service.get(chat_id, wallet)
+
+    if setting is None:
+        raise ValueError("Setting not found")
 
     await message.answer(
         **render(

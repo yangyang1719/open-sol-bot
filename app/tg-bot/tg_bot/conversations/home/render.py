@@ -2,9 +2,9 @@ from datetime import datetime
 
 from aiogram import types
 from aiogram.enums import ParseMode
-from cache.wallet import WalletCache
-from common.config import settings
-from common.utils.shyft import ShyftAPI
+from solbot_cache.wallet import WalletCache
+from solbot_common.config import settings
+from solbot_common.utils.shyft import ShyftAPI
 
 from tg_bot.keyboards.main_menu import main_menu_keyboard
 from tg_bot.services.activation import ActivationCodeService

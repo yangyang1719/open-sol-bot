@@ -1,5 +1,5 @@
 import pytest
-from common.utils import validate_transaction
+from solbot_common.utils import validate_transaction
 
 
 @pytest.mark.asyncio

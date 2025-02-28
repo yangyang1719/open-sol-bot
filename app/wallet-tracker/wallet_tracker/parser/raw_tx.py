@@ -1,13 +1,8 @@
 from functools import cache
 
 import orjson as json
-from common.constants import SWAP_PROGRAMS, TOKEN_PROGRAM_ID, WSOL
-from common.types import (
-    SolAmountChange,
-    TokenAmountChange,
-    TxEvent,
-    TxType,
-)
+from solbot_common.constants import SWAP_PROGRAMS, TOKEN_PROGRAM_ID, WSOL
+from solbot_common.types import SolAmountChange, TokenAmountChange, TxEvent, TxType
 
 from wallet_tracker.exceptions import (
     NotSwapTransaction,

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import Any
 
 import aioredis
-from common.log import logger
+from solbot_common.log import logger
 
 from cache_preloader.core.protocols import AutoUpdateCacheProtocol
 
