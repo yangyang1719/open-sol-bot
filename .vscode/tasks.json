@@ -52,7 +52,7 @@
     {
       "label": "运行 Tg Bot 服务",
       "type": "shell",
-      "command": "uv run python app/tg_bot/tg_bot/main.py",
+      "command": "uv run python app/tg-bot/tg_bot/main.py",
       "problemMatcher": [],
       "group": {
         "kind": "build",
