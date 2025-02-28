@@ -3,7 +3,6 @@ from sqlmodel import Field
 
 from common.models.base import Base
 
-
 # {
 #     "signature": "4uTy6e7h2SyxuwMyGsJ2Mxh3Rrj99CFeQ6uF1H8xFsEzW8xfrUZ9Xb8QxYutd5zt2cutP45CSPX3CypMAc3ykr2q",
 #     "mint": "DjmgD4sawByggagUqjxXqs9hAxAXb7Nf76Pzrk9npump",

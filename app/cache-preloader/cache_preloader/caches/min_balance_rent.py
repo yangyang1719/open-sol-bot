@@ -2,22 +2,23 @@ from datetime import timedelta
 
 import aioredis
 from cache.constants import MIN_BALANCE_RENT_CACHE_KEY
-from cache_preloader.core.base import BaseAutoUpdateCache
 from common.log import logger
 from common.utils import get_async_client
 from db.redis import RedisClient
 from spl.token.async_client import AsyncToken
 
+from cache_preloader.core.base import BaseAutoUpdateCache
+
 
 class MinBalanceRentCache(BaseAutoUpdateCache):
     """最小租金余额缓存管理器"""
-    
+
     key = MIN_BALANCE_RENT_CACHE_KEY
 
     def __init__(self, redis: aioredis.Redis):
         """
         初始化最小租金余额缓存管理器
-        
+
         Args:
             redis: Redis客户端实例
         """
@@ -28,23 +29,21 @@ class MinBalanceRentCache(BaseAutoUpdateCache):
     async def _gen_new_value(self) -> int:
         """
         生成新的缓存值
-        
+
         Returns:
             最小租金余额
         """
-        min_balance = await AsyncToken.get_min_balance_rent_for_exempt_for_account(
-            self.client
-        )
+        min_balance = await AsyncToken.get_min_balance_rent_for_exempt_for_account(self.client)
         return min_balance
 
     @classmethod
     async def get(cls, redis: aioredis.Redis | None = None) -> int:
         """
         获取最小租金余额
-        
+
         Args:
             redis: Redis客户端实例，如果为None则获取默认实例
-            
+
         Returns:
             最小租金余额
         """
@@ -55,4 +54,4 @@ class MinBalanceRentCache(BaseAutoUpdateCache):
             min_balance_rent_cache = cls(redis)
             cached_value = await min_balance_rent_cache._gen_new_value()
             await redis.set(cls.key, cached_value, ex=timedelta(seconds=30))
-        return int(cached_value) 
+        return int(cached_value)

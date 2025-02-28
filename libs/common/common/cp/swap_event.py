@@ -1,6 +1,7 @@
 import asyncio
 import time
-from typing import Any, Callable, Coroutine
+from collections.abc import Callable, Coroutine
+from typing import Any
 
 import aioredis
 
@@ -30,9 +31,7 @@ class SwapEventProducer:
             )
         except Exception as e:
             # Log error but don't re-raise to avoid disrupting the producer
-            logger.error(
-                f"Error producing swap event to Redis Stream: {e}, raw: {swap_event}"
-            )
+            logger.error(f"Error producing swap event to Redis Stream: {e}, raw: {swap_event}")
 
         return
 
@@ -83,9 +82,7 @@ class SwapEventConsumer:
                 raise
             logger.info(f"Consumer group {self.consumer_group} already exists")
 
-    def register_callback(
-        self, callback: Callable[[SwapEvent], Coroutine[Any, Any, None]]
-    ) -> None:
+    def register_callback(self, callback: Callable[[SwapEvent], Coroutine[Any, Any, None]]) -> None:
         """Register a callback function to process events.
 
         Args:
@@ -111,9 +108,7 @@ class SwapEventConsumer:
                             logger.info(f"Processing pending message {message_id}")
                             await self._process_message(message_id, fields)
                         except Exception as e:
-                            logger.error(
-                                f"Error processing pending message {message_id}: {e}"
-                            )
+                            logger.error(f"Error processing pending message {message_id}: {e}")
         except Exception as e:
             logger.error(f"Error processing pending messages: {e}")
 
@@ -136,16 +131,12 @@ class SwapEventConsumer:
                     await self.callback(swap_event)
 
                 # Acknowledge the message
-                await self.redis.xack(
-                    SWAP_EVENT_CHANNEL, self.consumer_group, message_id
-                )
+                await self.redis.xack(SWAP_EVENT_CHANNEL, self.consumer_group, message_id)
             except Exception as e:
                 logger.exception(f"Error processing message {message_id}: {e}")
                 await self._move_to_dead_letter(message_id, fields, str(e))
 
-    async def _move_to_dead_letter(
-        self, message_id: str, fields: dict, error: str
-    ) -> None:
+    async def _move_to_dead_letter(self, message_id: str, fields: dict, error: str) -> None:
         """Move a message to the dead letter queue.
 
         Args:

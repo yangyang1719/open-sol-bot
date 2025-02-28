@@ -10,9 +10,7 @@ class TokenAccountBalance(TypedDict):
     decimals: int
 
 
-async def get_token_account_balance(
-    token_mint: str, owner: str
-) -> TokenAccountBalance | None:
+async def get_token_account_balance(token_mint: str, owner: str) -> TokenAccountBalance | None:
     """获取 token 余额
 
     Args:

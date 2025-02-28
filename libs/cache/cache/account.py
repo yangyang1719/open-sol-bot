@@ -1,9 +1,10 @@
 import base64
-from solana.rpc.async_api import AsyncClient
-from solders.pubkey import Pubkey  # type: ignore
+
+import orjson as json
 from common.layouts.global_account import GlobalAccount
 from db.redis import RedisClient
-import orjson as json
+from solana.rpc.async_api import AsyncClient
+from solders.pubkey import Pubkey  # type: ignore
 
 
 class GlobalAccountCache:
@@ -14,9 +15,7 @@ class GlobalAccountCache:
 
     async def _get(self, program: Pubkey) -> bytes | None:
         global_account_pda = Pubkey.find_program_address([b"global"], program)[0]
-        token_account = await self.celient.get_account_info_json_parsed(
-            global_account_pda
-        )
+        token_account = await self.celient.get_account_info_json_parsed(global_account_pda)
         if token_account is None:
             return None
         value = token_account.value

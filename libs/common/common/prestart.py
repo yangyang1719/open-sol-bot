@@ -1,6 +1,7 @@
+from db.session import init_db as _init_db
+
 from common.log import logger
 from common.sentry import init_sentry as _init_sentry
-from db.session import init_db as _init_db
 
 
 def pre_start(

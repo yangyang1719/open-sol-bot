@@ -9,15 +9,15 @@ from .tg_bot import ActivationCode, CopyTrade, Monitor, User, UserLicense
 from .token_info import TokenInfo
 
 __all__ = [
-    "AssociatedTokenAccount",
-    "NewToken",
-    "MintAccount",
-    "CopyTrade",
-    "Monitor",
-    "User",
-    "TokenInfo",
-    "SwapRecord",
     "ActivationCode",
-    "UserLicense",
+    "AssociatedTokenAccount",
+    "CopyTrade",
+    "MintAccount",
+    "Monitor",
+    "NewToken",
     "RaydiumPoolModel",
+    "SwapRecord",
+    "TokenInfo",
+    "User",
+    "UserLicense",
 ]

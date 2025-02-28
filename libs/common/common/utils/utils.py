@@ -64,16 +64,12 @@ async def validate_transaction(
         client = get_async_client()
     if isinstance(tx_hash, str):
         tx_hash = Signature.from_string(tx_hash)
-    response = await client.get_signature_statuses(
-        [tx_hash], search_transaction_history=True
-    )
+    response = await client.get_signature_statuses([tx_hash], search_transaction_history=True)
     value = response.value[0]
     if value is None:
         return None
     if value.confirmation_status == TransactionConfirmationStatus.Confirmed:
-        if value.err is not None:
-            return False
-        return True
+        return value.err is None
     return None
 
 
@@ -120,11 +116,11 @@ def format_number(value: float) -> str:
     """
     abs_value = abs(value)
     if abs_value >= 1000000000:
-        return f"{value/1000000000:.2f}B"
+        return f"{value / 1000000000:.2f}B"
     elif abs_value >= 1000000:
-        return f"{value/1000000:.2f}M"
+        return f"{value / 1000000:.2f}M"
     elif abs_value >= 1000:
-        return f"{value/1000:.2f}K"
+        return f"{value / 1000:.2f}K"
     else:
         return f"{value:.2f}"
 

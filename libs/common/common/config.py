@@ -38,9 +38,7 @@ class TomlConfigSettingsSource(PydanticBaseSettingsSource):
         self.config = settings_cls.model_config
         self.dotenv_settings = dotenv_settings
 
-    def get_field_value(
-        self, field: FieldInfo, field_name: str
-    ) -> tuple[Any, str, bool]:
+    def get_field_value(self, field: FieldInfo, field_name: str) -> tuple[Any, str, bool]:
         env_file = self.config.get("env_file")
         if isinstance(self.dotenv_settings, DotEnvSettingsSource):
             env_file = env_file if env_file else self.dotenv_settings.env_file
@@ -63,12 +61,8 @@ class TomlConfigSettingsSource(PydanticBaseSettingsSource):
         d: dict[str, Any] = {}
 
         for field_name, field in self.settings_cls.model_fields.items():
-            field_value, field_key, value_is_complex = self.get_field_value(
-                field, field_name
-            )
-            field_value = self.prepare_field_value(
-                field_name, field, field_value, value_is_complex
-            )
+            field_value, field_key, value_is_complex = self.get_field_value(field, field_name)
+            field_value = self.prepare_field_value(field_name, field, field_value, value_is_complex)
             if field_value is not None:
                 d[field_key] = field_value
 

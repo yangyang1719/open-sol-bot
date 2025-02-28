@@ -1,14 +1,14 @@
 from construct import (
-    Struct,
-    Int64ul,
-    Int8ul,
-    Bytes,
-    Array,
-    Padding,
-    Flag,
-    Int16ul,
-    GreedyRange,
     Adapter,
+    Array,
+    Bytes,
+    Flag,
+    GreedyRange,
+    Int8ul,
+    Int16ul,
+    Int64ul,
+    Padding,
+    Struct,
 )
 
 CPMM_POOL_STATE_LAYOUT = Struct(

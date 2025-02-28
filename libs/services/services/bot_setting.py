@@ -1,8 +1,6 @@
-from typing_extensions import Self
-
-from db.redis import RedisClient
-
 from common.types.bot_setting import BotSetting
+from db.redis import RedisClient
+from typing_extensions import Self
 
 
 class BotSettingService:

@@ -1,5 +1,5 @@
-from dataclasses import dataclass
 import struct
+from dataclasses import dataclass
 
 
 @dataclass
@@ -42,9 +42,7 @@ class BondingCurveAccount:
             return 0
 
         # Calculate the proportional amount of virtual sol reserves to be received
-        n = (amount * self.virtual_sol_reserves) // (
-            self.virtual_token_reserves + amount
-        )
+        n = (amount * self.virtual_sol_reserves) // (self.virtual_token_reserves + amount)
 
         # Calculate the fee amount in the same units
         a = (n * fee_basis_points) // 10000
@@ -56,14 +54,10 @@ class BondingCurveAccount:
         if self.virtual_token_reserves == 0:
             return 0
 
-        return (
-            self.token_total_supply * self.virtual_sol_reserves
-        ) // self.virtual_token_reserves
+        return (self.token_total_supply * self.virtual_sol_reserves) // self.virtual_token_reserves
 
     def get_final_market_cap_sol(self, fee_basis_points: int) -> int:
-        total_sell_value = self.get_buy_out_price(
-            self.real_token_reserves, fee_basis_points
-        )
+        total_sell_value = self.get_buy_out_price(self.real_token_reserves, fee_basis_points)
         total_virtual_value = self.virtual_sol_reserves + total_sell_value
         total_virtual_tokens = self.virtual_token_reserves - self.real_token_reserves
 
@@ -73,9 +67,7 @@ class BondingCurveAccount:
         return (self.token_total_supply * total_virtual_value) // total_virtual_tokens
 
     def get_buy_out_price(self, amount: int, fee_basis_points: int) -> int:
-        sol_tokens = (
-            self.real_sol_reserves if amount < self.real_sol_reserves else amount
-        )
+        sol_tokens = self.real_sol_reserves if amount < self.real_sol_reserves else amount
         total_sell_value = (sol_tokens * self.virtual_sol_reserves) // (
             self.virtual_token_reserves - sol_tokens
         ) + 1

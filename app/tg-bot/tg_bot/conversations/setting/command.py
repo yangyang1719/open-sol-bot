@@ -1,5 +1,4 @@
 from aiogram.types import Message
-
 from common.log import logger
 
 from .render import render

@@ -1,10 +1,11 @@
 import asyncio
 from datetime import datetime, timedelta
-from typing import Any, Optional
+from typing import Any
 
 import aioredis
-from cache_preloader.core.protocols import AutoUpdateCacheProtocol
 from common.log import logger
+
+from cache_preloader.core.protocols import AutoUpdateCacheProtocol
 
 
 class BaseAutoUpdateCache(AutoUpdateCacheProtocol):
@@ -21,8 +22,8 @@ class BaseAutoUpdateCache(AutoUpdateCacheProtocol):
         """
         self.redis = redis
         self._update_interval = update_interval
-        self._last_update: Optional[datetime] = None
-        self._update_task: Optional[asyncio.Task] = None
+        self._last_update: datetime | None = None
+        self._update_task: asyncio.Task | None = None
         self._is_running = False
 
     def is_running(self) -> bool:
@@ -56,9 +57,7 @@ class BaseAutoUpdateCache(AutoUpdateCacheProtocol):
         while self._is_running:
             try:
                 val = await self._gen_new_value()
-                await self.redis.set(
-                    self.key, val, ex=timedelta(seconds=self._update_interval)
-                )
+                await self.redis.set(self.key, val, ex=timedelta(seconds=self._update_interval))
                 logger.info(f"已更新 {self.__class__.__name__} 缓存，值: {val}")
                 self._last_update = datetime.now()
                 await asyncio.sleep(self._update_interval - 1)
@@ -73,11 +72,12 @@ class BaseAutoUpdateCache(AutoUpdateCacheProtocol):
         raise NotImplementedError
 
     @property
-    def last_update(self) -> Optional[datetime]:
+    def last_update(self) -> datetime | None:
         """获取最后更新时间"""
         return self._last_update
 
     def __del__(self):
         """确保对象被删除时停止更新任务"""
         if self._is_running:
-            asyncio.create_task(self.stop()) 
+            # TODO: 需要采用更优雅的方式停止
+            return asyncio.create_task(self.stop())

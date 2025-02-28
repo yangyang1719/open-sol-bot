@@ -1,5 +1,4 @@
 from datetime import timedelta
-from typing import Tuple
 
 import aioredis
 import orjson as json
@@ -14,13 +13,13 @@ from cache_preloader.core.base import BaseAutoUpdateCache
 
 class BlockhashCache(BaseAutoUpdateCache):
     """区块哈希缓存管理器"""
-    
+
     key = BLOCKHASH_CACHE_KEY
 
     def __init__(self, redis: aioredis.Redis):
         """
         初始化区块哈希缓存管理器
-        
+
         Args:
             redis: Redis客户端实例
         """
@@ -32,7 +31,7 @@ class BlockhashCache(BaseAutoUpdateCache):
     async def _get_latest_blockhash(cls) -> tuple[Hash, int]:
         """
         获取最新的区块哈希
-        
+
         Returns:
             区块哈希和最后有效区块高度的元组
         """
@@ -42,7 +41,7 @@ class BlockhashCache(BaseAutoUpdateCache):
     async def _gen_new_value(self) -> str:
         """
         生成新的缓存值
-        
+
         Returns:
             序列化后的区块哈希信息
         """
@@ -55,19 +54,19 @@ class BlockhashCache(BaseAutoUpdateCache):
         ).decode("utf-8")
 
     @classmethod
-    async def get(cls, redis: aioredis.Redis | None = None) -> Tuple[Hash, int]:
+    async def get(cls, redis: aioredis.Redis | None = None) -> tuple[Hash, int]:
         """
         获取当前区块哈希和最后有效区块高度
         如果可用，使用缓存值
-        
+
         Args:
             redis: Redis客户端实例，如果为None则获取默认实例
-            
+
         Returns:
             区块哈希和最后有效区块高度的元组
         """
         # if os.getenv("PYTEST_CURRENT_TEST"):
-            # return await cls._get_latest_blockhash()
+        # return await cls._get_latest_blockhash()
 
         redis = redis or RedisClient.get_instance()
         raw_cached_value = await redis.get(cls.key)
@@ -79,4 +78,4 @@ class BlockhashCache(BaseAutoUpdateCache):
         cached_value = json.loads(raw_cached_value)
         return Hash.from_string(cached_value["blockhash"]), int(
             cached_value["last_valid_block_height"]
-        ) 
+        )

@@ -7,15 +7,9 @@ from common.models.base import Base
 class User(Base, table=True):
     __tablename__ = "bot_users"  # type: ignore
     chat_id: int = Field(nullable=False, index=True, sa_type=BIGINT)
-    pubkey: str = Field(
-        nullable=False, index=True, unique=True, description="User public key"
-    )
-    private_key: bytes | None = Field(
-        nullable=True, sa_type=BLOB, description="User private key"
-    )
-    is_default: bool = Field(
-        nullable=False, default=False, description="是否为用户的默认钱包"
-    )
+    pubkey: str = Field(nullable=False, index=True, unique=True, description="User public key")
+    private_key: bytes | None = Field(nullable=True, sa_type=BLOB, description="User private key")
+    is_default: bool = Field(nullable=False, default=False, description="是否为用户的默认钱包")
     is_active: bool = Field(nullable=False, default=True, description="是否启用")
 
     # 一个 chat id 只能有一个默认钱包

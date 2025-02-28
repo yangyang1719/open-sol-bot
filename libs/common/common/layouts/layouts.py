@@ -23,17 +23,17 @@ Note:
 """
 
 from construct import (
-    Bytes,
-    Int32ul,
-    Int8ul,
-    Int64ul,
-    Padding,
     BitsInteger,
     BitsSwapped,
     BitStruct,
+    Bytes,
+    BytesInteger,
     Const,
     Flag,
-    BytesInteger,
+    Int8ul,
+    Int32ul,
+    Int64ul,
+    Padding,
 )
 from construct import Struct as cStruct
 

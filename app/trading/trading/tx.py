@@ -59,9 +59,7 @@ async def build_transaction(
             transfer(
                 TransferParams(
                     from_pubkey=keypair.pubkey(),
-                    to_pubkey=Pubkey.from_string(
-                        "96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5"
-                    ),
+                    to_pubkey=Pubkey.from_string("96gYZGLnJYVFmbjzopPSU6QiEV5fGqZNyN9nmNhvrZU5"),
                     lamports=int(jito_fee * SOL_DECIMAL),
                 )
             )
@@ -69,17 +67,13 @@ async def build_transaction(
     elif priority_fee is not None:
         unit_price, unit_limit = calc_tx_units(priority_fee)
         logger.info(
-            "Using custom priority fee, unit limit: {}, unit price: {}".format(
-                unit_limit, unit_price
-            )
+            f"Using custom priority fee, unit limit: {unit_limit}, unit price: {unit_price}"
         )
         instructions.insert(0, set_compute_unit_limit(unit_limit))
         instructions.insert(1, set_compute_unit_price(unit_price))
     else:
         logger.info(
-            "Using default priority fee, unit limit: {}, unit price: {}".format(
-                settings.trading.unit_limit, settings.trading.unit_price
-            )
+            f"Using default priority fee, unit limit: {settings.trading.unit_limit}, unit price: {settings.trading.unit_price}"
         )
         unit_price, unit_limit = (
             settings.trading.unit_price,

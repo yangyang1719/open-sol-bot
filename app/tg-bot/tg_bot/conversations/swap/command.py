@@ -1,18 +1,19 @@
 import time
 
 from aiogram.types import Message
-
 from cache import TokenInfoCache
 from common.constants import SOL_DECIMAL, WSOL
 from common.cp.swap_event import SwapEventProducer
 from common.log import logger
 from common.types.swap import SwapEvent
+from common.utils import calculate_auto_slippage
 from db.redis import RedisClient
 from services.bot_setting import BotSettingService as SettingService
+
 from tg_bot.services.user import UserService
 from tg_bot.templates import BUY_SELL_TEMPLATE
-from common.utils import calculate_auto_slippage
 from tg_bot.utils.solana import validate_solana_address
+
 from .render import render
 
 setting_service = SettingService()
@@ -141,9 +142,7 @@ async def swap_command(message: Message):
         ui_amount=from_amount,
         slippage_bps=slippage_bps,
         timestamp=int(time.time()),
-        priority_fee=(
-            setting.buy_priority_fee if cmd == "buy" else setting.sell_priority_fee
-        ),
+        priority_fee=(setting.buy_priority_fee if cmd == "buy" else setting.sell_priority_fee),
     )
     if setting.auto_slippage:
         swap_event.dynamic_slippage = True
@@ -160,9 +159,7 @@ async def swap_command(message: Message):
             f"Buy {ui_amount} SOL for {token_info.symbol}, slippage: {slippage_bps / 100} %"
         )
     else:
-        await message.answer(
-            f"🚀 卖 {ui_amount} {token_info.symbol}, 滑点：{slippage_bps / 100}%"
-        )
+        await message.answer(f"🚀 卖 {ui_amount} {token_info.symbol}, 滑点：{slippage_bps / 100}%")
         logger.info(
             f"Sell {ui_amount} {token_info.symbol} for  SOL, slippage: {slippage_bps / 100} %"
         )

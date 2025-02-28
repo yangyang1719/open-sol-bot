@@ -16,9 +16,7 @@ class SwapRecord(Base, table=True):
     __tablename__ = "swap_record"  # type: ignore
 
     signature: str | None = Field(default=None, nullable=True, description="交易 hash")
-    status: TransactionStatus | None = Field(
-        default=None, nullable=True, description="交易状态"
-    )
+    status: TransactionStatus | None = Field(default=None, nullable=True, description="交易状态")
     user_pubkey: str = Field(nullable=False, index=True)
     swap_mode: str = Field(nullable=False)
     input_mint: str = Field(nullable=False)
@@ -28,12 +26,8 @@ class SwapRecord(Base, table=True):
     output_amount: int = Field(nullable=False, sa_type=BIGINT, description="输出金额")
     output_token_decimals: int = Field(nullable=False, description="输出代币精度")
     program_id: str | None = Field(default=None, nullable=True, description="程序ID")
-    timestamp: int | None = Field(
-        default=None, nullable=True, sa_type=BIGINT, description="时间戳"
-    )
-    fee: int | None = Field(
-        default=None, nullable=True, sa_type=BIGINT, description="手续费"
-    )
+    timestamp: int | None = Field(default=None, nullable=True, sa_type=BIGINT, description="时间戳")
+    fee: int | None = Field(default=None, nullable=True, sa_type=BIGINT, description="手续费")
     slot: int | None = Field(
         default=None, nullable=True, sa_type=BIGINT, description="提交时的 slot"
     )

@@ -1,13 +1,13 @@
 import contextlib
 import functools
-from collections.abc import Generator
+from collections.abc import AsyncGenerator, Generator
 from inspect import iscoroutinefunction
-from typing import AsyncGenerator, ParamSpec, TypedDict, TypeVar, cast
+from typing import ParamSpec, TypedDict, TypeVar, cast
 from urllib.parse import urlparse
 
 from common.config import settings
 from common.log import logger
-from common.models import *  # noqa: F403
+from common.models import *
 from sqlalchemy import Engine, exc, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlmodel import Session, SQLModel, create_engine

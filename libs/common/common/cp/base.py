@@ -1,6 +1,7 @@
 import asyncio
 import time
-from typing import Any, Callable, Coroutine, Generic, Protocol, TypeVar
+from collections.abc import Callable, Coroutine
+from typing import Any, Generic, Protocol, TypeVar
 
 import aioredis
 from loguru import logger
@@ -37,7 +38,6 @@ class Producer(Generic[T]):
 
 
 class Consumer(Generic[T]):
-
     def __init__(
         self,
         channel: str,
@@ -98,9 +98,7 @@ class Consumer(Generic[T]):
                         if group["pending"] == 0:  # 如果没有待处理的消息
                             try:
                                 # 删除旧的消费者组
-                                await self.redis.xgroup_destroy(
-                                    self.channel, self.consumer_group
-                                )
+                                await self.redis.xgroup_destroy(self.channel, self.consumer_group)
                                 # 创建新的消费者组，从头开始消费
                                 await self.redis.xgroup_create(
                                     name=self.channel,
@@ -115,9 +113,7 @@ class Consumer(Generic[T]):
                                 logger.error(f"Failed to reset consumer group: {e}")
                         break
 
-    def register_callback(
-        self, callback: Callable[[T], Coroutine[Any, Any, None]]
-    ) -> None:
+    def register_callback(self, callback: Callable[[T], Coroutine[Any, Any, None]]) -> None:
         """Register a callback function to process events.
 
         Args:
@@ -143,9 +139,7 @@ class Consumer(Generic[T]):
                 )
 
             # 检查消费者信息
-            consumers_info = await self.redis.xinfo_consumers(
-                self.channel, self.consumer_group
-            )
+            consumers_info = await self.redis.xinfo_consumers(self.channel, self.consumer_group)
             for consumer in consumers_info:
                 logger.info(
                     f"Consumer {consumer['name']} - pending: {consumer['pending']}, idle: {consumer['idle']}"
@@ -159,34 +153,27 @@ class Consumer(Generic[T]):
                 count=self.batch_size,
             )
 
-            logger.info(
-                f"Found pending messages: {pending is not None and len(pending) > 0}"
-            )
+            logger.info(f"Found pending messages: {pending is not None and len(pending) > 0}")
             if pending:
                 for stream_name, messages in pending:
-                    logger.info(
-                        f"Processing {len(messages)} messages from stream {stream_name}"
-                    )
+                    logger.info(f"Processing {len(messages)} messages from stream {stream_name}")
                     for message_id, fields in messages:
                         logger.info(f"Processing pending message {message_id}")
                         logger.debug(f"Message fields: {fields}")
                         try:
                             await self._process_message(message_id, fields)
                         except Exception as e:
-                            logger.error(
-                                f"Error processing pending message {message_id}: {e}"
-                            )
+                            logger.error(f"Error processing pending message {message_id}: {e}")
             else:
                 # 如果没有待处理的消息，检查是否有新消息
                 new_messages = await self.redis.xread(
-                    streams={self.channel: "0-0"}, count=1  # 从头开始读取所有消息
+                    streams={self.channel: "0-0"},
+                    count=1,  # 从头开始读取所有消息
                 )
                 if new_messages:
                     logger.info("Found unassigned messages in the stream")
                     for stream_name, messages in new_messages:
-                        logger.info(
-                            f"Stream {stream_name} has {len(messages)} unassigned messages"
-                        )
+                        logger.info(f"Stream {stream_name} has {len(messages)} unassigned messages")
                 else:
                     logger.info("No messages found in the stream")
 
@@ -238,9 +225,7 @@ class Consumer(Generic[T]):
             # Acknowledge the original message
             await self.redis.xack(self.channel, self.consumer_group, message_id)
 
-    async def _move_to_dead_letter(
-        self, message_id: str, fields: dict, error: str
-    ) -> None:
+    async def _move_to_dead_letter(self, message_id: str, fields: dict, error: str) -> None:
         """Move a message to the dead letter queue.
 
         Args:
@@ -292,9 +277,7 @@ class Consumer(Generic[T]):
                 if not messages:
                     continue
 
-                logger.info(
-                    f"Processing {len(messages)} messages from stream {messages[0][0]}"
-                )
+                logger.info(f"Processing {len(messages)} messages from stream {messages[0][0]}")
                 for stream, stream_messages in messages:
                     for message_id, fields in stream_messages:
                         await self._process_message(message_id, fields)

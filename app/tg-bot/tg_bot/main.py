@@ -74,9 +74,7 @@ async def start_bot():
         F.text.regexp(r"^[a-zA-Z0-9]{43,44}$"),
         ~StateFilter(*excluded_states),
     )
-    dp.message.register(
-        swap.swap_command, Command(re.compile(r"^buy.*"), re.compile(r"^sell.*"))
-    )
+    dp.message.register(swap.swap_command, Command(re.compile(r"^buy.*"), re.compile(r"^sell.*")))
     # Admin commands
     dp.message.register(
         admin.generate_activation_code,

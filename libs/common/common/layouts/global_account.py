@@ -1,6 +1,7 @@
-from dataclasses import dataclass
-from solders.pubkey import Pubkey  # type: ignore
 import struct
+from dataclasses import dataclass
+
+from solders.pubkey import Pubkey  # type: ignore
 
 
 @dataclass

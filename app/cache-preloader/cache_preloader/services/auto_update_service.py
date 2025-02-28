@@ -1,11 +1,11 @@
 import asyncio
-from typing import List
+
+from common.log import logger
+from db.redis import RedisClient
 
 from cache_preloader.caches.blockhash import BlockhashCache
 from cache_preloader.caches.min_balance_rent import MinBalanceRentCache
 from cache_preloader.core.protocols import AutoUpdateCacheProtocol
-from common.log import logger
-from db.redis import RedisClient
 
 
 class AutoUpdateCacheService:
@@ -13,7 +13,7 @@ class AutoUpdateCacheService:
 
     def __init__(self):
         self.redis_client = RedisClient.get_instance()
-        self.auto_update_caches: List[AutoUpdateCacheProtocol] = [
+        self.auto_update_caches: list[AutoUpdateCacheProtocol] = [
             BlockhashCache(self.redis_client),
             MinBalanceRentCache(self.redis_client),
             # RaydiumPoolCache(settings.rpc.rpc_url, self.redis_client, 20),
@@ -47,9 +47,7 @@ class AutoUpdateCacheService:
                 # 检查所有缓存是否正常运行
                 for cache in self.auto_update_caches:
                     if not cache.is_running():
-                        logger.warning(
-                            f"{cache.__class__.__name__} is not running, restarting..."
-                        )
+                        logger.warning(f"{cache.__class__.__name__} is not running, restarting...")
                         await cache.start()
                 # 每分钟检查一次
                 await asyncio.sleep(60)
@@ -78,4 +76,4 @@ class AutoUpdateCacheService:
 
         # 记录停止日志
         for cache in self.auto_update_caches:
-            logger.info(f"Stopped {cache.__class__.__name__}") 
+            logger.info(f"Stopped {cache.__class__.__name__}")

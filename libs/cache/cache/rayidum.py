@@ -197,11 +197,7 @@ class RaydiumPoolStoreage:
                     "market_data": record.market_data,
                 }
         else:
-            pool_data = (
-                await self.pool_data.get(top_pool_id)
-                if pool_data is None
-                else pool_data
-            )
+            pool_data = await self.pool_data.get(top_pool_id) if pool_data is None else pool_data
         return pool_data
 
     async def is_exist(self, pool_id: Pubkey) -> bool:
@@ -214,9 +210,7 @@ class RaydiumPoolStoreage:
         pool_keys = AmmV4PoolKeys.from_pool_data(
             pool_id, pool_data["amm_data"], pool_data["market_data"]
         )
-        mint = (
-            pool_keys.base_mint if pool_keys.base_mint != WSOL else pool_keys.quote_mint
-        )
+        mint = pool_keys.base_mint if pool_keys.base_mint != WSOL else pool_keys.quote_mint
         await self.pool_sorter.push(str(mint), str(pool_id))
 
         await self.pool_data.set(str(pool_id), pool_data)
@@ -225,9 +219,7 @@ class RaydiumPoolStoreage:
 
         async with start_async_session() as session:
             # 检查记录是否存在
-            stmt = select(RaydiumPoolModel.id).where(
-                RaydiumPoolModel.pool_id == str(pool_id)
-            )
+            stmt = select(RaydiumPoolModel.id).where(RaydiumPoolModel.pool_id == str(pool_id))
             result = await session.execute(stmt)
             pool = result.scalar_one_or_none()
 

@@ -78,9 +78,7 @@ class SwapSettlementProcessor:
             await asyncio.sleep(1)
         return TransactionStatus.EXPIRED
 
-    async def process(
-        self, signature: Signature | None, swap_event: SwapEvent
-    ) -> SwapRecord:
+    async def process(self, signature: Signature | None, swap_event: SwapEvent) -> SwapRecord:
         """处理交易
 
         Args:

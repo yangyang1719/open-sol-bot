@@ -25,7 +25,7 @@ def replace_version(match, version):
 
 def update_version_in_file(filepath, version):
     print(f"Processing {filepath}")
-    with open(filepath, "r") as f:
+    with open(filepath) as f:
         content = f.read()
 
     # 匹配两种模式：version = "x.x.x" 或 [project] 块中的 version = "x.x.x"
@@ -57,9 +57,7 @@ def update_version_in_file(filepath, version):
 def main():
     branch = get_current_branch()
     if not branch.startswith("release/"):
-        print(
-            "Error: This script should be run on a release branch (e.g., release/0.1.8)."
-        )
+        print("Error: This script should be run on a release branch (e.g., release/0.1.8).")
         sys.exit(1)
     version = branch.split("release/")[-1]
     print(f"Current version: {version}")

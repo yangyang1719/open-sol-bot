@@ -1,20 +1,20 @@
+import pathlib
+
 from anchorpy.program.core import Program
 from anchorpy.provider import Provider, Wallet
 from anchorpy_core.idl import Idl  # type: ignore
-import pathlib
-
 from solana.rpc.async_api import AsyncClient
-from solders.keypair import Keypair
 from solders.instruction import Instruction
+from solders.keypair import Keypair
 from solders.pubkey import Pubkey
 
 from common.constants import (
     EVENT_AUTHORITY,
     PUMP_FUN_PROGRAM,
+    PUMP_GLOBAL_ACCOUNT,
     RENT_PROGRAM_ID,
     SYSTEM_PROGRAM_ID,
     TOKEN_PROGRAM_ID,
-    PUMP_GLOBAL_ACCOUNT,
 )
 
 
@@ -66,8 +66,9 @@ class PumpFunInterface:
 
 
 if __name__ == "__main__":
-    from common.utils import get_async_client
     from solders.keypair import Keypair  # type: ignore
+
+    from common.utils import get_async_client
 
     keypair = Keypair()
     wallet = Wallet(keypair)
