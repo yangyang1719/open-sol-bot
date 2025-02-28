@@ -48,3 +48,6 @@ clean:
 
 update-version:
 	uv run python scripts/update-version.py
+
+pre-commit-check:
+	uv run pre-commit run --all-files | cat
