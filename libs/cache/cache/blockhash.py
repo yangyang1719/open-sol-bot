@@ -18,6 +18,4 @@ async def get_latest_blockhash() -> tuple[Hash, int]:
     if raw_cached_value is None:
         return await get_latest_blockhash_from_rpc()
     cached_value = json.loads(raw_cached_value)
-    return Hash.from_string(cached_value["blockhash"]), int(
-        cached_value["last_valid_block_height"]
-    )
+    return Hash.from_string(cached_value["blockhash"]), int(cached_value["last_valid_block_height"])

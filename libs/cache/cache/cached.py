@@ -1,10 +1,8 @@
 from typing import Literal
 
-from aiocache import Cache
+from aiocache import Cache, caches
 from aiocache import cached as _cached
-from aiocache import caches
 from aiocache.base import SENTINEL
-
 from common.config import settings
 
 endpoint = settings.db.redis.host

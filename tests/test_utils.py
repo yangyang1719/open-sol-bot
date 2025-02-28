@@ -1,6 +1,6 @@
 import pytest
-from common.utils.utils import calculate_auto_slippage
 from common.constants import WSOL
+from common.utils.utils import calculate_auto_slippage
 
 
 def test_get_associated_bonding_curve():
@@ -11,9 +11,7 @@ def test_get_associated_bonding_curve():
     mint = Pubkey.from_string("AYpgFp9DKcajYo2HuhdtTKcXVD3yjK27oYiHL37Lpump")
 
     associated_bonding_curve = get_associated_bonding_curve(bonding_curve, mint)
-    assert (
-        str(associated_bonding_curve) == "BxKK3qTsM3dcM1U5zJi3gVpddDpskkxfL7qgR4G749aU"
-    )
+    assert str(associated_bonding_curve) == "BxKK3qTsM3dcM1U5zJi3gVpddDpskkxfL7qgR4G749aU"
 
 
 @pytest.mark.asyncio

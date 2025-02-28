@@ -1,18 +1,21 @@
 from functools import cache
+
 import orjson as json
-
-from common.constants import TOKEN_PROGRAM_ID, WSOL, SWAP_PROGRAMS
-
-from wallet_tracker.exceptions import NotSwapTransaction, UnknownTransactionType
-
-from .protocol import TransactionParserInterface
+from common.constants import SWAP_PROGRAMS, TOKEN_PROGRAM_ID, WSOL
 from common.types import (
     SolAmountChange,
     TokenAmountChange,
     TxEvent,
     TxType,
 )
-from wallet_tracker.exceptions import ZeroChangeAmountError
+
+from wallet_tracker.exceptions import (
+    NotSwapTransaction,
+    UnknownTransactionType,
+    ZeroChangeAmountError,
+)
+
+from .protocol import TransactionParserInterface
 
 
 class RawTXParser(TransactionParserInterface):
@@ -49,17 +52,17 @@ class RawTXParser(TransactionParserInterface):
         for token_post_balance in token_post_balances:
             if token_post_balance["owner"] != self.get_who():
                 continue
-            if token_post_balance["programId"] == str(
-                TOKEN_PROGRAM_ID
-            ) and token_post_balance["mint"] != str(WSOL):
+            if token_post_balance["programId"] == str(TOKEN_PROGRAM_ID) and token_post_balance[
+                "mint"
+            ] != str(WSOL):
                 return token_post_balance["mint"]
 
         for token_pre_balance in token_pre_balances:
             if token_pre_balance["owner"] != self.get_who():
                 continue
-            if token_pre_balance["programId"] == str(
-                TOKEN_PROGRAM_ID
-            ) and token_pre_balance["mint"] != str(WSOL):
+            if token_pre_balance["programId"] == str(TOKEN_PROGRAM_ID) and token_pre_balance[
+                "mint"
+            ] != str(WSOL):
                 return token_pre_balance["mint"]
         raise ValueError("mint not found")
 
@@ -80,10 +83,7 @@ class RawTXParser(TransactionParserInterface):
                 break
 
         for post_token_balance in post_token_balances:
-            if (
-                post_token_balance["mint"] == mint
-                and post_token_balance["owner"] == who
-            ):
+            if post_token_balance["mint"] == mint and post_token_balance["owner"] == who:
                 post_token_amount = int(post_token_balance["uiTokenAmount"]["amount"])
                 decimals = post_token_balance["uiTokenAmount"]["decimals"]
                 break
@@ -117,12 +117,8 @@ class RawTXParser(TransactionParserInterface):
         change_ui_amount = token_amount_change["change_amount"] / (
             10 ** token_amount_change["decimals"]
         )
-        pre_balance = token_amount_change["pre_balance"] / (
-            10 ** token_amount_change["decimals"]
-        )
-        post_balance = token_amount_change["post_balance"] / (
-            10 ** token_amount_change["decimals"]
-        )
+        pre_balance = token_amount_change["pre_balance"] / (10 ** token_amount_change["decimals"])
+        post_balance = token_amount_change["post_balance"] / (10 ** token_amount_change["decimals"])
         if change_ui_amount > 0:
             # 加仓或开仓
             if pre_balance == 0 and post_balance > 0:

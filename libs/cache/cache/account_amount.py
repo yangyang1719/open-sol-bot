@@ -1,6 +1,5 @@
-from solders.pubkey import Pubkey  # type: ignore
-
 from common.utils import get_async_client
+from solders.pubkey import Pubkey  # type: ignore
 
 
 class AccountAmountCache:

@@ -1,7 +1,4 @@
-import asyncio
-
 import httpx
-
 from common.config import settings
 
 # {

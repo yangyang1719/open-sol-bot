@@ -1,5 +1,6 @@
 import asyncio
-from typing import Any, Callable, Coroutine, Optional
+from collections.abc import Callable, Coroutine
+from typing import Any
 
 import aioredis
 
@@ -55,7 +56,7 @@ class TxEventConsumer:
         self.batch_size = batch_size
         self.poll_timeout_ms = poll_timeout_ms
         self.is_running = False
-        self.callback: Optional[Callable[[TxEvent], Coroutine[Any, Any, None]]] = None
+        self.callback: Callable[[TxEvent], Coroutine[Any, Any, None]] | None = None
         self.task_pool = set()
         self.semaphore = asyncio.Semaphore(max_concurrent_tasks)
 
@@ -75,9 +76,7 @@ class TxEventConsumer:
                 raise
             logger.info(f"Consumer group {self.consumer_group} already exists")
 
-    def register_callback(
-        self, callback: Callable[[TxEvent], Coroutine[Any, Any, None]]
-    ) -> None:
+    def register_callback(self, callback: Callable[[TxEvent], Coroutine[Any, Any, None]]) -> None:
         """Register a callback function to process events.
 
         Args:
@@ -102,9 +101,7 @@ class TxEventConsumer:
                         try:
                             await self._process_message(message_id, fields)
                         except Exception as e:
-                            logger.error(
-                                f"Error processing pending message {message_id}: {e}"
-                            )
+                            logger.error(f"Error processing pending message {message_id}: {e}")
         except Exception as e:
             logger.error(f"Error processing pending messages: {e}")
 

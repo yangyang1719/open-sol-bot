@@ -1,7 +1,7 @@
 import asyncio
 import signal
 import time
-from typing import AsyncGenerator, Sequence
+from collections.abc import AsyncGenerator, Sequence
 
 import aioredis
 import base58
@@ -35,9 +35,7 @@ def should_convert_to_base58(value) -> bool:
         # 尝试解码为字符串，如果成功且没有特殊字符，就用字符串
         decoded = value.decode("utf-8")
         # 检查是否包含转义字符或不可打印字符
-        if "\\" in decoded or any(ord(c) < 32 or ord(c) > 126 for c in decoded):
-            return True
-        return False
+        return "\\" in decoded or any(ord(c) < 32 or ord(c) > 126 for c in decoded)
     except UnicodeDecodeError:
         # 如果无法解码为字符串，就用 base58
         return True
@@ -99,9 +97,7 @@ class TransactionDetailSubscriber:
         """Connect to Geyser service with retry mechanism."""
         while self.retry_count < self.max_retries:
             try:
-                self.geyser_client = await GeyserClient.connect(
-                    self.endpoint, x_token=self.api_key
-                )
+                self.geyser_client = await GeyserClient.connect(self.endpoint, x_token=self.api_key)
                 self.retry_count = 0  # Reset retry count on successful connection
                 logger.info("Successfully connected to Geyser service")
                 return
@@ -209,8 +205,7 @@ class TransactionDetailSubscriber:
         """Start response processing workers."""
         logger.info(f"Starting {self.worker_nums} response workers")
         self.workers = [
-            asyncio.create_task(self._process_response_worker())
-            for _ in range(self.worker_nums)
+            asyncio.create_task(self._process_response_worker()) for _ in range(self.worker_nums)
         ]
 
     async def _stop_workers(self):
@@ -245,9 +240,7 @@ class TransactionDetailSubscriber:
 
             # Create subscription request
             subscribe_request = SubscribeRequest(ping=SubscribeRequestPing(id=1))
-            pb_request = Parse(
-                subscribe_request.model_dump_json(), geyser_pb2.SubscribeRequest()
-            )
+            pb_request = Parse(subscribe_request.model_dump_json(), geyser_pb2.SubscribeRequest())
 
             # Subscribe to updates
             logger.info("Subscribing to account updates...")
@@ -273,7 +266,9 @@ class TransactionDetailSubscriber:
                         logger.exception(e)
                         await self._reconnect_and_subscribe()
 
-            asyncio.create_task(_f())
+            monitor_task = asyncio.create_task(_f())
+            # 添加任务完成回调以处理可能的异常
+            monitor_task.add_done_callback(lambda t: t.exception() if t.exception() else None)
         except asyncio.CancelledError:
             logger.info("Monitor cancelled, shutting down...")
         except Exception as e:

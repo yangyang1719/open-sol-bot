@@ -1,8 +1,7 @@
-import pytest
-from google.protobuf.json_format import Parse, MessageToJson, MessageToDict
-import base58
 import json
 
+import base58
+import pytest
 from common.config import settings
 from yellowstone_grpc.client import GeyserClient
 

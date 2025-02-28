@@ -32,24 +32,18 @@ class AMMData(TypedDict):
     pool_id: Pubkey
     amm_data: bytes
     market_data: bytes
-    
 
-async def fetch_pool_data_from_rpc(
-    pool_id: Pubkey, rpc_client: AsyncClient
-) -> AMMData | None:
+
+async def fetch_pool_data_from_rpc(pool_id: Pubkey, rpc_client: AsyncClient) -> AMMData | None:
     """从 rpc 获取池子信息"""
-    resp = await rpc_client.get_account_info_json_parsed(
-        pool_id, commitment=commitment.Processed
-    )
+    resp = await rpc_client.get_account_info_json_parsed(pool_id, commitment=commitment.Processed)
     if resp.value is None:
         return None
     amm_data = bytes(resp.value.data)
     amm_data_decoded = LIQUIDITY_STATE_LAYOUT_V4.parse(amm_data)
     market_id = Pubkey.from_bytes(amm_data_decoded.serumMarket)
 
-    resp = await rpc_client.get_account_info_json_parsed(
-        market_id, commitment=commitment.Processed
-    )
+    resp = await rpc_client.get_account_info_json_parsed(market_id, commitment=commitment.Processed)
     if resp.value is None:
         logger.error(f"Failed to fetch market data: {market_id}， pool_id: {pool_id}")
         return None
@@ -121,9 +115,7 @@ async def fetch_cpmm_pool_keys(pool_id: str) -> CpmmPoolKeys | None:
         client = get_async_client()
         pool_state = Pubkey.from_string(pool_id)
         raydium_vault_auth_2 = RAY_VAULT_AUTH_2
-        resp = await client.get_account_info_json_parsed(
-            pool_state, commitment=Processed
-        )
+        resp = await client.get_account_info_json_parsed(pool_state, commitment=Processed)
         if resp.value is None:
             return None
         parsed_data = CPMM_POOL_STATE_LAYOUT.parse(bytes(resp.value.data))
@@ -161,15 +153,11 @@ async def fetch_cpmm_pool_keys(pool_id: str) -> CpmmPoolKeys | None:
         return None
 
 
-async def fetch_clmm_pool_keys(
-    pool_id: str, zero_for_one: bool = True
-) -> ClmmPoolKeys | None:
+async def fetch_clmm_pool_keys(pool_id: str, zero_for_one: bool = True) -> ClmmPoolKeys | None:
     def calculate_start_index(
         tick_current: int, tick_spacing: int, tick_array_size: int = 60
     ) -> int:
-        return (tick_current // (tick_spacing * tick_array_size)) * (
-            tick_spacing * tick_array_size
-        )
+        return (tick_current // (tick_spacing * tick_array_size)) * (tick_spacing * tick_array_size)
 
     def get_pda_tick_array_address(pool_id: Pubkey, start_index: int):
         tick_array, _ = Pubkey.find_program_address(
@@ -187,9 +175,7 @@ async def fetch_clmm_pool_keys(
     try:
         client = get_async_client()
         pool_state = Pubkey.from_string(pool_id)
-        resp = await client.get_account_info_json_parsed(
-            pool_state, commitment=Processed
-        )
+        resp = await client.get_account_info_json_parsed(pool_state, commitment=Processed)
         if resp.value is None:
             return None
         parsed_data = CLMM_POOL_STATE_LAYOUT.parse(bytes(resp.value.data))
@@ -265,33 +251,21 @@ def make_amm_v4_swap_instruction(
     owner: Pubkey,
 ) -> Instruction:
     keys = [
-        AccountMeta(
-            pubkey=accounts.token_program_id, is_signer=False, is_writable=False
-        ),
+        AccountMeta(pubkey=accounts.token_program_id, is_signer=False, is_writable=False),
         AccountMeta(pubkey=accounts.amm_id, is_signer=False, is_writable=True),
-        AccountMeta(
-            pubkey=accounts.ray_authority_v4, is_signer=False, is_writable=False
-        ),
+        AccountMeta(pubkey=accounts.ray_authority_v4, is_signer=False, is_writable=False),
         AccountMeta(pubkey=accounts.open_orders, is_signer=False, is_writable=True),
         AccountMeta(pubkey=accounts.target_orders, is_signer=False, is_writable=True),
         AccountMeta(pubkey=accounts.base_vault, is_signer=False, is_writable=True),
         AccountMeta(pubkey=accounts.quote_vault, is_signer=False, is_writable=True),
-        AccountMeta(
-            pubkey=accounts.open_book_program, is_signer=False, is_writable=False
-        ),
+        AccountMeta(pubkey=accounts.open_book_program, is_signer=False, is_writable=False),
         AccountMeta(pubkey=accounts.market_id, is_signer=False, is_writable=True),
         AccountMeta(pubkey=accounts.bids, is_signer=False, is_writable=True),
         AccountMeta(pubkey=accounts.asks, is_signer=False, is_writable=True),
         AccountMeta(pubkey=accounts.event_queue, is_signer=False, is_writable=True),
-        AccountMeta(
-            pubkey=accounts.market_base_vault, is_signer=False, is_writable=True
-        ),
-        AccountMeta(
-            pubkey=accounts.market_quote_vault, is_signer=False, is_writable=True
-        ),
-        AccountMeta(
-            pubkey=accounts.market_authority, is_signer=False, is_writable=False
-        ),
+        AccountMeta(pubkey=accounts.market_base_vault, is_signer=False, is_writable=True),
+        AccountMeta(pubkey=accounts.market_quote_vault, is_signer=False, is_writable=True),
+        AccountMeta(pubkey=accounts.market_authority, is_signer=False, is_writable=False),
         AccountMeta(pubkey=token_account_in, is_signer=False, is_writable=True),
         AccountMeta(pubkey=token_account_out, is_signer=False, is_writable=True),
         AccountMeta(pubkey=owner, is_signer=True, is_writable=False),
@@ -333,9 +307,7 @@ def make_cpmm_swap_instruction(
 
     keys = [
         AccountMeta(pubkey=owner, is_signer=True, is_writable=True),
-        AccountMeta(
-            pubkey=accounts.raydium_vault_auth_2, is_signer=False, is_writable=False
-        ),
+        AccountMeta(pubkey=accounts.raydium_vault_auth_2, is_signer=False, is_writable=False),
         AccountMeta(pubkey=accounts.amm_config, is_signer=False, is_writable=False),
         AccountMeta(pubkey=accounts.pool_state, is_signer=False, is_writable=True),
         AccountMeta(pubkey=token_account_in, is_signer=False, is_writable=True),
@@ -383,16 +355,10 @@ def make_clmm_swap_instruction(
         AccountMeta(pubkey=output_vault, is_signer=False, is_writable=True),
         AccountMeta(pubkey=accounts.observation_key, is_signer=False, is_writable=True),
         AccountMeta(pubkey=TOKEN_PROGRAM_ID, is_signer=False, is_writable=False),
-        AccountMeta(
-            pubkey=accounts.current_tick_array, is_signer=False, is_writable=True
-        ),
-        AccountMeta(
-            pubkey=accounts.bitmap_extension, is_signer=False, is_writable=True
-        ),
+        AccountMeta(pubkey=accounts.current_tick_array, is_signer=False, is_writable=True),
+        AccountMeta(pubkey=accounts.bitmap_extension, is_signer=False, is_writable=True),
         AccountMeta(pubkey=accounts.prev_tick_array, is_signer=False, is_writable=True),
-        AccountMeta(
-            pubkey=accounts.additional_tick_array, is_signer=False, is_writable=True
-        ),
+        AccountMeta(pubkey=accounts.additional_tick_array, is_signer=False, is_writable=True),
     ]
 
     data = bytearray()
@@ -495,20 +461,12 @@ async def get_cpmm_reserves(pool_keys: CpmmPoolKeys):
         return None, None, None
 
     if base_mint == WSOL:
-        base_reserve = quote_account_balance - (
-            protocol_fees_token_0 + fund_fees_token_0
-        )
-        quote_reserve = base_account_balance - (
-            protocol_fees_token_1 + fund_fees_token_1
-        )
+        base_reserve = quote_account_balance - (protocol_fees_token_0 + fund_fees_token_0)
+        quote_reserve = base_account_balance - (protocol_fees_token_1 + fund_fees_token_1)
         token_decimal = quote_decimal
     else:
-        base_reserve = base_account_balance - (
-            protocol_fees_token_1 + fund_fees_token_1
-        )
-        quote_reserve = quote_account_balance - (
-            protocol_fees_token_0 + fund_fees_token_0
-        )
+        base_reserve = base_account_balance - (protocol_fees_token_1 + fund_fees_token_1)
+        quote_reserve = quote_account_balance - (protocol_fees_token_0 + fund_fees_token_0)
         token_decimal = base_decimal
 
     print(f"Base Mint: {base_mint} | Quote Mint: {quote_mint}")
@@ -558,20 +516,12 @@ async def get_clmm_reserves(pool_keys: ClmmPoolKeys):
         return None, None, None
 
     if base_mint == WSOL:
-        base_reserve = quote_account_balance - (
-            protocol_fees_token_0 + fund_fees_token_0
-        )
-        quote_reserve = base_account_balance - (
-            protocol_fees_token_1 + fund_fees_token_1
-        )
+        base_reserve = quote_account_balance - (protocol_fees_token_0 + fund_fees_token_0)
+        quote_reserve = base_account_balance - (protocol_fees_token_1 + fund_fees_token_1)
         token_decimal = quote_decimal
     else:
-        base_reserve = base_account_balance - (
-            protocol_fees_token_1 + fund_fees_token_1
-        )
-        quote_reserve = quote_account_balance - (
-            protocol_fees_token_0 + fund_fees_token_0
-        )
+        base_reserve = base_account_balance - (protocol_fees_token_1 + fund_fees_token_1)
+        quote_reserve = quote_account_balance - (protocol_fees_token_0 + fund_fees_token_0)
         token_decimal = base_decimal
 
     print(f"Base Mint: {base_mint} | Quote Mint: {quote_mint}")
@@ -594,9 +544,7 @@ async def fetch_pair_address_from_rpc(
         memcmp_filter_base = MemcmpOpts(offset=quote_offset, bytes=quote_mint)
         memcmp_filter_quote = MemcmpOpts(offset=base_offset, bytes=base_mint)
         try:
-            print(
-                f"Fetching pair addresses for base_mint: {base_mint}, quote_mint: {quote_mint}"
-            )
+            print(f"Fetching pair addresses for base_mint: {base_mint}, quote_mint: {quote_mint}")
             response = await client.get_program_accounts(
                 program_id,
                 commitment=Processed,

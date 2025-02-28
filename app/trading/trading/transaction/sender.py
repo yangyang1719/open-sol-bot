@@ -1,5 +1,4 @@
 import base64
-from typing import Optional
 
 from common.config import settings
 from common.log import logger
@@ -23,7 +22,7 @@ class DefaultTransactionSender(TransactionSender):
     async def send_transaction(
         self,
         transaction: VersionedTransaction,
-        opts: Optional[TxOpts] = None,
+        opts: TxOpts | None = None,
         **kwargs,
     ) -> Signature:
         if opts is None:
@@ -51,7 +50,7 @@ class JitoTransactionSender(TransactionSender):
     async def send_transaction(
         self,
         transaction: VersionedTransaction,
-        opts: Optional[TxOpts] = None,
+        opts: TxOpts | None = None,
         **kwargs,
     ) -> Signature:
         if opts is None:

@@ -1,14 +1,13 @@
 import math
 
+from cache.account import GlobalAccountCache
+from common.layouts.bonding_curve_account import BondingCurveAccount
+from common.layouts.global_account import GlobalAccount
 from solana.rpc.api import Client
 from solana.rpc.async_api import AsyncClient
 from solders.hash import Hash  # type: ignore
 from solders.pubkey import Pubkey  # type: ignore
 from spl.token.instructions import get_associated_token_address
-
-from cache.account import GlobalAccountCache
-from common.layouts.bonding_curve_account import BondingCurveAccount
-from common.layouts.global_account import GlobalAccount
 
 
 def get_client() -> Client:
@@ -68,9 +67,7 @@ async def get_bonding_curve_account(
     return (bonding_curve, associated_bonding_curve, bonding_curve_account)
 
 
-async def get_global_account(
-    client: AsyncClient, program: Pubkey
-) -> GlobalAccount | None:
+async def get_global_account(client: AsyncClient, program: Pubkey) -> GlobalAccount | None:
     return await GlobalAccountCache(client).get(program)
 
 

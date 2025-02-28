@@ -122,9 +122,7 @@ class RaydiumPoolCache(AutoUpdateCacheProtocol):
             else:
                 self._waiting_for_tasks = True
                 logger.info(
-                    "Waiting for {} tasks to complete...".format(
-                        len(self._running_tasks)
-                    ),
+                    f"Waiting for {len(self._running_tasks)} tasks to complete...",
                 )
                 # 等待所有正在运行的任务完成
                 if self._running_tasks:
@@ -136,7 +134,6 @@ class RaydiumPoolCache(AutoUpdateCacheProtocol):
         return len(self._running_tasks) > 0
 
 
-    
 if __name__ == "__main__":
     from db.redis import RedisClient
 

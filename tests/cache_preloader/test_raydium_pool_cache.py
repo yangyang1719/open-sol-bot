@@ -26,12 +26,11 @@ def mock_rpc_client():
     return client
 
 
-
 @pytest.mark.asyncio
 async def test_mint_pool_data_cache(mock_redis):
     """测试 Mint 池数据缓存"""
     cache = MintPoolDataCache(mock_redis)
-    
+
     # 这里可以添加测试，例如测试设置和获取缓存数据
 
 
@@ -41,7 +40,7 @@ async def test_raydium_pool_cache_initialization():
     with patch("cache_preloader.caches.raydium_pool.AsyncClient") as mock_client:
         redis = AsyncMock(spec=aioredis.Redis)
         cache = RaydiumPoolCache("https://api.mainnet-beta.solana.com", redis, 5)
-        
+
         # 验证初始状态
         assert not cache.is_running()
         assert cache.max_concurrent_tasks == 5
@@ -49,4 +48,4 @@ async def test_raydium_pool_cache_initialization():
 
 
 # 注意：由于 RaydiumPoolCache 的完整实现较为复杂，
-# 这里只提供了基本的测试框架。实际测试应该根据完整实现进行扩展。 
+# 这里只提供了基本的测试框架。实际测试应该根据完整实现进行扩展。

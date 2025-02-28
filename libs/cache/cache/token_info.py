@@ -1,5 +1,5 @@
 import asyncio
-from typing import List, TypedDict
+from typing import TypedDict
 
 from common.config import settings
 from common.log import logger
@@ -46,9 +46,9 @@ class TokenInfoDict(TypedDict):
     decimals: int
     description: str
     logo: str
-    tags: List[str]
+    tags: list[str]
     verified: str
-    network: List[str]
+    network: list[str]
     metadataToken: str
 
 
@@ -76,7 +76,7 @@ class TokenInfoCache:
             try:
                 mint = Pubkey.from_string(mint)
             except ValueError:
-                raise ValueError("Invalid Base58 string: {}".format(mint))
+                raise ValueError(f"Invalid Base58 string: {mint}")
 
         if not isinstance(mint, Pubkey):
             raise ValueError("Mint must be a string")
@@ -124,7 +124,9 @@ class TokenInfoCache:
                         )
                         await session.rollback()
 
-            asyncio.create_task(_write_to_db())
+            db_task = asyncio.create_task(_write_to_db())
+            # 添加任务完成回调以处理可能的异常
+            db_task.add_done_callback(lambda t: t.exception() if t.exception() else None)
         except Exception as e:
             logger.warning(f"Failed to fetch token info: {mint}, cause: {e}")
             return None

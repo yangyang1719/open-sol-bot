@@ -1,7 +1,8 @@
 from typing import Literal
-from pydantic import BaseModel
 
+from pydantic import BaseModel
 from typing_extensions import Self
+
 from common.models.swap_record import SwapRecord
 from common.types.tx import TxEvent
 

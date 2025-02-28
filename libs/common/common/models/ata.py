@@ -1,8 +1,10 @@
-from sqlmodel import Field
-from sqlalchemy import BIGINT
-from common.models.base import Base
 from enum import Enum
+
+from sqlalchemy import BIGINT
+from sqlmodel import Field
+
 from common.layouts.token_account import TokenAccount
+from common.models.base import Base
 from common.utils import get_associated_token_address
 
 

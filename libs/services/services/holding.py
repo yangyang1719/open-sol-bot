@@ -1,7 +1,7 @@
 from common.config import settings
+from common.types.holding import HoldingToken, TokenAccountBalance
 from common.utils.shyft import ShyftAPI
 from common.utils.utils import format_number
-from common.types.holding import HoldingToken, TokenAccountBalance
 
 
 # PERF: 暂时每次获取都调用 API，后续可以优化
@@ -9,9 +9,7 @@ class HoldingService:
     def __init__(self) -> None:
         self.shyft = ShyftAPI(settings.api.shyft_api_key)
 
-    async def get_token_account_balance(
-        self, mint: str, wallet: str
-    ) -> TokenAccountBalance:
+    async def get_token_account_balance(self, mint: str, wallet: str) -> TokenAccountBalance:
         """获取代币账户余额
 
         Args:

@@ -85,16 +85,14 @@ async def start_asset(token_mint: str, message: types.Message, state: FSMContext
     wallet = await user_service.get_pubkey(chat_id)
     setting = await setting_service.get(chat_id, wallet)
     if setting is None:
-        raise ValueError(
-            "Setting not found, chat_id: {}, wallet: {}".format(chat_id, wallet)
-        )
+        raise ValueError(f"Setting not found, chat_id: {chat_id}, wallet: {wallet}")
 
     token_info = await token_info_cache.get(token_mint)
     if token_info is None:
         logger.info(f"No token info found for {token_mint}")
         await message.answer("❌ 无法查询到该代币信息")
         return
-    logger.info("New Found Token Info: {}".format(token_info))
+    logger.info(f"New Found Token Info: {token_info}")
 
     await state.update_data(setting=setting, token_info=token_info, wallet=wallet)
 

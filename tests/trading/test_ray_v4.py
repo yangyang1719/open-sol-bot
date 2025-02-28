@@ -1,8 +1,6 @@
 import pytest
-from solana.rpc.async_api import AsyncClient
-
 from common.config import settings
-from common.utils.raydium import RaydiumAPI
+from solana.rpc.async_api import AsyncClient
 from trading.swap_protocols import RayV4
 
 

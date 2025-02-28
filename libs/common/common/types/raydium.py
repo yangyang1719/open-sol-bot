@@ -38,9 +38,7 @@ class AmmV4PoolKeys:
     token_program_id: Pubkey
 
     @classmethod
-    def from_pool_data(
-        cls, pool_id: str | Pubkey, amm_data: bytes, market_data: bytes
-    ) -> Self:
+    def from_pool_data(cls, pool_id: str | Pubkey, amm_data: bytes, market_data: bytes) -> Self:
         if isinstance(pool_id, str):
             amm_id = Pubkey.from_string(pool_id)
         else:

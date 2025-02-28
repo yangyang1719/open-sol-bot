@@ -1,14 +1,14 @@
-from typing import Sequence
-from sqlmodel import Field, select
+from collections.abc import Sequence
+
 from sqlalchemy import BIGINT
+from sqlmodel import Field, select
+
 from common.models.base import Base
 
 
 class Monitor(Base, table=True):
     __tablename__ = "bot_monitor"  # type: ignore
-    chat_id: int = Field(
-        nullable=False, index=True, sa_type=BIGINT, description="用户 ID"
-    )
+    chat_id: int = Field(nullable=False, index=True, sa_type=BIGINT, description="用户 ID")
     target_wallet: str = Field(nullable=False)
     wallet_alias: str | None = Field(nullable=True)
     active: bool = Field(nullable=False, description="是否激活")
@@ -24,10 +24,6 @@ class Monitor(Base, table=True):
 
         async with start_async_session() as session:
             # 查询所有激活的监听器，只选择 target_wallet 字段
-            stmt = (
-                select(cls.target_wallet)
-                .where(cls.active == True)  # noqa: E712
-                .distinct()
-            )
+            stmt = select(cls.target_wallet).where(cls.active == True).distinct()
             result = await session.execute(stmt)
             return result.scalars().all()

@@ -4,8 +4,6 @@ from common.constants import PUMP_FUN_PROGRAM, RAY_V4
 from common.log import logger
 from common.models.tg_bot.user import User
 from common.types.swap import SwapEvent
-from common.utils.jito import JitoClient
-from common.utils.raydium import RaydiumAPI
 from db.session import NEW_ASYNC_SESSION, provide_session
 from solana.rpc.async_api import AsyncClient
 from solders.keypair import Keypair  # type: ignore
@@ -65,13 +63,9 @@ class TradingExecutor:
         program_id = swap_event.program_id
 
         try:
-            is_pump_token_launched = await self._launch_cache.is_pump_token_launched(
-                token_address
-            )
-            if (
-                program_id == PUMP_FUN_PROGRAM_ID
-                or token_address.endswith("pump")
-                and not is_pump_token_launched
+            is_pump_token_launched = await self._launch_cache.is_pump_token_launched(token_address)
+            if program_id == PUMP_FUN_PROGRAM_ID or (
+                token_address.endswith("pump") and not is_pump_token_launched
             ):
                 should_use_pump = True
                 logger.info(

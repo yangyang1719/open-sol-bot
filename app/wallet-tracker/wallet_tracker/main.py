@@ -8,6 +8,7 @@ from common.types import copytrade
 from common.utils import get_async_client
 from db.redis import RedisClient
 from solders.pubkey import Pubkey  # type: ignore
+
 from wallet_tracker.benchmark import BenchmarkService
 from wallet_tracker.tx_monitor import TxMonitor
 from wallet_tracker.tx_worker import TransactionWorker

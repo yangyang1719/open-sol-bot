@@ -86,9 +86,7 @@ class JupiterAPI:
         Returns:
             dict: 交易信息
         """
-        quote_response = await self.get_quote(
-            input_mint, output_mint, amount, slippage_bps
-        )
+        quote_response = await self.get_quote(input_mint, output_mint, amount, slippage_bps)
         if use_jito and not jito_tip_lamports:
             raise ValueError("jito_tip_lamports is required if use_jito is True")
         elif use_jito:
@@ -120,9 +118,7 @@ class JupiterAPI:
         slippage_bps: int,
         user_publickey: str,
     ) -> dict:
-        quote_response = await self.get_quote(
-            input_mint, output_mint, amount, slippage_bps
-        )
+        quote_response = await self.get_quote(input_mint, output_mint, amount, slippage_bps)
         data = {
             "quoteResponse": quote_response,
             "userPublicKey": user_publickey,

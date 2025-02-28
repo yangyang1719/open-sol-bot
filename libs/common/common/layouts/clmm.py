@@ -1,15 +1,15 @@
 from construct import (
-    Int32ul,
-    Struct,
+    Adapter,
+    Array,
+    Bytes,
+    Flag,
     Int8ul,
     Int16ul,
-    Int64ul,
     Int32sl,
-    Bytes,
-    Array,
-    Flag,
+    Int32ul,
+    Int64ul,
     Padding,
-    Adapter,
+    Struct,
 )
 
 
@@ -52,9 +52,7 @@ OBSERVATION_STATE_LAYOUT = Struct(
     "padding" / Array(5, UInt128ul),
 )
 
-POSITION_REWARD_INFO = Struct(
-    "reward_amount" / UInt128ul, "reward_growth_inside" / UInt128ul
-)
+POSITION_REWARD_INFO = Struct("reward_amount" / UInt128ul, "reward_growth_inside" / UInt128ul)
 
 PERSONAL_POSITION_STATE_LAYOUT = Struct(
     Padding(8),

@@ -1,5 +1,4 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
 from common.types.tx import TxEvent
 
 

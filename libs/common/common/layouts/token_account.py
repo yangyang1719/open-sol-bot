@@ -1,7 +1,9 @@
-from .layouts import TOKEN_ACCOUNT_LAYOUT
-from solders.pubkey import Pubkey
 from dataclasses import dataclass
+
+from solders.pubkey import Pubkey
 from typing_extensions import Self
+
+from .layouts import TOKEN_ACCOUNT_LAYOUT
 
 
 @dataclass
@@ -24,9 +26,7 @@ class TokenAccount:
         owner = Pubkey.from_bytes(decoded_data.owner)
         amount = decoded_data.amount
         delegate = decoded_data.delegate_option == 1
-        delegate_address = (
-            Pubkey.from_bytes(decoded_data.delegate) if delegate else None
-        )
+        delegate_address = Pubkey.from_bytes(decoded_data.delegate) if delegate else None
         state = decoded_data.state
         is_native = decoded_data.is_native_option == 1
         delegated_amount = decoded_data.delegated_amount if delegate else 0

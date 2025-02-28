@@ -2,8 +2,8 @@
 Monitor event producer and consumer for handling wallet monitoring events
 """
 
+from collections.abc import Callable
 from enum import Enum
-from typing import Callable, Optional
 
 import aioredis
 import orjson as json
@@ -27,7 +27,7 @@ class MonitorEvent(BaseModel):
     monitor_id: int
     target_wallet: str
     owner_id: int
-    wallet_alias: Optional[str] = None
+    wallet_alias: str | None = None
 
 
 class MonitorEventProducer:
@@ -184,9 +184,7 @@ class MonitorEventConsumer:
                     logger.error(f"Error in event handler for {event.event_type}: {e}")
                     raise
             else:
-                logger.warning(
-                    f"No handler registered for event type: {event.event_type}"
-                )
+                logger.warning(f"No handler registered for event type: {event.event_type}")
 
         except json.JSONDecodeError as e:
             logger.error(f"Invalid JSON in message data: {e}")

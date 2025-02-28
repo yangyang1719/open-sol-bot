@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
-import pytest
 
-from wallet_tracker.parser.raw_tx import RawTXParser
+import pytest
 from common.types import TxType
+from wallet_tracker.parser.raw_tx import RawTXParser
 
 
 def read_raw_tx(name: str) -> dict:

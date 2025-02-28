@@ -1,15 +1,15 @@
 from construct import (
-    Bytes,
-    Int32ul,
-    Int8ul,
-    Int64ul,
-    Padding,
     BitsInteger,
     BitsSwapped,
     BitStruct,
+    Bytes,
+    BytesInteger,
     Const,
     Flag,
-    BytesInteger,
+    Int8ul,
+    Int32ul,
+    Int64ul,
+    Padding,
 )
 from construct import Struct as cStruct
 
@@ -122,9 +122,7 @@ OPEN_ORDERS_LAYOUT = cStruct(
     Padding(7),
 )
 
-SWAP_LAYOUT = cStruct(
-    "instruction" / Int8ul, "amount_in" / Int64ul, "min_amount_out" / Int64ul
-)
+SWAP_LAYOUT = cStruct("instruction" / Int8ul, "amount_in" / Int64ul, "min_amount_out" / Int64ul)
 
 PUBLIC_KEY_LAYOUT = Bytes(32)
 

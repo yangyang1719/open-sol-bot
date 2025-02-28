@@ -1,6 +1,5 @@
-from .layouts import *
-from .global_account import GlobalAccount
 from .bonding_curve_account import BondingCurveAccount
+from .global_account import GlobalAccount
+from .layouts import *
 
-
-__all__ = ["GlobalAccount", "BondingCurveAccount"]
+__all__ = ["BondingCurveAccount", "GlobalAccount"]
