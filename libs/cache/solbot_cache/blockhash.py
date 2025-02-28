@@ -1,5 +1,5 @@
 import orjson as json
-from solbot_common.utils import get_async_client
+from solbot_common.utils.utils import get_async_client
 from solbot_db.redis import RedisClient
 from solders.hash import Hash  # type: ignore
 

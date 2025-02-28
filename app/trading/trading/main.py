@@ -8,12 +8,13 @@ from solbot_common.cp.swap_result import SwapResultProducer
 from solbot_common.log import logger
 from solbot_common.prestart import pre_start
 from solbot_common.types.swap import SwapEvent, SwapResult
+from solbot_common.utils.utils import get_async_client
 from solbot_db.redis import RedisClient
+from solders.signature import Signature  # type: ignore
 
 from trading.copytrade import CopyTradeProcessor
 from trading.executor import TradingExecutor
 from trading.settlement import SwapSettlementProcessor
-from trading.utils import get_async_client
 
 
 class Trading:
@@ -70,7 +71,7 @@ class Trading:
         factor=0.1,
         max_time=2,
     )
-    async def _execute_swap(self, swap_event: SwapEvent) -> str | None:
+    async def _execute_swap(self, swap_event: SwapEvent) -> Signature | None:
         """执行交易并返回签名"""
         sig = await self.trading_executor.exec(swap_event)
         logger.info(f"Transaction submitted: {sig}")
@@ -84,7 +85,7 @@ class Trading:
         factor=0.1,
         max_time=2,
     )
-    async def _record_swap_result(self, sig: str | None, swap_event: SwapEvent) -> SwapResult:
+    async def _record_swap_result(self, sig: Signature | None, swap_event: SwapEvent) -> SwapResult:
         """记录交易结果"""
         if not sig:
             return await self._record_failed_swap(swap_event)

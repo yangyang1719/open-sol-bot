@@ -11,7 +11,35 @@ from solders.signature import Signature  # type: ignore
 from solders.transaction_status import TransactionConfirmationStatus  # type: ignore
 from spl.token.instructions import get_associated_token_address
 
+from solbot_common.layouts.bonding_curve_account import BondingCurveAccount
+from solbot_common.layouts.global_account import GlobalAccount
 from solbot_common.layouts.mint_account import MintAccount
+
+
+def get_bonding_curve_pda(mint: Pubkey, program: Pubkey) -> Pubkey:
+    return Pubkey.find_program_address([b"bonding-curve", bytes(mint)], program)[0]
+
+
+async def get_bonding_curve_account(
+    client: AsyncClient, mint: Pubkey, program: Pubkey
+) -> tuple[Pubkey, Pubkey, BondingCurveAccount] | None:
+    bonding_curve = get_bonding_curve_pda(mint, program)
+    associated_bonding_curve = get_associated_token_address(bonding_curve, mint)
+
+    account_info = await client.get_account_info_json_parsed(bonding_curve)
+    if account_info is None:
+        return None
+    value = account_info.value
+    if value is None:
+        return None
+    bonding_curve_account = BondingCurveAccount.from_buffer(bytes(value.data))
+    return (bonding_curve, associated_bonding_curve, bonding_curve_account)
+
+
+async def get_global_account(client: AsyncClient, program: Pubkey) -> GlobalAccount | None:
+    from solbot_cache.account import GlobalAccountCache
+
+    return await GlobalAccountCache(client).get(program)
 
 
 def get_associated_bonding_curve(bonding_curve: Pubkey, mint: Pubkey) -> Pubkey:

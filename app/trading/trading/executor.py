@@ -7,6 +7,7 @@ from solbot_common.models.tg_bot.user import User
 from solbot_common.types.swap import SwapEvent
 from solbot_db.session import NEW_ASYNC_SESSION, provide_session
 from solders.keypair import Keypair  # type: ignore
+from solders.signature import Signature  # type: ignore
 from sqlmodel import select
 
 from trading.swap import SwapDirection, SwapInType
@@ -30,7 +31,7 @@ class TradingExecutor:
             raise ValueError("Wallet not found")
         return Keypair.from_bytes(private_key)
 
-    async def exec(self, swap_event: SwapEvent):
+    async def exec(self, swap_event: SwapEvent) -> Signature | None:
         """执行交易
 
         Args:

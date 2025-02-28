@@ -14,6 +14,7 @@ from solbot_common.constants import (
 )
 from solbot_common.IDL.pumpfun import PumpFunInterface
 from solbot_common.log import logger
+from solbot_common.utils.utils import get_bonding_curve_account, get_global_account
 from solders.keypair import Keypair  # type: ignore
 from solders.pubkey import Pubkey  # type: ignore
 from solders.transaction import VersionedTransaction  # type: ignore
@@ -27,13 +28,7 @@ from spl.token.instructions import (
 from trading.exceptions import BondingCurveNotFound
 from trading.swap import SwapDirection, SwapInType
 from trading.tx import build_transaction
-from trading.utils import (
-    get_bonding_curve_account,
-    get_global_account,
-    has_ata,
-    max_amount_with_slippage,
-    min_amount_with_slippage,
-)
+from trading.utils import has_ata, max_amount_with_slippage, min_amount_with_slippage
 
 from .base import TransactionBuilder
 

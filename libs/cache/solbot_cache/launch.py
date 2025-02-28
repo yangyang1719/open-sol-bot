@@ -1,4 +1,5 @@
-from solbot_common.utils.utils import get_async_client
+from solbot_common.constants import PUMP_FUN_PROGRAM
+from solbot_common.utils.utils import get_async_client, get_bonding_curve_account
 from solders.pubkey import Pubkey  # type: ignore
 
 from .cached import cached
@@ -34,9 +35,6 @@ class LaunchCache:
         Raises:
             BondingCurveNotFound: 如果找不到对应的 bonding curve 账户
         """
-        from solbot_common.constants import PUMP_FUN_PROGRAM
-        from trading.utils import get_bonding_curve_account
-
         result = await get_bonding_curve_account(
             self.client,
             Pubkey.from_string(mint) if isinstance(mint, str) else mint,

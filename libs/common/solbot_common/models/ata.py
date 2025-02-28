@@ -5,7 +5,7 @@ from sqlmodel import Field
 
 from solbot_common.layouts.token_account import TokenAccount
 from solbot_common.models.base import Base
-from solbot_common.utils import get_associated_token_address
+from solbot_common.utils.utils import get_associated_token_address
 
 
 class State(Enum):
