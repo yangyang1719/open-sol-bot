@@ -13,10 +13,9 @@ def test_get_bonding_curve_pda():
     assert str(result) == "8o4o1rhJQ2AoCHBRvumBAmbPH9pxrxWCAYBCfEFcniee"
 
 
-@pytest.mark.asyncio
-async def test_get_associated_bonding_curve():
+def test_get_associated_bonding_curve():
     mint = Pubkey.from_string("7YYfWqoKvZmGfX4MgE9TuTpPZz9waHAUUxshFmwqpump")
-    bonding_curve = await get_bonding_curve_pda(mint, PUMP_FUN_PROGRAM)
+    bonding_curve = get_bonding_curve_pda(mint, PUMP_FUN_PROGRAM)
     result = get_associated_bonding_curve(bonding_curve, mint)
     assert str(result) == "GDmfeokYLpfG4s1MdLcSYTriEgapkBL4hCupMk5UTRev"
 
