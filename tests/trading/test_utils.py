@@ -7,10 +7,9 @@ from libs.common.solbot_common.utils.utils import (
     get_bonding_curve_pda, get_global_account)
 
 
-@pytest.mark.asyncio
-async def test_get_bonding_curve_pda():
+def test_get_bonding_curve_pda():
     mint = Pubkey.from_string("7YYfWqoKvZmGfX4MgE9TuTpPZz9waHAUUxshFmwqpump")
-    result = await get_bonding_curve_pda(mint, PUMP_FUN_PROGRAM)
+    result = get_bonding_curve_pda(mint, PUMP_FUN_PROGRAM)
     assert str(result) == "8o4o1rhJQ2AoCHBRvumBAmbPH9pxrxWCAYBCfEFcniee"
 
 
