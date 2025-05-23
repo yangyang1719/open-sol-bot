@@ -22,7 +22,7 @@ class LaunchCache:
 
     @cached(ttl=None, noself=True)
     async def is_pump_token_launched(self, mint: str | Pubkey) -> bool:
-        """检查 pump 代币是否已被发射。
+        """Examine if a Pump.fun token has been launched.
 
         通过检查代币的 virtual_sol_reserves 是否为 0 来判断。
         如果为 0，说明代币已经在 Raydium 上发射。
