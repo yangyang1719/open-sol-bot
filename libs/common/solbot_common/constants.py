@@ -30,4 +30,5 @@ PUMP_SELL_METHOD = 12502976635542562355
 SWAP_PROGRAMS = [
     "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",  # Raydium Liquidity Pool V4
     "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",  # Pump
+    "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG",  # MMeteora DAMM v2
 ]

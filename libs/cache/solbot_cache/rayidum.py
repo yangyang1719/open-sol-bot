@@ -10,7 +10,8 @@ from solbot_common.utils.pool import AmmV4PoolKeys, fetch_pool_data_from_rpc
 from solbot_common.utils.raydium import RaydiumAPI
 from solbot_common.utils.utils import get_async_client
 from solbot_db.redis import RedisClient
-from solbot_db.session import NEW_ASYNC_SESSION, provide_session, start_async_session
+from solbot_db.session import (NEW_ASYNC_SESSION, provide_session,
+                               start_async_session)
 from solders.pubkey import Pubkey  # type: ignore
 from sqlmodel import select
 
@@ -237,7 +238,7 @@ class RaydiumPoolStoreage:
 
 
 async def get_preferred_pool(mint: Pubkey | str) -> AMMData | None:
-    """获取 mint 优先级最高的池子"""
+    """Get mint The highest priority pool"""
     redis = RedisClient.get_instance()
     storeage = RaydiumPoolStoreage(redis)
 
@@ -268,4 +269,26 @@ async def get_preferred_pool(mint: Pubkey | str) -> AMMData | None:
     if pool_data is None:
         logger.info(f"No pool found for mint: {mint}, fetching from rpc")
         pool_data = await _get_pool_data_from_rpc(mint_str)
+    return pool_data
+
+
+async def get_pool_data_from_rpc(mint: str) -> AMMData | None:
+    """Get pool data directly from RPC.
+    
+    Args:
+        mint: The token mint address
+        
+    Returns:
+        AMMData | None: The pool data if found, None otherwise
+    """
+    rpc_client = get_async_client()
+    data = await RaydiumAPI().get_pool_info_by_mint(str(mint))
+    count = data["count"]
+    if count == 0:
+        return None
+    pool_id = cast(str, data["data"][0]["id"])
+
+    pool_pubkey = Pubkey.from_string(pool_id)
+    pool_data = await fetch_pool_data_from_rpc(pool_pubkey, rpc_client)
+
     return pool_data
