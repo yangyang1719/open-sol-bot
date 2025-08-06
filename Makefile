@@ -11,6 +11,17 @@ else
 	conda env update -f environment.yml
 endif
 
+
+bot-up:
+	$(DOCKER_EXEC) compose up -d  wallet-tracker trading bot
+
+bot-stop:
+	$(DOCKER_EXEC) compose stop wallet-tracker trading bot
+
+bot-down:
+	$(DOCKER_EXEC) compose stop wallet-tracker trading bot
+	-$(DOCKER_EXEC) rm --ignore open-sol-bot_wallet-tracker_1 open-sol-bot_trading_1 open-sol-bot_bot_1 2>/dev/null || $(DOCKER_EXEC) rm -f open-sol-bot_wallet-tracker_1 open-sol-bot_trading_1 open-sol-bot_bot_1 2>/dev/null || true
+
 # 基础设施服务
 infra-up:
 	$(DOCKER_EXEC) compose up -d mysql redis
