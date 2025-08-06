@@ -48,6 +48,10 @@ class CopyTradeProcessor:
         """处理交易事件"""
         logger.info(f"Processing tx event: {tx_event}")
         copytrade_items = await self.copytrade_service.get_by_target_wallet(tx_event.who)
+        if len(copytrade_items) == 0:
+            logger.info(f"No copytrade items found for {tx_event.who}, skip...")
+            return
+
         swap_mode = "ExactIn" if tx_event.tx_direction == "buy" else "ExactOut"
         # buy_pct = 0
         sell_pct = 0
@@ -64,8 +68,9 @@ class CopyTradeProcessor:
             output_mint = WSOL.__str__()
             # 卖出比例
             if tx_event.tx_type == TxType.CLOSE_POSITION:
-                sell_pct = 1
+                sell_pct = 1  # 全部卖出
             else:
+                # 卖出比例
                 sell_pct = round(
                     (tx_event.pre_token_amount - tx_event.post_token_amount)
                     / tx_event.pre_token_amount,

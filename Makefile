@@ -1,10 +1,15 @@
 .PHONY: install build test clean dev-deps infra-up infra-down up down
 
-DOCKER_EXEC := podman  # podman or docker
+DOCKER_EXEC := docker  # podman or docker
+PKG_MANAGER := conda  # conda or uv
 
 # 安装开发依赖
 dev-deps:
+ifeq ($(PKG_MANAGER),uv)
 	uv sync
+else
+	conda env update -f environment.yml
+endif
 
 # 基础设施服务
 infra-up:
