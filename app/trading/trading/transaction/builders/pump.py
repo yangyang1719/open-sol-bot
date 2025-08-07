@@ -7,7 +7,7 @@ from solbot_common.constants import (ASSOCIATED_TOKEN_PROGRAM, PUMP_BUY_METHOD,
 from solbot_common.IDL.pumpfun import PumpFunInterface
 from solbot_common.log import logger
 from solbot_common.utils.utils import (get_bonding_curve_account, get_bonding_curve_pda_creator_vault,
-                                       get_global_account)
+                                       get_global_account, get_global_volume_accumulator_pda, get_user_volume_accumulator_pda)
 from solders.keypair import Keypair  # type: ignore
 from solders.pubkey import Pubkey  # type: ignore
 from solders.transaction import VersionedTransaction  # type: ignore
@@ -142,6 +142,8 @@ class PumpTransactionBuilder(TransactionBuilder):
                 "creator_vault": bonding_curve_pda,
                 "event_authority": PUMP_FUN_ACCOUNT,
                 "program": PUMP_FUN_PROGRAM,
+                "global_volume_accumulator": get_global_volume_accumulator_pda(PUMP_FUN_PROGRAM),
+                "user_volume_accumulator": get_user_volume_accumulator_pda(owner, PUMP_FUN_PROGRAM),
             }
         elif swap_direction == SwapDirection.Sell:
             sol_output = (

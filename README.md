@@ -164,3 +164,17 @@ podman/docker compose up -d --build
 ## 📄 许可证
 
 [Apache 2.0](./LICENSE)
+
+
+
+常见的 System Program 错误代码：
+错误代码	错误名称	描述
+0	AccountAlreadyInitialized	账户已经初始化
+1	InsufficientFunds	余额不足
+2	InvalidAccountData	无效的账户数据
+3	InvalidAccountOwner	无效的账户所有者
+4	UninitializedAccount	账户未初始化
+5	InvalidArgument	无效参数
+6	InvalidInstructionData	无效指令数据
+7	IncorrectProgramId	程序ID不正确
+8	MissingRequiredSignatures	缺少必需签名

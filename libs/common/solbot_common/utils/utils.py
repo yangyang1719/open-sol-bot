@@ -16,6 +16,16 @@ from solders.transaction_status import \
 from spl.token.instructions import get_associated_token_address
 
 
+def get_global_volume_accumulator_pda(program_id: Pubkey) -> Pubkey:
+    """计算全局交易量累加器 PDA"""
+    pda, _ = Pubkey.find_program_address([b"global_volume_accumulator"], program_id)
+    return pda
+
+def get_user_volume_accumulator_pda(user: Pubkey, program_id: Pubkey) -> Pubkey:
+    """计算用户交易量累加器 PDA"""
+    pda, _ = Pubkey.find_program_address([b"user_volume_accumulator", bytes(user)], program_id)
+    return pda
+
 def get_bonding_curve_pda(mint: Pubkey, program: Pubkey) -> tuple[Pubkey, int]:
     """
     Derives the associated bonding curve Program Derived Address (PDA) for a given mint.
