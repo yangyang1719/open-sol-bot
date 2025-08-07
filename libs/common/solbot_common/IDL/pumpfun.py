@@ -42,6 +42,12 @@ class PumpFunInterface:
         bonding_curve_creator_vault: Pubkey,
         ata: Pubkey,
     ) -> Instruction:
+        from solbot_common.utils.utils import get_global_volume_accumulator_pda, get_user_volume_accumulator_pda
+        
+        # 计算 volume accumulator PDAs
+        global_volume_accumulator = get_global_volume_accumulator_pda(PUMP_FUN_PROGRAM)
+        user_volume_accumulator = get_user_volume_accumulator_pda(buyer, PUMP_FUN_PROGRAM)
+        
         buy_builder = self.program.methods["buy"]
 
         return (
@@ -60,6 +66,8 @@ class PumpFunInterface:
                     "creator_vault": bonding_curve_creator_vault,
                     "event_authority": EVENT_AUTHORITY,
                     "program": PUMP_FUN_PROGRAM,
+                    "global_volume_accumulator": global_volume_accumulator,
+                    "user_volume_accumulator": user_volume_accumulator,
                 }
             )
             .instruction()
