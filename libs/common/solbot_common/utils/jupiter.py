@@ -5,7 +5,7 @@ import httpx
 
 class JupiterAPI:
     def __init__(self):
-        self.client = httpx.AsyncClient(base_url="https://api.jup.ag")
+        self.client = httpx.AsyncClient(base_url="https://lite-api.jup.ag")
 
     async def get_quote(
         self,

@@ -1,3 +1,5 @@
+name: solana-trade-bot
+
 services:
   cache-preloader:
     build:
