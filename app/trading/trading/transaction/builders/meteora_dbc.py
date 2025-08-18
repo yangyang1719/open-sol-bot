@@ -81,7 +81,7 @@ class MeteoraDBCTransactionBuilder(TransactionBuilder):
         quote_amount_in = int(ui_amount * 10 ** quote_token_decimals)
         if pool_config.quote_mint != WSOL:
             raise ValueError("swap for this pool is not supported, the quote token must be WSOL")
-        if pool_config.base_mint != token_address:
+        if pool_state.base_mint != token_address:
             raise ValueError("swap for this pool is not supported, the base token must be the same as the pool")
 
         curve: list[tuple[int, int]] = [
