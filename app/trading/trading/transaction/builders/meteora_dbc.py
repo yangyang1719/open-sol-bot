@@ -107,7 +107,7 @@ class MeteoraDBCTransactionBuilder(TransactionBuilder):
                 to_pubkey=quote_token_account,
                 base=owner,
                 seed=seed,
-                lamports=int(quote_rent + quote_amount_in),
+                lamports=int(quote_rent + (quote_amount_in if swap_direction == SwapDirection.Buy else 0)),
                 space=ACCOUNT_LAYOUT_LEN,
                 owner=TOKEN_PROGRAM_ID,
             )
@@ -207,6 +207,7 @@ class MeteoraDBCTransactionBuilder(TransactionBuilder):
             sol_output = int(estimate["outputAmount"])
             min_sol_cost = min_amount_with_slippage(sol_output, slippage_bps)
             quote_amount_in=amount_specified
+            logger.info(f"Base→Quote in: {quote_amount_in}, min_output: {min_sol_cost}")
             input_accounts = [
                 AccountMeta(POOL_AUTHORITY, False, False),
                 AccountMeta(pool_state.config, False, False),
