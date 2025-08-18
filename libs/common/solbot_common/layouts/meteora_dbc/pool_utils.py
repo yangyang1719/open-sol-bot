@@ -9,9 +9,9 @@ from solbot_common.constants import METEORA_DBC_PROGRAM
 from .pool_config import POOL_CONFIG_LAYOUT, parse_pool_config
 from .pool_state import POOL_STATE_LAYOUT, parse_pool_state
 
-def fetch_pool_state(client: Client, pool_str: str):
+async def fetch_pool_state(client: AsyncClient, pool_str: str):
     pool_pubkey = Pubkey.from_string(pool_str)
-    account_info = client.get_account_info_json_parsed(pool_pubkey)
+    account_info = await client.get_account_info_json_parsed(pool_pubkey)
     account_data = account_info.value.data
     decoded_data = POOL_STATE_LAYOUT.parse(account_data)
     pool_state = parse_pool_state(pool_pubkey, decoded_data)

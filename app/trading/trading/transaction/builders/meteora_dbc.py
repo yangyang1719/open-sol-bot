@@ -72,10 +72,9 @@ class MeteoraDBCTransactionBuilder(TransactionBuilder):
 
         logger.info(f"Starting buy transaction for pool: {token_address}")
 
-        pool_str = fetch_pool_from_rpc(self.rpc_client, token_address)
+        pool_str = await fetch_pool_from_rpc(self.rpc_client, token_address)
         logger.info("Fetching pool state...")
-        logger.info(f"pool_str: {pool_str}")
-        pool_state: PoolState = fetch_pool_state(self.rpc_client, pool_str)
+        pool_state: PoolState = await fetch_pool_state(self.rpc_client, pool_str)
         logger.info("Fetching pool config...")
         pool_config: PoolConfig = fetch_pool_config(self.rpc_client, pool_state.config)
         quote_token_decimals = pool_config.token_decimal
