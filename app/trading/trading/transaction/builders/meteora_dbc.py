@@ -79,6 +79,10 @@ class MeteoraDBCTransactionBuilder(TransactionBuilder):
         pool_config: PoolConfig = await fetch_pool_config(self.rpc_client, pool_state.config)
         quote_token_decimals = pool_config.token_decimal
         quote_amount_in = int(ui_amount * 10 ** quote_token_decimals)
+        if pool_config.quote_mint != WSOL:
+            raise ValueError("swap for this pool is not supported, the quote token must be WSOL")
+        if pool_config.base_mint != token_address:
+            raise ValueError("swap for this pool is not supported, the base token must be the same as the pool")
 
         curve: list[tuple[int, int]] = [
             (pt.sqrt_price, pt.liquidity)
@@ -148,7 +152,7 @@ class MeteoraDBCTransactionBuilder(TransactionBuilder):
                 AccountMeta(pool_state.config, False, False),
                 AccountMeta(pool_state.pool, False, True),
                 AccountMeta(quote_token_account, False, True),
-                AccountMeta(in_ata, False, True),
+                AccountMeta(out_ata, False, True),
                 AccountMeta(pool_state.base_vault, False, True),
                 AccountMeta(pool_state.quote_vault, False, True),
                 AccountMeta(pool_state.base_mint, False, False),
@@ -207,7 +211,7 @@ class MeteoraDBCTransactionBuilder(TransactionBuilder):
                 AccountMeta(POOL_AUTHORITY, False, False),
                 AccountMeta(pool_state.config, False, False),
                 AccountMeta(pool_state.pool, False, True),
-                AccountMeta(out_ata, False, True),
+                AccountMeta(in_ata, False, True),
                 AccountMeta(quote_token_account, False, True),
                 AccountMeta(pool_state.base_vault, False, True),
                 AccountMeta(pool_state.quote_vault, False, True),
