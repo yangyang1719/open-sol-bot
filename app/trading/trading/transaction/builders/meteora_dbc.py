@@ -76,7 +76,7 @@ class MeteoraDBCTransactionBuilder(TransactionBuilder):
         logger.info("Fetching pool state...")
         pool_state: PoolState = await fetch_pool_state(self.rpc_client, pool_str)
         logger.info("Fetching pool config...")
-        pool_config: PoolConfig = fetch_pool_config(self.rpc_client, pool_state.config)
+        pool_config: PoolConfig = await fetch_pool_config(self.rpc_client, pool_state.config)
         quote_token_decimals = pool_config.token_decimal
         quote_amount_in = int(ui_amount * 10 ** quote_token_decimals)
 

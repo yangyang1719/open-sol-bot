@@ -17,8 +17,8 @@ async def fetch_pool_state(client: AsyncClient, pool_str: str):
     pool_state = parse_pool_state(pool_pubkey, decoded_data)
     return pool_state
 
-def fetch_pool_config(client: Client, pool_config: Pubkey):
-    account_info = client.get_account_info_json_parsed(pool_config)
+async def fetch_pool_config(client: AsyncClient, pool_config: Pubkey):
+    account_info = await client.get_account_info_json_parsed(pool_config)
     account_data = account_info.value.data
     decoded_data = POOL_CONFIG_LAYOUT.parse(account_data)
     pool_config = parse_pool_config(decoded_data)
