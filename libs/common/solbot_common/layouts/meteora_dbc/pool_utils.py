@@ -1,4 +1,5 @@
 from solana.rpc.api import Client
+from solana.rpc.async_api import AsyncClient
 from solders.pubkey import Pubkey  # type: ignore
 
 from solana.rpc.commitment import Processed
@@ -23,11 +24,11 @@ def fetch_pool_config(client: Client, pool_config: Pubkey):
     pool_config = parse_pool_config(decoded_data)
     return pool_config
 
-def fetch_pool_from_rpc(client: Client, base_mint: str) -> str | None:
+async def fetch_pool_from_rpc(client: AsyncClient, base_mint: str) -> str | None:
     memcmp_filter_base = MemcmpOpts(offset=136, bytes=base_mint)
 
     try:
-        response = client.get_program_accounts_json_parsed(
+        response = await client.get_program_accounts_json_parsed(
             METEORA_DBC_PROGRAM,
             commitment=Processed,
             filters=[memcmp_filter_base],
