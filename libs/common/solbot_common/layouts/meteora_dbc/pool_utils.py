@@ -4,9 +4,9 @@ from solders.pubkey import Pubkey  # type: ignore
 from solana.rpc.commitment import Processed
 from solana.rpc.types import MemcmpOpts
 
-from constants import METEORA_DBC_PROGRAM
-from pool_config import POOL_CONFIG_LAYOUT, parse_pool_config
-from pool_state import POOL_STATE_LAYOUT, parse_pool_state
+from solbot_common.constants import METEORA_DBC_PROGRAM
+from .pool_config import POOL_CONFIG_LAYOUT, parse_pool_config
+from .pool_state import POOL_STATE_LAYOUT, parse_pool_state
 
 def fetch_pool_state(client: Client, pool_str: str):
     pool_pubkey = Pubkey.from_string(pool_str)
