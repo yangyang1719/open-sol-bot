@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+    "version": "0.1.0",
   "name": "pump",
   "instructions": [
     {
@@ -412,7 +412,7 @@
       ]
     }
   ],
-  "accounts": [
+      "accounts": [
     {
       "name": "Global",
       "type": {
@@ -489,34 +489,34 @@
   "events": [
     {
       "name": "CreateEvent",
-      "fields": [
-        {
-          "name": "name",
+        "fields": [
+          {
+            "name": "name",
           "type": "string",
           "index": false
-        },
-        {
-          "name": "symbol",
+          },
+          {
+            "name": "symbol",
           "type": "string",
           "index": false
-        },
-        {
-          "name": "uri",
+          },
+          {
+            "name": "uri",
           "type": "string",
           "index": false
-        },
-        {
-          "name": "mint",
+          },
+          {
+            "name": "mint",
           "type": "publicKey",
           "index": false
-        },
-        {
+          },
+          {
           "name": "bondingCurve",
           "type": "publicKey",
           "index": false
-        },
-        {
-          "name": "user",
+          },
+          {
+            "name": "user",
           "type": "publicKey",
           "index": false
         }
@@ -524,9 +524,9 @@
     },
     {
       "name": "TradeEvent",
-      "fields": [
-        {
-          "name": "mint",
+        "fields": [
+          {
+            "name": "mint",
           "type": "publicKey",
           "index": false
         },
@@ -544,14 +544,14 @@
           "name": "isBuy",
           "type": "bool",
           "index": false
-        },
-        {
-          "name": "user",
+          },
+          {
+            "name": "user",
           "type": "publicKey",
           "index": false
-        },
-        {
-          "name": "timestamp",
+          },
+          {
+            "name": "timestamp",
           "type": "i64",
           "index": false
         },
@@ -569,14 +569,14 @@
     },
     {
       "name": "CompleteEvent",
-      "fields": [
-        {
+        "fields": [
+          {
           "name": "user",
           "type": "publicKey",
           "index": false
-        },
-        {
-          "name": "mint",
+          },
+          {
+            "name": "mint",
           "type": "publicKey",
           "index": false
         },
@@ -594,8 +594,8 @@
     },
     {
       "name": "SetParamsEvent",
-      "fields": [
-        {
+        "fields": [
+          {
           "name": "feeRecipient",
           "type": "publicKey",
           "index": false

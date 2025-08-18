@@ -7,6 +7,7 @@ class TradingRoute(Enum):
     PUMP = "pump"  # PUMP 协议交易
     RAYDIUM_V4 = "raydium_v4"  # Raydium V4 协议交易
     DEX = "dex"  # DEX 交易
+    METEORA_DBC = "meteora_dbc"  # Meteora DBC 交易
 
     @classmethod
     def from_str(cls, value: str) -> "TradingRoute":

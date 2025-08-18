@@ -2,7 +2,7 @@ from solana.rpc.async_api import AsyncClient
 from solbot_cache.launch import LaunchCache
 from solbot_cache.rayidum import get_preferred_pool
 from solbot_common.config import settings
-from solbot_common.constants import PUMP_FUN_PROGRAM, RAY_V4
+from solbot_common.constants import PUMP_FUN_PROGRAM, RAY_V4, METEORA_DBC_PROGRAM
 from solbot_common.log import logger
 from solbot_common.models.tg_bot.user import User
 from solbot_common.types.swap import SwapEvent
@@ -15,6 +15,7 @@ from trading.transaction import TradingRoute, TradingService
 
 PUMP_FUN_PROGRAM_ID = str(PUMP_FUN_PROGRAM)
 RAY_V4_PROGRAM_ID = str(RAY_V4)
+METEORA_DBC_PROGRAM_ID = str(METEORA_DBC_PROGRAM)
 
 
 class TradingExecutor:
@@ -81,6 +82,9 @@ class TradingExecutor:
         elif swap_event.program_id == RAY_V4_PROGRAM_ID:
             logger.info("Program ID is RayV4")
             trade_route = TradingRoute.RAYDIUM_V4
+        elif program_id == METEORA_DBC_PROGRAM:
+            logger.info("Program ID is Meteora DBC")
+            trade_route = TradingRoute.METEORA_DBC
         elif program_id is None:
             logger.warning("Program ID is Unknown. Using Jupiter DEX aggregator to trade")
             trade_route = TradingRoute.DEX

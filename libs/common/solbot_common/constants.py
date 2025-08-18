@@ -20,6 +20,7 @@ SOL_DECIMAL = 10**9
 
 ASSOCIATED_TOKEN_PROGRAM = Pubkey.from_string("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL")
 
+
 PUMP_FUN_PROGRAM = Pubkey.from_string("6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P")
 PUMP_FUN_ACCOUNT = Pubkey.from_string("Ce6TQqeHC9p8KetsN6JsjHK7UTZk7nasjjnr7XxXp9F1")
 PUMP_GLOBAL_ACCOUNT = Pubkey.from_string("4wTV1YmiEkRvAtNtsSGPtUrqRYQMe5SKy2uB4Jjaxnjf")
@@ -27,8 +28,22 @@ PUMP_BUY_METHOD = 16927863322537952870
 PUMP_SELL_METHOD = 12502976635542562355
 
 
+# Pump AMM 相关常量
+# PUMP_AMM_PROGRAM = Pubkey.from_string("pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA")
+# PUMP_AMM_GLOBAL_CONFIG = Pubkey.from_string("CQKbRHyoC9CkQCYhP1A4CnZGHzdhsH9GCfxhD1dmBp2z")  # 需要实际地址
+# PUMP_AMM_PROTOCOL_FEE_RECIPIENT = Pubkey.from_string("proto11111111111111111111111111111111111")  # 需要实际地址
+
+
+METEORA_DBC_PROGRAM = Pubkey.from_string("dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN")
+POOL_AUTHORITY = Pubkey.from_string("FhVo3mqL8PW5pH5U2CN4XE33DokiyZnUwuGpH2hmHLuM")
+REFERRAL_TOKEN_ACC = Pubkey.from_string("dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN")
+EVENT_AUTH = Pubkey.from_string("8Ks12pbrD6PXxfty1hVQiE9sc289zgU1zHkvXhrSdriF")
+METEORA_DBC_SWAP = "f8c69e91e17587c8"
+
 SWAP_PROGRAMS = [
     "675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8",  # Raydium Liquidity Pool V4
     "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",  # Pump
-    "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG",  # MMeteora DAMM v2
+    "dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN",  # Meteora DBC
+    # "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG",  # MMeteora DAMM v2
+    # "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA",  # Pump AMM
 ]

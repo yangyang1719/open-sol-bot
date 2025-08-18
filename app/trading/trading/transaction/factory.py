@@ -13,6 +13,7 @@ from trading.transaction.builders.gmgn import GMGNTransactionBuilder
 from trading.transaction.builders.jupiter import JupiterTransactionBuilder
 from trading.transaction.builders.pump import PumpTransactionBuilder
 from trading.transaction.builders.ray_v4 import RaydiumV4TransactionBuilder
+from trading.transaction.builders.meteora_dbc import MeteoraDBCTransactionBuilder
 from trading.transaction.protocol import TradingRoute
 from trading.transaction.sender import (
     DefaultTransactionSender,
@@ -192,10 +193,11 @@ class TradingService:
         )
         self._pump_txn_builder = PumpTransactionBuilder(self._rpc_client)
         self._raydium_v4_txn_builder = RaydiumV4TransactionBuilder(self._rpc_client)
+        self._meteora_dbc_txn_builder = MeteoraDBCTransactionBuilder(self._rpc_client)
         self._gmgn_sender = GMGNTransactionSender(self._rpc_client)
         self._jito_sender = JitoTransactionSender(self._rpc_client)
         self.default_sender = DefaultTransactionSender(rpc_client)
-
+        
     def select_builder(self, route: TradingRoute) -> TransactionBuilder:
         if route == TradingRoute.PUMP:
             return self._pump_txn_builder
@@ -203,6 +205,8 @@ class TradingService:
             return self._raydium_v4_txn_builder
         elif route == TradingRoute.DEX:
             return self._aggreage_txn_builder
+        elif route == TradingRoute.METEORA_DBC:
+            return self._meteora_dbc_txn_builder
         else:
             raise ValueError(f"Unsupported trading route: {route}")
 
