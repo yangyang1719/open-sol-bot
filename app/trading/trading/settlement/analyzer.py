@@ -357,8 +357,8 @@ class TransactionAnalyzer:
         slot = tx_detail["slot"]
         timestamp = tx_detail["timestamp"]
         tx_type = tx_detail["type"]
-        if tx_type != "SWAP":
-            raise NotImplementedError(f"不支持的交易类型: {tx_type}")
+        # if tx_type != "SWAP":
+        #     raise NotImplementedError(f"不支持的交易类型: {tx_type}")
 
         sol_change = 0
         token_change = 0
